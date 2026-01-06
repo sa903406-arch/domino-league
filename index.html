@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نادي الدومنة الملكي 🏆</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.95);
+            --primary: #1e3c72;
+            --secondary: #2a5298;
+            --accent: #f39c12;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --text: #2c3e50;
+            --gold: #FFD700;
+            --silver: #C0C0C0;
+            --bronze: #CD7F32;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container { max-width: 500px; margin: auto; padding: 15px; }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: var(--primary);
+            color: white;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        /* منصة التتويج المعدلة */
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 15px;
+            margin: 20px 0 40px;
+            padding-top: 30px;
+        }
+
+        .podium-item { text-align: center; position: relative; flex: 1; }
+        .podium-item.rank-1 { transform: scale(1.25); z-index: 2; margin-bottom: 10px; }
+        
+        .avatar-wrapper { position: relative; display: inline-block; }
+
+        .avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            object-fit: cover;
+            background: #fff;
+        }
+
+        .rank-1 .avatar { width: 90px; height: 90px; border-color: var(--gold); border-width: 4px; }
+        .rank-2 .avatar { border-color: var(--silver); }
+        .rank-3 .avatar { border-color: var(--bronze); }
+
+        .rank-1 .crown { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 28px; }
+
+        .name-tag { font-weight: 900; font-size: 0.9em; margin-top: 8px; display: block; color: var(--primary); }
+        .score-tag { font-size: 0.8em; background: var(--secondary); color: white; padding: 2px 10px; border-radius: 12px; font-weight: bold; }
+
+        /* إحصائيات عراق السريعة */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            padding: 12px;
+            border-radius: 18px;
+            text-align: center;
+            font-size: 0.75em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .stat-card b { display: block; font-size: 1.1em; color: var(--primary); margin-top: 5px; }
+
+        /* الترتيب العام */
+        .player-card {
+            background: var(--glass);
+            margin-bottom: 12px;
+            padding: 12px 18px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .rank-number { font-weight: 900; color: #95a5a6; font-size: 1.1em; min-width: 30px; }
+        .player-info { flex-grow: 1; }
+        .player-info h4 { margin: 0; font-size: 1.05em; color: var(--primary); }
+        .player-info small { color: #7f8c8d; font-size: 0.8em; }
+
+        .player-points { text-align: left; }
+        .point-val { font-weight: 900; font-size: 1.3em; color: var(--secondary); }
+
+        /* التنقل */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            padding: 12px 30px;
+            border-radius: 40px;
+            display: flex;
+            gap: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .nav-item { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 1em; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: white; transform: scale(1.1); }
+
+        .page { margin-bottom: 100px; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hidden { display: none !important; }
+
+        /* الإدارة */
+        .admin-card { background: white; border-radius: 22px; padding: 22px; margin-top: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+        input, select { width: 100%; padding: 14px; margin: 12px 0; border: 1px solid #f0f0f0; border-radius: 14px; font-family: 'Cairo'; background: #fcfcfc; box-sizing: border-box; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 14px; font-weight: 800; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; font-size: 1em; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        
+        .point-editor { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #f5f5f5; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2 style="margin:0; font-weight:900; letter-spacing: 1px;">نادي الدومنة الملكي</h2>
+        <p style="margin:0; font-size: 0.85em; opacity: 0.9">بطولة أسود الرافدين 🦁</p>
+    </header>
+
+    <div class="container">
+        
+        <div id="rankPage" class="page">
+            <div class="podium" id="podium"></div>
+            
+            <div class="quick-stats" id="quickStats">
+                <div class="stat-card">⚔️ المحارب <b id="mostPlayed">-</b></div>
+                <div class="stat-card">🎯 القناص <b id="mostWins">-</b></div>
+                <div class="stat-card">🧨 المنحوس <b id="mostLoss">-</b></div>
+            </div>
+
+            <div id="mainList"></div>
+        </div>
+
+        <div id="adminPage" class="page hidden">
+            <div id="loginSection" class="admin-card" style="text-align:center">
+                <h3>دخول الإدارة</h3>
+                <input type="password" id="pass" placeholder="كلمة المرور">
+                <button class="btn btn-primary" onclick="verifyAdmin()">دخول</button>
+            </div>
+
+            <div id="adminControls" class="hidden">
+                <div class="admin-card">
+                    <h4>👤 إضافة لاعب جديد</h4>
+                    <input type="text" id="pName" placeholder="الاسم الكامل">
+                    <input type="text" id="pImg" placeholder="رابط الصورة (URL)">
+                    <button class="btn btn-success" onclick="createNewPlayer()">إضافة للديوان</button>
+                </div>
+
+                <div class="admin-card">
+                    <h4>🎯 تحديث نقاط الجولة</h4>
+                    <div id="pointsList"></div>
+                    <button class="btn btn-primary" onclick="updateAllPoints()" id="updateBtn" style="margin-top:20px">حفظ النتائج</button>
+                </div>
+
+                <button class="btn" style="background:none; color:#999; margin-top:20px" onclick="location.reload()">تسجيل خروج</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" id="navRank" onclick="navTo('rank')">الترتيب</div>
+        <div class="nav-item" id="navAdmin" onclick="navTo('admin')">الإدارة</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, increment, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+       const firebaseConfig = {
+  apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
+  authDomain: "koster-499c0.firebaseapp.com",
+  projectId: "koster-499c0",
+  storageBucket: "koster-499c0.firebasestorage.app",
+  messagingSenderId: "170205849470",
+  appId: "1:170205849470:web:7133888e3051c7ab47b52f",
+  measurementId: "G-KT9W98Y75C"
+};
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.navTo = (p) => {
+            document.querySelectorAll('.page').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(p === 'rank') {
+                document.getElementById('rankPage').classList.remove('hidden');
+                document.getElementById('navRank').classList.add('active');
+                loadData();
+            } else {
+                document.getElementById('adminPage').classList.remove('hidden');
+                document.getElementById('navAdmin').classList.add('active');
+            }
+        };
+
+        window.verifyAdmin = () => {
+            if(document.getElementById('pass').value === '314630') {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('adminControls').classList.remove('hidden');
+                loadAdminList();
+            } else { alert("كلمة المرور خاطئة"); }
+        };
+
+        async function loadData() {
+            const q = query(collection(db, "players"), orderBy("points", "desc"));
+            const snap = await getDocs(q);
+            const players = [];
+            snap.forEach(d => players.push({id: d.id, ...d.data()}));
+            
+            displayPodium(players.slice(0,3));
+            displayList(players);
+            calculateStats(players);
+        }
+
+        function displayPodium(top) {
+            const area = document.getElementById('podium');
+            const labels = ["أول عراق 🇮🇶", "ثاني عراق 🇮🇶", "ثالث عراق 🇮🇶"];
+            area.innerHTML = '';
+            
+            // ترتيب العرض: الثاني، الأول، الثالث
+            const displayOrder = [1, 0, 2];
+            
+            displayOrder.forEach(idx => {
+                const p = top[idx];
+                if(p) {
+                    const rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : 'rank-3');
+                    area.innerHTML += `
+                        <div class="podium-item ${rankClass}">
+                            <div class="avatar-wrapper">
+                                ${idx === 0 ? '<span class="crown">👑</span>' : ''}
+                                <img src="${p.img}" class="avatar">
+                            </div>
+                            <span class="name-tag">${labels[idx]}</span>
+                            <span class="score-tag">${p.name} (${p.points})</span>
+                        </div>`;
+                }
+            });
+        }
+
+        function displayList(players) {
+            const area = document.getElementById('mainList');
+            area.innerHTML = players.map((p, i) => `
+                <div class="player-card">
+                    <div class="rank-number">${i+1}</div>
+                    <img src="${p.img}" style="width:45px; height:45px; border-radius:50%; object-fit:cover; border: 2px solid #eee">
+                    <div class="player-info">
+                        <h4>${p.name}</h4>
+                        <small>فوز: ${p.win} | خسارة: ${p.loss}</small>
+                    </div>
+                    <div class="player-points">
+                        <div class="point-val">${p.points}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function calculateStats(players) {
+            if(players.length === 0) return;
+            const mostP = [...players].sort((a,b) => (b.win+b.loss) - (a.win+a.loss))[0];
+            const mostW = [...players].sort((a,b) => b.win - a.win)[0];
+            const mostL = [...players].sort((a,b) => b.loss - a.loss)[0];
+            
+            document.getElementById('mostPlayed').innerText = mostP.name;
+            document.getElementById('mostWins').innerText = mostW.name;
+            document.getElementById('mostLoss').innerText = mostL.name;
+        }
+
+        window.createNewPlayer = async () => {
+            const name = document.getElementById('pName').value;
+            const img = document.getElementById('pImg').value || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            if(!name) return;
+            await addDoc(collection(db, "players"), { name, img, win: 0, loss: 0, points: 0 });
+            alert("تمت الإضافة للمجلس بنجاح");
+            location.reload();
+        };
+
+        async function loadAdminList() {
+            const snap = await getDocs(collection(db, "players"));
+            const area = document.getElementById('pointsList');
+            area.innerHTML = '';
+            snap.forEach(d => {
+                const p = d.data();
+                area.innerHTML += `
+                    <div class="point-editor">
+                        <strong>${p.name}</strong>
+                        <div>
+                            + <input type="number" id="win_${d.id}" placeholder="0" style="width:45px; margin:0 5px; text-align:center">
+                            - <input type="number" id="loss_${d.id}" placeholder="0" style="width:45px; text-align:center">
+                        </div>
+                    </div>`;
+            });
+        }
+
+        window.updateAllPoints = async () => {
+            const btn = document.getElementById('updateBtn');
+            btn.innerText = "جاري الحفظ...";
+            const snap = await getDocs(collection(db, "players"));
+            for(let d of snap.docs) {
+                const w = parseInt(document.getElementById('win_' + d.id).value) || 0;
+                const l = parseInt(document.getElementById('loss_' + d.id).value) || 0;
+                if(w !== 0 || l !== 0) {
+                    await updateDoc(doc(db, "players", d.id), {
+                        win: increment(w),
+                        loss: increment(l),
+                        points: increment(w - l)
+                    });
+                }
+            }
+            alert("تم تحديث ديوان الدومنة!");
+            location.reload();
+        };
+
+        window.onload = loadData;
+    </script>
+</body>
+</html>
