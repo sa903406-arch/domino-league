@@ -10,76 +10,55 @@
             --primary: #1e3c72; --secondary: #2a5298;
             --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
             --bg: #f3f4f6; --white: #ffffff; --text: #1f2937;
-            --danger: #ef4444; --success: #10b981;
+            --danger: #ef4444; --success: #10b981; --accent: #8e44ad;
         }
 
-        body {
-            font-family: 'Cairo', sans-serif; background-color: var(--bg);
-            color: var(--text); margin: 0; padding-bottom: 80px;
-        }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
 
-        /* --- الهيدر --- */
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: var(--white); padding: 25px 20px 40px; text-align: center;
-            border-radius: 0 0 30px 30px; box-shadow: 0 10px 25px rgba(30, 60, 114, 0.2);
-        }
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--white); padding: 25px 20px 40px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 10px 25px rgba(30,60,114,0.2); }
 
         .container { max-width: 600px; margin: -30px auto 0; padding: 0 15px; position: relative; z-index: 2; }
-        
-        .card {
-            background: var(--white); border-radius: 20px; padding: 20px;
-            margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
+        .card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 10px; }
 
-        /* --- تصميم الأرشيف --- */
-        .date-header {
-            background: var(--primary); color: white; padding: 8px 15px;
-            border-radius: 10px; margin: 15px 0 10px; font-size: 0.9rem; font-weight: bold;
-        }
-        .history-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem;
-        }
-        .history-score { font-weight: bold; direction: ltr; }
+        /* --- صفحة الإحصائيات (الأوسمة) --- */
+        .badge-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 15px; background: #f8fafc; margin-bottom: 10px; border: 1px solid #edf2f7; }
+        .badge-icon { font-size: 2rem; width: 50px; text-align: center; }
+        .badge-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid var(--white); box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+        .badge-info { flex: 1; }
+        .badge-title { font-weight: 900; color: var(--primary); font-size: 1rem; display: block; }
+        .badge-name { font-weight: bold; font-size: 0.9rem; color: #555; }
+        .badge-value { font-size: 0.8rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; margin-top: 4px; display: inline-block; }
 
-        /* --- العناصر الأخرى --- */
-        .podium-container { display: flex; justify-content: center; align-items: flex-end; height: 240px; margin-bottom: 25px; gap: 15px; }
-        .podium-item { display: flex; flex-direction: column; align-items: center; width: 30%; }
-        .podium-avatar { width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: -15px; z-index: 2; background: #eee; object-fit: cover; }
-        .podium-rank { width: 100%; border-radius: 15px 15px 0 0; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--white); font-weight: bold; }
-        .rank-1 .podium-rank { height: 140px; background: linear-gradient(to bottom, #FFD700, #FDB931); }
-        .rank-2 .podium-rank { height: 100px; background: linear-gradient(to bottom, #E0E0E0, #BDBDBD); }
-        .rank-3 .podium-rank { height: 80px; background: linear-gradient(to bottom, #CD7F32, #A0522D); }
-        .rank-1 .podium-avatar { width: 70px; height: 70px; border-color: var(--gold); }
+        /* --- الأرشيف والترتيب --- */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; height: 220px; margin-bottom: 25px; gap: 10px; }
+        .podium-item { display: flex; flex-direction: column; align-items: center; width: 32%; }
+        .podium-avatar { width: 55px; height: 55px; border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: -15px; z-index: 2; background: #eee; object-fit: cover; }
+        .podium-rank { width: 100%; border-radius: 15px 15px 0 0; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--white); font-weight: bold; padding: 10px 0; }
+        .rank-1 .podium-rank { height: 130px; background: linear-gradient(to bottom, #FFD700, #FDB931); }
+        .rank-2 .podium-rank { height: 95px; background: linear-gradient(to bottom, #E0E0E0, #BDBDBD); }
+        .rank-3 .podium-rank { height: 75px; background: linear-gradient(to bottom, #CD7F32, #A0522D); }
 
         .player-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
         .list-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin: 0 10px; background: #eee; }
-        .list-info { flex: 1; }
-        .list-score { background: var(--bg); padding: 5px 10px; border-radius: 8px; font-weight: 900; }
+        .list-score { background: var(--bg); padding: 5px 10px; border-radius: 8px; font-weight: 900; min-width: 40px; text-align: center; }
         .score-pos { color: var(--success); background: #d1fae5; }
         .score-neg { color: var(--danger); background: #fee2e2; }
 
-        /* --- الحقول والأزرار --- */
+        /* --- التنقل السفلي --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 100; border-radius: 20px 20px 0 0; }
+        .nav-item { text-align: center; color: #9ca3af; cursor: pointer; flex: 1; transition: 0.3s; }
+        .nav-item i { font-style: normal; font-size: 1.2rem; }
+        .nav-item span { font-size: 0.7rem; font-weight: bold; display: block; }
+        .nav-item.active { color: var(--primary); transform: translateY(-3px); }
+
+        /* --- الأدوات --- */
         input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e5e7eb; border-radius: 12px; font-family: 'Cairo'; box-sizing: border-box; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; margin-bottom: 5px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: var(--danger); color: white; width: auto; padding: 5px 10px; font-size: 0.8rem; }
-
-        /* --- البار السفلي --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; background: white; 
-            display: flex; justify-content: space-around; padding: 12px 0;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 100; border-radius: 20px 20px 0 0;
-        }
-        .nav-item { text-align: center; color: #9ca3af; cursor: pointer; }
-        .nav-item.active { color: var(--primary); transform: translateY(-5px); }
-        
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; display: flex; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 30px; border-radius: 20px; width: 80%; max-width: 300px; text-align: center; }
+        .modal-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 300px; text-align: center; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -99,44 +78,52 @@
         </div>
     </div>
 
+    <div id="page-stats" class="hidden">
+        <div class="card">
+            <h3>🏅 أبطال الدوري</h3>
+            <div id="badgesContainer">
+                <p style="text-align:center; color:#888;">جاري تحليل البيانات...</p>
+            </div>
+        </div>
+    </div>
+
     <div id="page-history" class="hidden">
         <div class="card">
-            <h3>📅 سجل المباريات (حسب التاريخ)</h3>
+            <h3>📅 سجل المباريات</h3>
             <div id="historyByDateList"></div>
         </div>
     </div>
 
     <div id="page-admin" class="hidden">
-        <div class="card" style="border-right: 4px solid var(--success);">
-            <h3>👤 إضافة لاعب جديد</h3>
-            <input type="text" id="newPlayerName" placeholder="اسم اللاعب (يجب أن يكون مميز)">
-            <input type="url" id="newPlayerImg" placeholder="رابط الصورة (اختياري)">
-            <button class="btn btn-success" onclick="addPlayer()">إضافة للديوان</button>
+        <div style="text-align: left; margin-bottom: 10px;">
+            <button onclick="logout()" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;">خروج 🔒</button>
         </div>
-
-        <div class="card" style="border-right: 4px solid var(--primary);">
-            <h3>📝 تسجيل جولة</h3>
+        <div class="card" style="border-right: 5px solid var(--success);">
+            <h3>👤 إضافة لاعب</h3>
+            <input type="text" id="newPlayerName" placeholder="الاسم">
+            <input type="url" id="newPlayerImg" placeholder="رابط الصورة">
+            <button class="btn btn-success" onclick="addPlayer()">إضافة</button>
+        </div>
+        <div class="card" style="border-right: 5px solid var(--primary);">
+            <h3>📝 تسجيل نتيجة</h3>
             <input type="date" id="gameDate">
             <select id="playerSelect"></select>
             <div style="display: flex; gap: 10px;">
                 <input type="number" id="winCount" placeholder="فوز (+)">
                 <input type="number" id="lossCount" placeholder="خسارة (-)">
             </div>
-            <button class="btn btn-primary" onclick="addRecord()">حفظ النتيجة</button>
+            <button class="btn btn-primary" onclick="addRecord()">حفظ</button>
         </div>
-
-        <div class="card" style="border-right: 4px solid var(--danger);">
-            <h3>🗑️ إدارة اللاعبين (حذف)</h3>
-            <p style="font-size:0.8rem; color:red">تنبيه: حذف اللاعب سيحذف جميع سجلاته السابقة!</p>
+        <div class="card">
+            <h3>🗑️ حذف لاعبين</h3>
             <div id="adminPlayersList"></div>
         </div>
     </div>
-
 </div>
 
 <div id="loginModal" class="modal-overlay hidden">
     <div class="modal-box">
-        <h3>🔒 دخول الإدارة</h3>
+        <h3>🔒 دخول المدير</h3>
         <input type="password" id="adminPassword" placeholder="كلمة المرور">
         <button class="btn btn-primary" onclick="checkPassword()">دخول</button>
         <button class="btn" style="margin-top:10px; background:#eee" onclick="closeLogin()">إلغاء</button>
@@ -144,15 +131,10 @@
 </div>
 
 <nav class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('page-home', this)">
-        <i>🏠</i><br><small>الرئيسية</small>
-    </div>
-    <div class="nav-item" onclick="switchTab('page-history', this)">
-        <i>📅</i><br><small>الأرشيف</small>
-    </div>
-    <div class="nav-item" onclick="requestAdmin(this)">
-        <i>⚙️</i><br><small>الإدارة</small>
-    </div>
+    <div class="nav-item active" onclick="switchTab('page-home', this)"><i>🏠</i><span>الرئيسية</span></div>
+    <div class="nav-item" onclick="switchTab('page-stats', this)"><i>🏅</i><span>الأوسمة</span></div>
+    <div class="nav-item" onclick="switchTab('page-history', this)"><i>📅</i><span>الأرشيف</span></div>
+    <div class="nav-item" onclick="requestAdmin(this)"><i>⚙️</i><span>الإدارة</span></div>
 </nav>
 
 <script type="module">
@@ -174,10 +156,11 @@
     let playersData = {}; 
     let isAdminUnlocked = false;
     const ADMIN_PASS = "1234";
+    let cachedStats = {}; 
+    let cachedHistory = {};
 
     document.getElementById('gameDate').valueAsDate = new Date();
 
-    // --- التنقل ---
     window.switchTab = (pageId, elem) => {
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
         document.getElementById(pageId).classList.remove('hidden');
@@ -185,230 +168,140 @@
         elem.classList.add('active');
     };
 
-    window.requestAdmin = (elem) => {
-        if (isAdminUnlocked) {
-            window.switchTab('page-admin', elem);
-        } else {
-            document.getElementById('loginModal').classList.remove('hidden');
-        }
-    };
-
+    window.requestAdmin = (elem) => { isAdminUnlocked ? window.switchTab('page-admin', elem) : document.getElementById('loginModal').classList.remove('hidden'); };
     window.checkPassword = () => {
         if (document.getElementById('adminPassword').value === ADMIN_PASS) {
             isAdminUnlocked = true;
             document.getElementById('loginModal').classList.add('hidden');
-            // البحث عن عنصر التبويب الخاص بالإدارة لتفعيله
-            const adminTab = document.querySelectorAll('.nav-item')[2];
-            window.switchTab('page-admin', adminTab);
-        } else {
-            alert("خطأ في كلمة المرور");
-        }
+            renderHome(cachedStats);
+            renderHistory(cachedHistory);
+            switchTab('page-admin', document.querySelectorAll('.nav-item')[3]);
+        } else { alert("خطأ!"); }
     };
+    window.logout = () => { isAdminUnlocked = false; renderHistory(cachedHistory); switchTab('page-home', document.querySelectorAll('.nav-item')[0]); };
     window.closeLogin = () => document.getElementById('loginModal').classList.add('hidden');
 
-    // --- العمليات ---
-
-    // 1. إضافة لاعب (مع منع التكرار)
+    // العمليات
     window.addPlayer = async () => {
         const name = document.getElementById('newPlayerName').value.trim();
         const img = document.getElementById('newPlayerImg').value.trim();
-        
-        if(!name) return alert("اكتب الاسم");
-
-        // التحقق من التكرار
-        const q = query(collection(db, "players"), where("name", "==", name));
-        const snap = await getDocs(q);
-        
-        if(!snap.empty) {
-            alert("هذا اللاعب موجود بالفعل!");
-            return;
-        }
-        
+        if(!name) return;
+        const snap = await getDocs(query(collection(db, "players"), where("name", "==", name)));
+        if(!snap.empty) return alert("موجود!");
         await addDoc(collection(db, "players"), { name, imageUrl: img });
-        document.getElementById('newPlayerName').value = "";
-        document.getElementById('newPlayerImg').value = "";
-        alert("تمت الإضافة");
+        alert("تم!");
     };
 
-    // 2. حذف لاعب وحذف سجلاته بالكامل
-    window.deleteFullPlayer = async (playerId, playerName) => {
-        if(!confirm(`هل أنت متأكد من حذف الكابتن (${playerName})؟\nسيتم حذف جميع نتائجه السابقة ولن تظهر في الأرشيف!`)) return;
-
-        try {
-            // أ. حذف وثيقة اللاعب نفسه
-            await deleteDoc(doc(db, "players", playerId));
-
-            // ب. البحث عن جميع سجلات اللعب المرتبطة باسمه
-            const q = query(collection(db, "game_records"), where("name", "==", playerName));
-            const snap = await getDocs(q);
-
-            // ج. حذف السجلات (Batch Delete لتحسين الأداء)
-            const batch = writeBatch(db);
-            snap.forEach((doc) => {
-                batch.delete(doc.ref);
-            });
-            await batch.commit();
-
-            alert("تم الحذف وتنظيف السجلات.");
-        } catch(e) {
-            console.error(e);
-            alert("حدث خطأ أثناء الحذف");
-        }
-    };
-
-    // 3. إضافة نتيجة
     window.addRecord = async () => {
         const name = document.getElementById('playerSelect').value;
         const date = document.getElementById('gameDate').value;
         const win = parseInt(document.getElementById('winCount').value) || 0;
         const loss = parseInt(document.getElementById('lossCount').value) || 0;
-
-        if(!name) return alert("اختر اللاعب");
-
-        await addDoc(collection(db, "game_records"), {
-            name, date, win, loss,
-            diff: win - loss, total: win + loss, timestamp: new Date()
-        });
+        if(!name) return;
+        await addDoc(collection(db, "game_records"), { name, date, win, loss, diff: win-loss, total: win+loss });
         alert("تم الحفظ");
-        // تصفير الأرقام فقط
-        document.getElementById('winCount').value = "";
-        document.getElementById('lossCount').value = "";
     };
 
-    // --- الاستماع للبيانات ---
-
-    // تحميل اللاعبين (للقوائم وللمنع التكرار)
+    // الاستماع للبيانات
     onSnapshot(collection(db, "players"), (snap) => {
         const select = document.getElementById('playerSelect');
         const adminList = document.getElementById('adminPlayersList');
-        
         select.innerHTML = '<option value="">اختر لاعباً...</option>';
         adminList.innerHTML = "";
         playersData = {};
-
         snap.forEach(d => {
             const p = d.data();
             playersData[p.name] = p.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
-            
-            // القائمة المنسدلة
             select.innerHTML += `<option value="${p.name}">${p.name}</option>`;
-            
-            // قائمة الحذف في الإدارة
-            adminList.innerHTML += `
-                <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee">
-                    <span>${p.name}</span>
-                    <button class="btn btn-danger" onclick="deleteFullPlayer('${d.id}', '${p.name}')">حذف نهائي</button>
-                </div>`;
+            adminList.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee"><span>${p.name}</span><button class="btn-danger" style="width:auto; padding:2px 10px" onclick="deleteFullPlayer('${d.id}', '${p.name}')">حذف</button></div>`;
         });
-        
-        // إعادة تحميل النتائج لتحديث الصور في حالة تغييرها
-        fetchRecordsAndRender();
+        fetchRecords();
     });
 
-    // تحميل النتائج ومعالجتها (للرئيسية وللأرشيف)
-    function fetchRecordsAndRender() {
-        const q = query(collection(db, "game_records"), orderBy("date", "desc"));
-        
-        onSnapshot(q, (snap) => {
-            let stats = {};
-            let historyByDate = {}; // كائن لتجميع النتائج حسب التاريخ
-
+    function fetchRecords() {
+        onSnapshot(query(collection(db, "game_records"), orderBy("date", "desc")), (snap) => {
+            let stats = {}; let history = {};
             snap.forEach(d => {
                 const r = d.data();
-                
-                // 1. تجميع للإحصائيات العامة (الصفحة الرئيسية)
                 if (!stats[r.name]) stats[r.name] = { name: r.name, win: 0, loss: 0, diff: 0, total: 0 };
-                stats[r.name].win += r.win;
-                stats[r.name].loss += r.loss;
-                stats[r.name].diff += r.diff;
-                stats[r.name].total += r.total;
-
-                // 2. تجميع للأرشيف (حسب التاريخ)
-                if (!historyByDate[r.date]) historyByDate[r.date] = [];
-                historyByDate[r.date].push({ ...r, id: d.id });
+                stats[r.name].win += r.win; stats[r.name].loss += r.loss; stats[r.name].diff += r.diff; stats[r.name].total += r.total;
+                if (!history[r.date]) history[r.date] = [];
+                history[r.date].push({ ...r, id: d.id });
             });
-
+            cachedStats = stats; cachedHistory = history;
             renderHome(stats);
-            renderHistory(historyByDate);
+            renderHistory(history);
+            renderBadges(stats);
         });
     }
 
     function renderHome(stats) {
-        const sorted = Object.values(stats).sort((a, b) => b.diff - a.diff);
-        const podiumDiv = document.getElementById('podiumUI');
-        const listDiv = document.getElementById('leaderboardList');
-        
-        podiumDiv.innerHTML = "";
-        listDiv.innerHTML = "";
-
-        if(sorted.length === 0) { podiumDiv.innerHTML = "<p>لا توجد بيانات</p>"; return; }
-
-        // المنصة
+        const sorted = Object.values(stats).sort((a,b) => b.diff - a.diff);
+        const podium = document.getElementById('podiumUI');
+        const list = document.getElementById('leaderboardList');
+        podium.innerHTML = ""; list.innerHTML = "";
         [1, 0, 2].forEach(idx => {
             if(sorted[idx]) {
                 const p = sorted[idx];
-                const img = playersData[p.name] || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
-                podiumDiv.innerHTML += `
-                    <div class="podium-item rank-${idx+1}">
-                        <img src="${img}" class="podium-avatar">
-                        <div class="podium-rank"><span>${p.diff}</span><small>${p.name}</small></div>
-                    </div>`;
+                podium.innerHTML += `<div class="podium-item rank-${idx+1}"><img src="${playersData[p.name]}" class="podium-avatar"><div class="podium-rank"><span>${p.diff}</span><small>${p.name}</small></div></div>`;
             }
         });
-
-        // القائمة
         sorted.forEach((p, i) => {
-            const img = playersData[p.name] || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
-            listDiv.innerHTML += `
-                <div class="player-row">
-                    <div style="width:30px;text-align:center;font-weight:bold;color:#ccc">${i+1}</div>
-                    <img src="${img}" class="list-avatar">
-                    <div class="list-info">
-                        <div>${p.name}</div>
-                        <small style="color:#777">فوز: ${p.win} | خسارة: ${p.loss}</small>
-                    </div>
-                    <div class="list-score ${p.diff >=0 ? 'score-pos':'score-neg'}">${p.diff}</div>
-                </div>`;
+            list.innerHTML += `<div class="player-row"><div style="width:25px;font-weight:bold;color:#ccc">${i+1}</div><img src="${playersData[p.name]}" class="list-avatar"><div style="flex:1"><b>${p.name}</b><br><small>لعب: ${p.total}</small></div><div class="list-score ${p.diff>=0?'score-pos':'score-neg'}">${p.diff}</div></div>`;
         });
     }
 
-    function renderHistory(historyData) {
-        const container = document.getElementById('historyByDateList');
+    function renderBadges(stats) {
+        const players = Object.values(stats);
+        if(players.length === 0) return;
+        
+        const king = [...players].sort((a,b) => b.win - a.win)[0];
+        const warrior = [...players].sort((a,b) => b.total - a.total)[0];
+        const unlucky = [...players].sort((a,b) => b.loss - a.loss)[0];
+        const rock = [...players].filter(p => p.total >= 3).sort((a,b) => a.loss - b.loss)[0];
+
+        const container = document.getElementById('badgesContainer');
         container.innerHTML = "";
 
-        // ترتيب التواريخ تنازلياً
-        const sortedDates = Object.keys(historyData).sort().reverse();
+        const createBadge = (icon, title, p, val, label) => `
+            <div class="badge-item">
+                <div class="badge-icon">${icon}</div>
+                <img src="${playersData[p.name]}" class="badge-img">
+                <div class="badge-info">
+                    <span class="badge-title">${title}</span>
+                    <span class="badge-name">${p.name}</span><br>
+                    <span class="badge-value">${val} ${label}</span>
+                </div>
+            </div>`;
 
-        if (sortedDates.length === 0) {
-            container.innerHTML = "<p style='text-align:center'>الأرشيف فارغ</p>";
-            return;
-        }
+        container.innerHTML += createBadge("👑", "ملك الفوز", king, king.win, "فوز");
+        container.innerHTML += createBadge("⚔️", "المحارب الأكبر", warrior, warrior.total, "مباراة");
+        container.innerHTML += createBadge("🧨", "المنحوس", unlucky, unlucky.loss, "خسارة");
+        if(rock) container.innerHTML += createBadge("🛡️", "الصخرة (أقل خسارة)", rock, rock.loss, "خسارة");
+    }
 
-        sortedDates.forEach(date => {
-            // رأس التاريخ
-            container.innerHTML += `<div class="date-header">📅 ${date}</div>`;
-            
-            // المباريات في هذا التاريخ
-            historyData[date].forEach(rec => {
-                container.innerHTML += `
-                    <div class="history-item">
-                        <span><b>${rec.name}</b></span>
-                        <span class="history-score">
-                            <span style="color:green">+${rec.win}</span> / 
-                            <span style="color:red">-${rec.loss}</span>
-                        </span>
-                        <button onclick="deleteRecord('${rec.id}')" style="border:none;background:none;cursor:pointer">❌</button>
-                    </div>
-                `;
+    function renderHistory(history) {
+        const container = document.getElementById('historyByDateList');
+        container.innerHTML = "";
+        Object.keys(history).sort().reverse().forEach(date => {
+            container.innerHTML += `<div class="date-header"><span>📅 ${date}</span></div>`;
+            history[date].forEach(r => {
+                const del = isAdminUnlocked ? `<button onclick="deleteRecord('${r.id}')" style="border:none;background:none;color:red;cursor:pointer">❌</button>` : '';
+                container.innerHTML += `<div class="history-item"><span>${del} <b>${r.name}</b></span><span class="history-score"><span style="color:green">+${r.win}</span> / <span style="color:red">-${r.loss}</span></span></div>`;
             });
         });
     }
 
-    window.deleteRecord = async (id) => {
-        if(confirm("هل تريد حذف هذا السجل المحدد؟")) await deleteDoc(doc(db, "game_records", id));
+    window.deleteRecord = async (id) => { if(isAdminUnlocked && confirm("حذف؟")) await deleteDoc(doc(db, "game_records", id)); };
+    window.deleteFullPlayer = async (id, name) => {
+        if(isAdminUnlocked && confirm("حذف اللاعب وكل سجلاته؟")) {
+            await deleteDoc(doc(db, "players", id));
+            const snap = await getDocs(query(collection(db, "game_records"), where("name", "==", name)));
+            const batch = writeBatch(db);
+            snap.forEach(d => batch.delete(d.ref));
+            await batch.commit();
+        }
     };
-
 </script>
-
 </body>
 </html>
