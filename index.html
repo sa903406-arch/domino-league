@@ -400,3 +400,30 @@
         location.reload();
     };
 </script>
+// دالة لجلب قائمة الإدارة مع إمكانية الحذف
+async function loadAdminList() {
+    const snap = await getDocs(collection(db, "players"));
+    const area = document.getElementById('pointsList');
+    area.innerHTML = ''; // تفريغ القائمة قبل التحميل
+    snap.forEach(d => {
+        const p = d.data();
+        area.innerHTML += `
+            <div class="point-editor" style="border-bottom: 1px solid #eee; padding: 10px; display:flex; justify-content:space-between; align-items:center">
+                <strong>${p.name}</strong>
+                <div>
+                    <input type="number" id="win_${d.id}" placeholder="فوز" style="width:40px">
+                    <input type="number" id="loss_${d.id}" placeholder="خسارة" style="width:40px">
+                    <button onclick="deletePlayer('${d.id}')" style="color:red; background:none; border:none; cursor:pointer">🗑️ حذف</button>
+                </div>
+            </div>`;
+    });
+}
+
+// دالة حذف اللاعب للتعديل
+window.deletePlayer = async (id) => {
+    if(confirm("هل تريد حذف هذا اللاعب نهائياً؟")) {
+        await deleteDoc(doc(db, "players", id));
+        alert("تم الحذف بنجاح");
+        location.reload();
+    }
+};
