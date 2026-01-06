@@ -350,3 +350,53 @@
     </script>
 </body>
 </html>
+<script type="module">
+    // ... (تأكد من وضع firebaseConfig الخاص بك هنا) ...
+
+    // دالة جلب قائمة الإدارة للتعديل والحذف
+    async function loadAdminList() {
+        const snap = await getDocs(collection(db, "players"));
+        const area = document.getElementById('pointsList');
+        area.innerHTML = '';
+        snap.forEach(d => {
+            const p = d.data();
+            area.innerHTML += `
+                <div class="point-editor" style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <strong>${p.name}</strong>
+                        <button onclick="deletePlayer('${d.id}')" style="background:none; border:none; color:red; cursor:pointer">🗑️ حذف</button>
+                    </div>
+                    <div style="margin-top:10px">
+                        <span>فوز: <input type="number" id="win_${d.id}" value="0" style="width:50px; text-align:center"></span>
+                        <span style="margin-right:15px">خسارة: <input type="number" id="loss_${d.id}" value="0" style="width:50px; text-align:center"></span>
+                    </div>
+                </div>`;
+        });
+    }
+
+    // إضافة وظيفة الحذف للتعديل على اللاعبين
+    window.deletePlayer = async (id) => {
+        if(confirm("هل تريد حذف هذا اللاعب لتعديل بياناته؟")) {
+            await deleteDoc(doc(db, "players", id));
+            alert("تم الحذف");
+            loadAdminList();
+        }
+    };
+
+    // تأكد أن دالة الإضافة تقبل الروابط
+    window.createNewPlayer = async () => {
+        const name = document.getElementById('pName').value;
+        const img = document.getElementById('pImg').value;
+        if(!name || !img) return alert("يرجى وضع الاسم ورابط الصورة");
+        
+        await addDoc(collection(db, "players"), { 
+            name: name, 
+            img: img, 
+            win: 0, 
+            loss: 0, 
+            points: 0 
+        });
+        alert("تمت إضافة " + name + " للديوان");
+        location.reload();
+    };
+</script>
