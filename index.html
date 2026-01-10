@@ -753,36 +753,28 @@ window.closeProfile = () => {
     window.renderArchive = () => {
     const archiveContainer = document.getElementById('archiveList');
     if (!archiveContainer) return;
-    archiveContainer.innerHTML = ""; // تنظيف المكان
+    archiveContainer.innerHTML = ""; 
 
-    // ترتيب التواريخ من الأحدث (اليوم) إلى الأقدم
     const sortedDates = Object.keys(cachedHistory).sort().reverse();
-
-    if (sortedDates.length === 0) {
-        archiveContainer.innerHTML = "<p style='text-align:center; color:#94a3b8; padding:20px;'>لا توجد مواجهات مسجلة حالياً</p>";
-        return;
-    }
 
     sortedDates.forEach(date => {
         let daySection = `<div class="archive-day-wrapper"><span class="archive-date-badge">📅 ${date}</span>`;
         
         cachedHistory[date].forEach(match => {
             const isWinner = match.diff > 0;
+            // هنا أضفنا خاصية التفاعل عند الضغط (cursor:pointer و onclick)
             daySection += `
-                <div class="match-card">
+                <div class="match-card" onclick="showProfile('${match.name}')" style="cursor: pointer; transition: 0.2s;">
                     <div class="match-player-info">
                         <img src="${playersData[match.name] || 'https://via.placeholder.com/40'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;">
                         <div>
                             <div style="font-size:0.85rem; font-weight:bold;">${match.name}</div>
-                            <div style="font-size:0.65rem; color:#64748b;">${isWinner ? 'حقق انتصاراً' : 'تعرض لخسارة'}</div>
+                            <div style="font-size:0.6rem; color:#64748b;">اضغط لعرض التحليل</div>
                         </div>
                     </div>
                     <div style="text-align:left;">
                         <div class="match-score-tag" style="color:${isWinner ? 'var(--success)' : 'var(--danger)'}">
                             ${isWinner ? '▲' : '▼'} ${match.win} - ${match.loss}
-                        </div>
-                        <div style="font-size:0.6rem; font-weight:bold; color:#94a3b8; text-align:center;">
-                            صافي: ${match.diff}
                         </div>
                     </div>
                 </div>`;
