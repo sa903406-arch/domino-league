@@ -1,241 +1,169 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دوري الدومنة الملكي 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1e3c72; --secondary: #2a5298;
-            --gold: #FFD700; --bg: #f3f4f6; --white: #ffffff; --text: #1f2937;
-            --danger: #ef4444; --success: #10b981;
-        }
-        body.dark-mode {
-            --bg: #1a1a2e; --white: #16213e; --text: #e9ecef;
-            --primary: #4ecca3;
-        }
-        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; transition: 0.3s; }
-        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; padding: 25px 20px 40px; text-align: center; border-radius: 0 0 30px 30px; position: relative; }
-        
-        .dark-toggle { position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px; border-radius: 50%; cursor: pointer; }
-        .container { max-width: 600px; margin: -30px auto 0; padding: 0 15px; position: relative; z-index: 2; }
-        .card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        
-        .player-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); gap: 12px; }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #eee; }
+<meta charset="UTF-8">
+<title>Domino League</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-        /* سجل المباريات */
-        .history-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        .date-header { background: #eee; padding: 5px 10px; border-radius: 8px; margin-top: 15px; font-weight: bold; color: #555; }
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 100; border-radius: 25px 25px 0 0; }
-        .nav-item { text-align: center; color: #9ca3af; cursor: pointer; flex: 1; border: none; background: none; font-family: 'Cairo'; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
-        .nav-item i { display: block; font-size: 1.3rem; }
+window.firebaseConfig = {
+  apiKey: "PUT_API_KEY_HERE",
+  authDomain: "PUT_DOMAIN_HERE",
+  projectId: "PUT_PROJECT_ID",
+  storageBucket: "PUT_BUCKET",
+  messagingSenderId: "PUT_SENDER_ID",
+  appId: "PUT_APP_ID"
+};
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; display: flex; justify-content: center; align-items: center; }
-        .modal-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 300px; text-align: center; }
-        
-        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e5e7eb; border-radius: 12px; font-family: 'Cairo'; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; }
-        .hidden { display: none !important; }
-    </style>
+window.app = initializeApp(firebaseConfig);
+window.db = getFirestore(app);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<style>
+body{margin:0;font-family:Tahoma;background:#f2f2f2}
+header{background:#111;color:#fff;padding:12px;text-align:center}
+nav{display:flex;background:#222}
+nav button{flex:1;color:#fff;background:none;border:none;padding:10px}
+nav button.active{background:#444}
+.container{padding:15px}
+.card{background:#fff;padding:15px;margin-bottom:15px;border-radius:8px}
+.hidden{display:none}
+input,button{width:100%;padding:8px;margin-top:8px}
+button{background:#007bff;color:#fff;border:none;border-radius:5px}
+.leader,.season{display:flex;align-items:center;border-bottom:1px solid #ddd;padding:8px 0}
+img{width:45px;height:45px;border-radius:50%;margin-left:10px}
+</style>
 </head>
-<body id="bodyTag">
 
-<header>
-    <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
-    <h1>🏆 دوري الدومنة 2026</h1>
-</header>
+<body>
 
-<div class="container">
-    <div id="page-home">
-        <div class="card">
-            <h3>📊 الترتيب العام</h3>
-            <div id="leaderboardList"></div>
-        </div>
-    </div>
+<header>🏆 Domino League</header>
 
-    <div id="page-stats" class="hidden">
-        <div class="card">
-            <h3>🎖️ أوسمة الموسم</h3>
-            <div id="badgesContainer"></div>
-        </div>
-        <div class="card">
-            <h3>📅 سجل المباريات بالتفصيل</h3>
-            <div id="historyList"></div>
-        </div>
-    </div>
-
-    <div id="page-admin" class="hidden">
-        <div class="card">
-            <h3>👤 إضافة لاعب جديد</h3>
-            <input type="text" id="newPlayerName" placeholder="الاسم">
-            <input type="url" id="newPlayerImg" placeholder="رابط الصورة">
-            <button class="btn" style="background:var(--success); color:white" onclick="addPlayer()">إضافة لاعب</button>
-        </div>
-        <div class="card">
-            <h3>📝 تسجيل نتيجة</h3>
-            <select id="playerSelect"></select>
-            <div style="display: flex; gap: 10px;">
-                <input type="number" id="winCount" placeholder="فوز">
-                <input type="number" id="lossCount" placeholder="خسارة">
-            </div>
-            <button class="btn" style="background:var(--primary); color:white" onclick="addRecord()">حفظ</button>
-        </div>
-        <div class="card">
-            <h3>🗑️ حذف لاعب</h3>
-            <div id="adminPlayersList"></div>
-        </div>
-    </div>
-</div>
-
-<div id="loginModal" class="modal-overlay hidden">
-    <div class="modal-box">
-        <h3>🔒 دخول المدير</h3>
-        <input type="password" id="adminPassword" placeholder="كلمة المرور">
-        <button class="btn" style="background:var(--primary); color:white" onclick="checkPassword()">دخول</button>
-        <button class="btn" style="margin-top:10px;" onclick="closeLogin()">إلغاء</button>
-    </div>
-</div>
-
-<nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchTab('page-home', this)"><i>🏠</i><span>الرئيسية</span></button>
-    <button class="nav-item" onclick="switchTab('page-stats', this)"><i>🏅</i><span>الأرشيف</span></button>
-    <button class="nav-item" onclick="requestAdmin(this)"><i>⚙️</i><span>الإدارة</span></button>
+<nav>
+<button onclick="show('home')" class="active">الترتيب</button>
+<button onclick="show('seasons')">المواسم</button>
+<button onclick="show('admin')">الإدارة</button>
 </nav>
 
+<div class="container">
+
+<div id="home" class="page">
+  <div class="card">
+    <h3>الترتيب العام</h3>
+    <div id="leaders"></div>
+    <button onclick="share()">📸 مشاركة الترتيب</button>
+  </div>
+</div>
+
+<div id="seasons" class="page hidden">
+  <div class="card">
+    <h3>🏆 أبطال المواسم</h3>
+    <div id="seasonList"></div>
+  </div>
+</div>
+
+<div id="admin" class="page hidden">
+  <div class="card" id="loginBox">
+    <h3>🔐 دخول المدير</h3>
+    <input id="pass" type="password" placeholder="كلمة المرور">
+    <button onclick="login()">دخول</button>
+  </div>
+
+  <div class="card hidden" id="panel">
+    <h3>➕ إضافة بطل موسم</h3>
+    <input id="year" placeholder="2024">
+    <input id="name" placeholder="اسم اللاعب">
+    <input id="img" placeholder="رابط الصورة">
+    <input id="points" placeholder="النقاط">
+    <button onclick="addSeason()">حفظ</button>
+  </div>
+</div>
+
+</div>
+
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, addDoc, getDocs, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
-        authDomain: "koster-499c0.firebaseapp.com",
-        projectId: "koster-499c0",
-        storageBucket: "koster-499c0.firebasestorage.app",
-        messagingSenderId: "170205849470",
-        appId: "1:170205849470:web:7133888e3051c7ab47b52f"
-    };
+let adminUnlocked=false;
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+/* تنقل */
+window.show=id=>{
+ document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+ document.getElementById(id).classList.remove('hidden');
+}
 
-    let playersImages = {};
-    let isAdmin = false;
+/* تسجيل دخول */
+window.login=async()=>{
+ const snap=await getDocs(collection(db,"admin"));
+ snap.forEach(d=>{
+  if(d.data().password===pass.value){
+    adminUnlocked=true;
+    loginBox.classList.add("hidden");
+    panel.classList.remove("hidden");
+  }
+ });
+ if(!adminUnlocked) alert("كلمة المرور خاطئة");
+}
 
-    window.toggleDarkMode = () => document.getElementById('bodyTag').classList.toggle('dark-mode');
+/* إضافة موسم */
+window.addSeason=async()=>{
+ if(!adminUnlocked) return;
+ await addDoc(collection(db,"seasons"),{
+   year:year.value,
+   name:name.value,
+   img:img.value,
+   points:points.value
+ });
+ alert("تمت الإضافة");
+}
 
-    window.switchTab = (id, el) => {
-        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-    };
+/* تحميل المواسم */
+onSnapshot(collection(db,"seasons"),snap=>{
+ seasonList.innerHTML="";
+ snap.forEach(d=>{
+  const s=d.data();
+  seasonList.innerHTML+=`
+   <div class="season">
+    <img src="${s.img}">
+    <div>
+      <b>موسم ${s.year}</b><br>
+      ${s.name} – ${s.points} نقطة
+    </div>
+   </div>`;
+ });
+});
 
-    // نظام الحماية
-    window.requestAdmin = (el) => {
-        if(isAdmin) switchTab('page-admin', el);
-        else document.getElementById('loginModal').classList.remove('hidden');
-    };
+/* ترتيب تجريبي */
+const demo=[
+ {name:"علي",points:30,img:"https://i.pravatar.cc/100?1"},
+ {name:"حسن",points:25,img:"https://i.pravatar.cc/100?2"}
+];
+demo.forEach(p=>{
+ leaders.innerHTML+=`
+ <div class="leader">
+  <img src="${p.img}">
+  <div>${p.name} – ${p.points}</div>
+ </div>`;
+});
 
-    window.checkPassword = () => {
-        if(document.getElementById('adminPassword').value === "1234") {
-            isAdmin = true;
-            document.getElementById('loginModal').classList.add('hidden');
-            switchTab('page-admin', document.querySelectorAll('.nav-item')[2]);
-        } else alert("خطأ!");
-    };
-    window.closeLogin = () => document.getElementById('loginModal').classList.add('hidden');
-
-    // جلب اللاعبين
-    onSnapshot(collection(db, "players"), (snap) => {
-        const select = document.getElementById('playerSelect');
-        const adminList = document.getElementById('adminPlayersList');
-        select.innerHTML = '<option value="">اختر لاعباً...</option>';
-        adminList.innerHTML = "";
-        snap.forEach(d => {
-            const p = d.data();
-            playersImages[p.name] = p.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
-            select.innerHTML += `<option value="${p.name}">${p.name}</option>`;
-            adminList.innerHTML += `<div class="history-item"><span>${p.name}</span><button onclick="deletePlayer('${d.id}')" style="color:red;border:none;background:none;">حذف ❌</button></div>`;
-        });
-    });
-
-    // جلب السجلات
-    onSnapshot(query(collection(db, "game_records"), orderBy("date", "desc")), (snap) => {
-        let stats = {};
-        let historyHTML = "";
-        let currentDate = "";
-
-        snap.forEach(d => {
-            const r = d.data();
-            // حساب الإحصائيات
-            if (!stats[r.name]) stats[r.name] = { name: r.name, win: 0, loss: 0, diff: 0 };
-            stats[r.name].win += (r.win || 0);
-            stats[r.name].loss += (r.loss || 0);
-            stats[r.name].diff += (r.win - r.loss);
-
-            // بناء الأرشيف
-            if(currentDate !== r.date) {
-                currentDate = r.date;
-                historyHTML += `<div class="date-header">📅 ${r.date}</div>`;
-            }
-            historyHTML += `<div class="history-item"><span>${r.name}</span><span>+${r.win} / -${r.loss}</span></div>`;
-        });
-        
-        renderLeaderboard(stats);
-        document.getElementById('historyList').innerHTML = historyHTML;
-        renderBadges(stats);
-    });
-
-    function renderLeaderboard(stats) {
-        const list = document.getElementById('leaderboardList');
-        list.innerHTML = "";
-        Object.values(stats).sort((a,b) => b.diff - a.diff).forEach(p => {
-            list.innerHTML += `
-                <div class="player-row">
-                    <img src="${playersImages[p.name]}" class="avatar">
-                    <div style="flex:1"><b>${p.name}</b><br><small>فوز: ${p.win} | خسارة: ${p.loss}</small></div>
-                    <div style="font-weight:900; color:var(--primary); font-size:1.2rem;">${p.diff}</div>
-                </div>`;
-        });
-    }
-
-    function renderBadges(stats) {
-        const container = document.getElementById('badgesContainer');
-        const players = Object.values(stats);
-        if(players.length === 0) return;
-        const king = [...players].sort((a,b) => b.win - a.win)[0];
-        const unlucky = [...players].sort((a,b) => b.loss - a.loss)[0];
-        
-        container.innerHTML = `
-            <div class="player-row">👑 <b>الملك (أكثر فوز):</b> ${king.name} (${king.win})</div>
-            <div class="player-row">🧨 <b>المنحوس (أكثر خسارة):</b> ${unlucky.name} (${unlucky.loss})</div>
-        `;
-    }
-
-    // العمليات
-    window.addPlayer = async () => {
-        const name = document.getElementById('newPlayerName').value;
-        const img = document.getElementById('newPlayerImg').value;
-        if(name) await addDoc(collection(db, "players"), { name, imageUrl: img });
-        alert("تم!");
-    };
-
-    window.addRecord = async () => {
-        const name = document.getElementById('playerSelect').value;
-        const win = parseInt(document.getElementById('winCount').value) || 0;
-        const loss = parseInt(document.getElementById('lossCount').value) || 0;
-        if(!name) return;
-        await addDoc(collection(db, "game_records"), {
-            name, win, loss, date: new Date().toISOString().split('T')[0]
-        });
-        alert("تم الحفظ!");
-    };
-
-    window.deletePlayer = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "players", id)); };
+/* مشاركة */
+window.share=()=>{
+ html2canvas(leaders,{scale:2}).then(c=>{
+  const a=document.createElement("a");
+  a.href=c.toDataURL();
+  a.download="ranking.png";
+  a.click();
+ });
+}
 </script>
+
 </body>
 </html>
