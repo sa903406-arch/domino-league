@@ -1,169 +1,307 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>Domino League</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دوري الدومنة الملكي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3c72; --secondary: #2a5298;
+            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
+            --bg: #f3f4f6; --white: #ffffff; --text: #1f2937;
+            --danger: #ef4444; --success: #10b981; --accent: #8e44ad;
+        }
 
-<!-- Firebase -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, onSnapshot } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
 
-window.firebaseConfig = {
-  apiKey: "PUT_API_KEY_HERE",
-  authDomain: "PUT_DOMAIN_HERE",
-  projectId: "PUT_PROJECT_ID",
-  storageBucket: "PUT_BUCKET",
-  messagingSenderId: "PUT_SENDER_ID",
-  appId: "PUT_APP_ID"
-};
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--white); padding: 25px 20px 40px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 10px 25px rgba(30,60,114,0.2); }
 
-window.app = initializeApp(firebaseConfig);
-window.db = getFirestore(app);
-</script>
+        .container { max-width: 600px; margin: -30px auto 0; padding: 0 15px; position: relative; z-index: 2; }
+        .card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; border-bottom: 1px solid #eee; padding-bottom: 10px; }
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+        /* --- صفحة الإحصائيات (الأوسمة) --- */
+        .badge-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 15px; background: #f8fafc; margin-bottom: 10px; border: 1px solid #edf2f7; }
+        .badge-icon { font-size: 2rem; width: 50px; text-align: center; }
+        .badge-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid var(--white); box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+        .badge-info { flex: 1; }
+        .badge-title { font-weight: 900; color: var(--primary); font-size: 1rem; display: block; }
+        .badge-name { font-weight: bold; font-size: 0.9rem; color: #555; }
+        .badge-value { font-size: 0.8rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; margin-top: 4px; display: inline-block; }
 
-<style>
-body{margin:0;font-family:Tahoma;background:#f2f2f2}
-header{background:#111;color:#fff;padding:12px;text-align:center}
-nav{display:flex;background:#222}
-nav button{flex:1;color:#fff;background:none;border:none;padding:10px}
-nav button.active{background:#444}
-.container{padding:15px}
-.card{background:#fff;padding:15px;margin-bottom:15px;border-radius:8px}
-.hidden{display:none}
-input,button{width:100%;padding:8px;margin-top:8px}
-button{background:#007bff;color:#fff;border:none;border-radius:5px}
-.leader,.season{display:flex;align-items:center;border-bottom:1px solid #ddd;padding:8px 0}
-img{width:45px;height:45px;border-radius:50%;margin-left:10px}
-</style>
+        /* --- الأرشيف والترتيب --- */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; height: 220px; margin-bottom: 25px; gap: 10px; }
+        .podium-item { display: flex; flex-direction: column; align-items: center; width: 32%; }
+        .podium-avatar { width: 55px; height: 55px; border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: -15px; z-index: 2; background: #eee; object-fit: cover; }
+        .podium-rank { width: 100%; border-radius: 15px 15px 0 0; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--white); font-weight: bold; padding: 10px 0; }
+        .rank-1 .podium-rank { height: 130px; background: linear-gradient(to bottom, #FFD700, #FDB931); }
+        .rank-2 .podium-rank { height: 95px; background: linear-gradient(to bottom, #E0E0E0, #BDBDBD); }
+        .rank-3 .podium-rank { height: 75px; background: linear-gradient(to bottom, #CD7F32, #A0522D); }
+
+        .player-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .list-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin: 0 10px; background: #eee; }
+        .list-score { background: var(--bg); padding: 5px 10px; border-radius: 8px; font-weight: 900; min-width: 40px; text-align: center; }
+        .score-pos { color: var(--success); background: #d1fae5; }
+        .score-neg { color: var(--danger); background: #fee2e2; }
+
+        /* --- التنقل السفلي --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 100; border-radius: 20px 20px 0 0; }
+        .nav-item { text-align: center; color: #9ca3af; cursor: pointer; flex: 1; transition: 0.3s; }
+        .nav-item i { font-style: normal; font-size: 1.2rem; }
+        .nav-item span { font-size: 0.7rem; font-weight: bold; display: block; }
+        .nav-item.active { color: var(--primary); transform: translateY(-3px); }
+
+        /* --- الأدوات --- */
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e5e7eb; border-radius: 12px; font-family: 'Cairo'; box-sizing: border-box; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; display: flex; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 300px; text-align: center; }
+        .hidden { display: none !important; }
+    </style>
 </head>
-
 <body>
 
-<header>🏆 Domino League</header>
-
-<nav>
-<button onclick="show('home')" class="active">الترتيب</button>
-<button onclick="show('seasons')">المواسم</button>
-<button onclick="show('admin')">الإدارة</button>
-</nav>
+<header>
+    <h1>🏆 دوري الدومنة</h1>
+</header>
 
 <div class="container">
+    
+    <div id="page-home">
+        <div class="podium-container" id="podiumUI"></div>
+        <div class="card">
+            <h3>📊 الترتيب العام</h3>
+            <div id="leaderboardList"></div>
+        </div>
+    </div>
 
-<div id="home" class="page">
-  <div class="card">
-    <h3>الترتيب العام</h3>
-    <div id="leaders"></div>
-    <button onclick="share()">📸 مشاركة الترتيب</button>
-  </div>
+    <div id="page-stats" class="hidden">
+        <div class="card">
+            <h3>🏅 أبطال الدوري</h3>
+            <div id="badgesContainer">
+                <p style="text-align:center; color:#888;">جاري تحليل البيانات...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-history" class="hidden">
+        <div class="card">
+            <h3>📅 سجل المباريات</h3>
+            <div id="historyByDateList"></div>
+        </div>
+    </div>
+
+    <div id="page-admin" class="hidden">
+        <div style="text-align: left; margin-bottom: 10px;">
+            <button onclick="logout()" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;">خروج 🔒</button>
+        </div>
+        <div class="card" style="border-right: 5px solid var(--success);">
+            <h3>👤 إضافة لاعب</h3>
+            <input type="text" id="newPlayerName" placeholder="الاسم">
+            <input type="url" id="newPlayerImg" placeholder="رابط الصورة">
+            <button class="btn btn-success" onclick="addPlayer()">إضافة</button>
+        </div>
+        <div class="card" style="border-right: 5px solid var(--primary);">
+            <h3>📝 تسجيل نتيجة</h3>
+            <input type="date" id="gameDate">
+            <select id="playerSelect"></select>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="winCount" placeholder="فوز (+)">
+                <input type="number" id="lossCount" placeholder="خسارة (-)">
+            </div>
+            <button class="btn btn-primary" onclick="addRecord()">حفظ</button>
+        </div>
+        <div class="card">
+            <h3>🗑️ حذف لاعبين</h3>
+            <div id="adminPlayersList"></div>
+        </div>
+    </div>
 </div>
 
-<div id="seasons" class="page hidden">
-  <div class="card">
-    <h3>🏆 أبطال المواسم</h3>
-    <div id="seasonList"></div>
-  </div>
+<div id="loginModal" class="modal-overlay hidden">
+    <div class="modal-box">
+        <h3>🔒 دخول المدير</h3>
+        <input type="password" id="adminPassword" placeholder="كلمة المرور">
+        <button class="btn btn-primary" onclick="checkPassword()">دخول</button>
+        <button class="btn" style="margin-top:10px; background:#eee" onclick="closeLogin()">إلغاء</button>
+    </div>
 </div>
 
-<div id="admin" class="page hidden">
-  <div class="card" id="loginBox">
-    <h3>🔐 دخول المدير</h3>
-    <input id="pass" type="password" placeholder="كلمة المرور">
-    <button onclick="login()">دخول</button>
-  </div>
-
-  <div class="card hidden" id="panel">
-    <h3>➕ إضافة بطل موسم</h3>
-    <input id="year" placeholder="2024">
-    <input id="name" placeholder="اسم اللاعب">
-    <input id="img" placeholder="رابط الصورة">
-    <input id="points" placeholder="النقاط">
-    <button onclick="addSeason()">حفظ</button>
-  </div>
-</div>
-
-</div>
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('page-home', this)"><i>🏠</i><span>الرئيسية</span></div>
+    <div class="nav-item" onclick="switchTab('page-stats', this)"><i>🏅</i><span>الأوسمة</span></div>
+    <div class="nav-item" onclick="switchTab('page-history', this)"><i>📅</i><span>الأرشيف</span></div>
+    <div class="nav-item" onclick="requestAdmin(this)"><i>⚙️</i><span>الإدارة</span></div>
+</nav>
 
 <script type="module">
-import { collection, addDoc, getDocs, onSnapshot } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, onSnapshot, where, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-let adminUnlocked=false;
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
+        authDomain: "koster-499c0.firebaseapp.com",
+        projectId: "koster-499c0",
+        storageBucket: "koster-499c0.firebasestorage.app",
+        messagingSenderId: "170205849470",
+        appId: "1:170205849470:web:7133888e3051c7ab47b52f"
+    };
 
-/* تنقل */
-window.show=id=>{
- document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
- document.getElementById(id).classList.remove('hidden');
-}
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-/* تسجيل دخول */
-window.login=async()=>{
- const snap=await getDocs(collection(db,"admin"));
- snap.forEach(d=>{
-  if(d.data().password===pass.value){
-    adminUnlocked=true;
-    loginBox.classList.add("hidden");
-    panel.classList.remove("hidden");
-  }
- });
- if(!adminUnlocked) alert("كلمة المرور خاطئة");
-}
+    let playersData = {}; 
+    let isAdminUnlocked = false;
+    const ADMIN_PASS = "1234";
+    let cachedStats = {}; 
+    let cachedHistory = {};
 
-/* إضافة موسم */
-window.addSeason=async()=>{
- if(!adminUnlocked) return;
- await addDoc(collection(db,"seasons"),{
-   year:year.value,
-   name:name.value,
-   img:img.value,
-   points:points.value
- });
- alert("تمت الإضافة");
-}
+    document.getElementById('gameDate').valueAsDate = new Date();
 
-/* تحميل المواسم */
-onSnapshot(collection(db,"seasons"),snap=>{
- seasonList.innerHTML="";
- snap.forEach(d=>{
-  const s=d.data();
-  seasonList.innerHTML+=`
-   <div class="season">
-    <img src="${s.img}">
-    <div>
-      <b>موسم ${s.year}</b><br>
-      ${s.name} – ${s.points} نقطة
-    </div>
-   </div>`;
- });
-});
+    window.switchTab = (pageId, elem) => {
+        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+        document.getElementById(pageId).classList.remove('hidden');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        elem.classList.add('active');
+    };
 
-/* ترتيب تجريبي */
-const demo=[
- {name:"علي",points:30,img:"https://i.pravatar.cc/100?1"},
- {name:"حسن",points:25,img:"https://i.pravatar.cc/100?2"}
-];
-demo.forEach(p=>{
- leaders.innerHTML+=`
- <div class="leader">
-  <img src="${p.img}">
-  <div>${p.name} – ${p.points}</div>
- </div>`;
-});
+    window.requestAdmin = (elem) => { isAdminUnlocked ? window.switchTab('page-admin', elem) : document.getElementById('loginModal').classList.remove('hidden'); };
+    window.checkPassword = () => {
+        if (document.getElementById('adminPassword').value === ADMIN_PASS) {
+            isAdminUnlocked = true;
+            document.getElementById('loginModal').classList.add('hidden');
+            renderHome(cachedStats);
+            renderHistory(cachedHistory);
+            switchTab('page-admin', document.querySelectorAll('.nav-item')[3]);
+        } else { alert("خطأ!"); }
+    };
+    window.logout = () => { isAdminUnlocked = false; renderHistory(cachedHistory); switchTab('page-home', document.querySelectorAll('.nav-item')[0]); };
+    window.closeLogin = () => document.getElementById('loginModal').classList.add('hidden');
 
-/* مشاركة */
-window.share=()=>{
- html2canvas(leaders,{scale:2}).then(c=>{
-  const a=document.createElement("a");
-  a.href=c.toDataURL();
-  a.download="ranking.png";
-  a.click();
- });
-}
+    // العمليات
+    window.addPlayer = async () => {
+        const name = document.getElementById('newPlayerName').value.trim();
+        const img = document.getElementById('newPlayerImg').value.trim();
+        if(!name) return;
+        const snap = await getDocs(query(collection(db, "players"), where("name", "==", name)));
+        if(!snap.empty) return alert("موجود!");
+        await addDoc(collection(db, "players"), { name, imageUrl: img });
+        alert("تم!");
+    };
+
+    window.addRecord = async () => {
+        const name = document.getElementById('playerSelect').value;
+        const date = document.getElementById('gameDate').value;
+        const win = parseInt(document.getElementById('winCount').value) || 0;
+        const loss = parseInt(document.getElementById('lossCount').value) || 0;
+        if(!name) return;
+        await addDoc(collection(db, "game_records"), { name, date, win, loss, diff: win-loss, total: win+loss });
+        alert("تم الحفظ");
+    };
+
+    // الاستماع للبيانات
+    onSnapshot(collection(db, "players"), (snap) => {
+        const select = document.getElementById('playerSelect');
+        const adminList = document.getElementById('adminPlayersList');
+        select.innerHTML = '<option value="">اختر لاعباً...</option>';
+        adminList.innerHTML = "";
+        playersData = {};
+        snap.forEach(d => {
+            const p = d.data();
+            playersData[p.name] = p.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+            select.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+            adminList.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee"><span>${p.name}</span><button class="btn-danger" style="width:auto; padding:2px 10px" onclick="deleteFullPlayer('${d.id}', '${p.name}')">حذف</button></div>`;
+        });
+        fetchRecords();
+    });
+
+    function fetchRecords() {
+        onSnapshot(query(collection(db, "game_records"), orderBy("date", "desc")), (snap) => {
+            let stats = {}; let history = {};
+            snap.forEach(d => {
+                const r = d.data();
+                if (!stats[r.name]) stats[r.name] = { name: r.name, win: 0, loss: 0, diff: 0, total: 0 };
+                stats[r.name].win += r.win; stats[r.name].loss += r.loss; stats[r.name].diff += r.diff; stats[r.name].total += r.total;
+                if (!history[r.date]) history[r.date] = [];
+                history[r.date].push({ ...r, id: d.id });
+            });
+            cachedStats = stats; cachedHistory = history;
+            renderHome(stats);
+            renderHistory(history);
+            renderBadges(stats);
+        });
+    }
+
+    function renderHome(stats) {
+        const sorted = Object.values(stats).sort((a,b) => b.diff - a.diff);
+        const podium = document.getElementById('podiumUI');
+        const list = document.getElementById('leaderboardList');
+        podium.innerHTML = ""; list.innerHTML = "";
+        [1, 0, 2].forEach(idx => {
+            if(sorted[idx]) {
+                const p = sorted[idx];
+                podium.innerHTML += `<div class="podium-item rank-${idx+1}"><img src="${playersData[p.name]}" class="podium-avatar"><div class="podium-rank"><span>${p.diff}</span><small>${p.name}</small></div></div>`;
+            }
+        });
+        sorted.forEach((p, i) => {
+            list.innerHTML += `<div class="player-row"><div style="width:25px;font-weight:bold;color:#ccc">${i+1}</div><img src="${playersData[p.name]}" class="list-avatar"><div style="flex:1"><b>${p.name}</b><br><small>لعب: ${p.total}</small></div><div class="list-score ${p.diff>=0?'score-pos':'score-neg'}">${p.diff}</div></div>`;
+        });
+    }
+
+    function renderBadges(stats) {
+        const players = Object.values(stats);
+        if(players.length === 0) return;
+        
+        const king = [...players].sort((a,b) => b.win - a.win)[0];
+        const warrior = [...players].sort((a,b) => b.total - a.total)[0];
+        const unlucky = [...players].sort((a,b) => b.loss - a.loss)[0];
+        const rock = [...players].filter(p => p.total >= 3).sort((a,b) => a.loss - b.loss)[0];
+
+        const container = document.getElementById('badgesContainer');
+        container.innerHTML = "";
+
+        const createBadge = (icon, title, p, val, label) => `
+            <div class="badge-item">
+                <div class="badge-icon">${icon}</div>
+                <img src="${playersData[p.name]}" class="badge-img">
+                <div class="badge-info">
+                    <span class="badge-title">${title}</span>
+                    <span class="badge-name">${p.name}</span><br>
+                    <span class="badge-value">${val} ${label}</span>
+                </div>
+            </div>`;
+
+        container.innerHTML += createBadge("👑", "ملك الفوز", king, king.win, "فوز");
+        container.innerHTML += createBadge("⚔️", "المحارب الأكبر", warrior, warrior.total, "مباراة");
+        container.innerHTML += createBadge("🧨", "المنحوس", unlucky, unlucky.loss, "خسارة");
+        if(rock) container.innerHTML += createBadge("🛡️", "الصخرة (أقل خسارة)", rock, rock.loss, "خسارة");
+    }
+
+    function renderHistory(history) {
+        const container = document.getElementById('historyByDateList');
+        container.innerHTML = "";
+        Object.keys(history).sort().reverse().forEach(date => {
+            container.innerHTML += `<div class="date-header"><span>📅 ${date}</span></div>`;
+            history[date].forEach(r => {
+                const del = isAdminUnlocked ? `<button onclick="deleteRecord('${r.id}')" style="border:none;background:none;color:red;cursor:pointer">❌</button>` : '';
+                container.innerHTML += `<div class="history-item"><span>${del} <b>${r.name}</b></span><span class="history-score"><span style="color:green">+${r.win}</span> / <span style="color:red">-${r.loss}</span></span></div>`;
+            });
+        });
+    }
+
+    window.deleteRecord = async (id) => { if(isAdminUnlocked && confirm("حذف؟")) await deleteDoc(doc(db, "game_records", id)); };
+    window.deleteFullPlayer = async (id, name) => {
+        if(isAdminUnlocked && confirm("حذف اللاعب وكل سجلاته؟")) {
+            await deleteDoc(doc(db, "players", id));
+            const snap = await getDocs(query(collection(db, "game_records"), where("name", "==", name)));
+            const batch = writeBatch(db);
+            snap.forEach(d => batch.delete(d.ref));
+            await batch.commit();
+        }
+    };
 </script>
-
 </body>
 </html>
