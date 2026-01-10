@@ -6,6 +6,21 @@
     <title>دوري الدومنة الملكي | الإصدار الاحترافي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
+        /* تنسيق سجل الأرشيف */
+.archive-day-wrapper { margin-bottom: 25px; }
+.archive-date-badge { 
+    font-size: 0.8rem; font-weight: 900; color: #1e3c72; 
+    background: #f1f5f9; padding: 6px 15px; border-radius: 12px;
+    display: inline-block; margin-bottom: 10px; border-right: 4px solid var(--accent);
+}
+.match-card {
+    background: white; border-radius: 15px; padding: 12px;
+    margin-bottom: 8px; display: flex; justify-content: space-between;
+    align-items: center; border: 1px solid #f1f5f9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.match-player-info { display: flex; align-items: center; gap: 10px; }
+.match-score-tag { font-family: monospace; font-weight: bold; font-size: 0.9rem; }
         /* تصميم أوسمة لوحة الشرف المطور */
 .honor-grid {
     display: grid;
@@ -248,6 +263,14 @@
         <div class="card">
             <h3>📊 جدول الصدارة</h3>
             <div id="leaderboardList"></div>
+            <div class="card" style="margin-top: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0;">📂 أرشيف المواجهات</h3>
+        <span style="font-size: 0.7rem; color: var(--primary); background: #e2e8f0; padding: 4px 10px; border-radius: 10px; font-weight: bold;">سجل التواريخ</span>
+    </div>
+    <div id="archiveList" style="max-height: 400px; overflow-y: auto;">
+        </div>
+</div>
         </div>
     </div>
 
@@ -727,6 +750,48 @@ window.closeProfile = () => {
         let p = prompt("كلمة المرور:");
         if(p === "1234") { isAdminUnlocked = true; switchTab('page-admin', el); }
     };
+    window.renderArchive = () => {
+    const archiveContainer = document.getElementById('archiveList');
+    if (!archiveContainer) return;
+    archiveContainer.innerHTML = ""; // تنظيف المكان
+
+    // ترتيب التواريخ من الأحدث (اليوم) إلى الأقدم
+    const sortedDates = Object.keys(cachedHistory).sort().reverse();
+
+    if (sortedDates.length === 0) {
+        archiveContainer.innerHTML = "<p style='text-align:center; color:#94a3b8; padding:20px;'>لا توجد مواجهات مسجلة حالياً</p>";
+        return;
+    }
+
+    sortedDates.forEach(date => {
+        let daySection = `<div class="archive-day-wrapper"><span class="archive-date-badge">📅 ${date}</span>`;
+        
+        cachedHistory[date].forEach(match => {
+            const isWinner = match.diff > 0;
+            daySection += `
+                <div class="match-card">
+                    <div class="match-player-info">
+                        <img src="${playersData[match.name] || 'https://via.placeholder.com/40'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;">
+                        <div>
+                            <div style="font-size:0.85rem; font-weight:bold;">${match.name}</div>
+                            <div style="font-size:0.65rem; color:#64748b;">${isWinner ? 'حقق انتصاراً' : 'تعرض لخسارة'}</div>
+                        </div>
+                    </div>
+                    <div style="text-align:left;">
+                        <div class="match-score-tag" style="color:${isWinner ? 'var(--success)' : 'var(--danger)'}">
+                            ${isWinner ? '▲' : '▼'} ${match.win} - ${match.loss}
+                        </div>
+                        <div style="font-size:0.6rem; font-weight:bold; color:#94a3b8; text-align:center;">
+                            صافي: ${match.diff}
+                        </div>
+                    </div>
+                </div>`;
+        });
+        
+        daySection += `</div>`;
+        archiveContainer.innerHTML += daySection;
+    });
+};
 </script>
 </body>
 </html>
