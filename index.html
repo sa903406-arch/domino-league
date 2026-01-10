@@ -6,6 +6,53 @@
     <title>دوري الدومنة الملكي | الإصدار الاحترافي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
+        /* تصميم أوسمة لوحة الشرف المطور */
+.honor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 10px;
+}
+
+.honor-card-v2 {
+    background: white;
+    border-radius: 25px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.honor-card-v2:active { transform: scale(0.95); }
+
+.badge-icon-circle {
+    width: 50px;
+    height: 50px;
+    background: #f8fafc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 1.5rem;
+    border: 2px solid #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.honor-player-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    margin-top: 5px;
+}
+
+.honor-title { font-size: 0.8rem; font-weight: 900; color: var(--primary); display: block; }
+.honor-desc { font-size: 0.65rem; color: #64748b; }
         /* تصميم البروفايل الاحترافي الجديد */
 .pro-card {
     background: linear-gradient(145deg, #ffffff, #f0f4f8);
@@ -452,24 +499,72 @@ window.closeProfile = () => {
         });
     }
 
-    function renderHonorBadges() {
-        const ps = Object.values(cachedStats); if(!ps.length) return;
-        const container = document.getElementById('badgesContainer'); container.innerHTML = "";
-        const config = [
-            { icon:"👑", title:"ملك الدومنة", p: [...ps].sort((a,b)=>b.diff-a.diff)[0], lbl:"الأعلى نقاطاً" },
-            { icon:"🛡️", title:"الدرع الحصين", p: [...ps].sort((a,b)=>a.loss-b.loss)[0], lbl:"الأقل خسارة" }
-        ];
-        config.forEach(c => {
-            if(c.p) {
-                container.innerHTML += `<div class="leader-row" onclick="showProfile('${c.p.name}')" style="border-right:5px solid var(--accent);">
-                    <img src="${playersData[c.p.name]}" class="leader-img">
-                    <div class="leader-name"><b>${c.icon} ${c.title}</b><br><small style="color:#64748b;">${c.p.name}</small></div>
-                    <div style="font-size:0.7rem; background:var(--accent); color:white; padding:4px 10px; border-radius:10px;">${c.lbl}</div>
-                </div>`;
-            }
-        });
-    }
+   function renderHonorBadges() {
+    const ps = Object.values(cachedStats);
+    if (!ps.length) return;
 
+    const container = document.getElementById('badgesContainer');
+    container.innerHTML = ""; // تنظيف
+
+    // 1. حساب الأوسمة بناءً على البيانات
+    const badges = [
+        {
+            title: "ملك الدومنة",
+            desc: "الأعلى نقاطاً",
+            icon: "👑",
+            player: [...ps].sort((a, b) => b.diff - a.diff)[0]
+        },
+        {
+            title: "الدرع الحصين",
+            desc: "الأقل خسارة",
+            icon: "🛡️",
+            player: [...ps].sort((a, b) => a.loss - b.loss)[0]
+        },
+        {
+            title: "الهداف الفتاك",
+            desc: "الأكثر تسجيلاً للفوز",
+            icon: "⚽",
+            player: [...ps].sort((a, b) => b.win - a.win)[0]
+        },
+        {
+            title: "صخرة الدفاع",
+            desc: "أكثر من تحمل ضغط",
+            icon: "🧱",
+            player: [...ps].sort((a, b) => b.loss - a.loss)[0]
+        },
+        {
+            title: "المثابر",
+            desc: "الأكثر لعباً للمباريات",
+            icon: "🏃",
+            player: [...ps].sort((a, b) => b.total - a.total)[0]
+        },
+        {
+            title: "القناص",
+            desc: "أفضل نسبة فوز",
+            icon: "🎯",
+            player: [...ps].sort((a, b) => (b.win / b.total) - (a.win / a.total))[0]
+        }
+    ];
+
+    // 2. بناء واجهة الشبكة (Grid)
+    let html = `<div class="honor-grid">`;
+    badges.forEach(b => {
+        html += `
+            <div class="honor-card-v2" onclick="showProfile('${b.player.name}')">
+                <div class="badge-icon-circle">${b.icon}</div>
+                <span class="honor-title">${b.title}</span>
+                <span class="honor-desc">${b.desc}</span>
+                <div style="margin-top:10px; border-top:1px solid #eee; pt-5">
+                    <img src="${playersData[b.player.name]}" class="honor-player-img">
+                    <div style="font-size:0.7rem; font-weight:bold; margin-top:3px;">${b.player.name}</div>
+                </div>
+            </div>
+        `;
+    });
+    html += `</div>`;
+    
+    container.innerHTML = html;
+}
     // --- نظام القرعة الذكي (Fixed & Improved) ---
     function renderDrawSelection() {
         const ui = document.getElementById('drawSelectUI'); ui.innerHTML = "";
