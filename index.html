@@ -287,7 +287,7 @@
     function renderBadges(stats) {
         const players = Object.values(stats);
         if(players.length === 0) return;
-        const king = [...players].sort((a,b) => b.win - a.win)[0];
+const king = [...players].sort((a,b) => b.diff - a.diff)[0];
         const warrior = [...players].sort((a,b) => b.total - a.total)[0];
         const unlucky = [...players].sort((a,b) => b.loss - a.loss)[0];
         const rock = [...players].filter(p => p.total >= 3).sort((a,b) => a.loss - b.loss)[0];
