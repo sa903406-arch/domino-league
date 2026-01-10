@@ -3,66 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>دوري الدومنة الملكي | Pro Stats</title>
+    <title>دوري الدومنة الملكي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e3c72; --secondary: #2a5298; --gold: #FFD700; 
-            --silver: #C0C0C0; --bronze: #CD7F32; --bg: #f3f4f6; 
-            --white: #ffffff; --text: #1f2937; --danger: #ef4444; 
-            --success: #10b981; --accent: #8e44ad;
+            --primary: #1e3c72; --secondary: #2a5298;
+            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
+            --bg: #f3f4f6; --white: #ffffff; --text: #1f2937;
+            --danger: #ef4444; --success: #10b981; --accent: #8e44ad;
         }
-        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; -webkit-tap-highlight-color: transparent; }
-        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--white); padding: 20px 20px 45px; text-align: center; border-radius: 0 0 35px 35px; box-shadow: 0 10px 30px rgba(30,60,114,0.25); }
-        .container { max-width: 600px; margin: -35px auto 0; padding: 0 15px; position: relative; z-index: 2; }
-        .card { background: var(--white); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); }
-        h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
+
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--white); padding: 25px 20px 40px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        
+        .container { max-width: 500px; margin: -30px auto 0; padding: 0 15px; position: relative; z-index: 2; }
+        
+        .card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        h3 { color: var(--primary); margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; font-size: 1.1rem; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-box { background: white; padding: 25px; border-radius: 30px; width: 85%; max-width: 350px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: translateY(20px); transition: 0.3s; max-height: 90vh; overflow-y: auto; }
-        .modal-overlay.active .modal-box { transform: translateY(0); }
-        .form-dot { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: white; }
-        .badge-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 18px; background: #fff; margin-bottom: 12px; border: 1px solid #e2e8f0; position: relative; cursor: pointer; }
-        .badge-icon { font-size: 2.2rem; min-width: 50px; text-align: center; }
-        .badge-img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 3px solid #f1f5f9; }
-        .badge-info { flex: 1; }
-        .badge-title { font-weight: 900; color: var(--primary); font-size: 0.95rem; display: block; }
-        .badge-value { font-size: 0.75rem; background: var(--primary); color: white; padding: 3px 10px; border-radius: 20px; margin-top: 5px; display: inline-block; }
-        .podium-container { display: flex; justify-content: center; align-items: flex-end; height: 210px; margin-bottom: 25px; gap: 8px; }
-        .podium-item { display: flex; flex-direction: column; align-items: center; width: 32%; cursor: pointer; }
-        .podium-avatar { width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: -15px; z-index: 2; object-fit: cover; background: #eee; }
-        .podium-rank { width: 100%; border-radius: 15px 15px 10px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--white); font-weight: bold; padding: 10px 0; }
-        .rank-1 .podium-rank { height: 120px; background: linear-gradient(180deg, #FFD700 0%, #FDB931 100%); }
-        .rank-2 .podium-rank { height: 90px; background: linear-gradient(180deg, #E0E0E0 0%, #BDBDBD 100%); }
-        .rank-3 .podium-rank { height: 70px; background: linear-gradient(180deg, #CD7F32 0%, #A0522D 100%); }
-        .player-row { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
-        .list-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; margin: 0 12px; background: #eee; }
-        .list-score { padding: 6px 12px; border-radius: 10px; font-weight: 800; min-width: 35px; text-align: center; }
-        .score-pos { color: #065f46; background: #d1fae5; }
-        .score-neg { color: #991b1b; background: #fee2e2; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 20px; z-index: 100; border-radius: 25px 25px 0 0; }
-        .nav-item { text-align: center; color: #94a3b8; cursor: pointer; flex: 1; }
-        .nav-item.active { color: var(--primary); }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; font-family: 'Cairo'; }
+        .modal-box { background: white; padding: 25px; border-radius: 25px; width: 85%; max-width: 350px; text-align: center; max-height: 85vh; overflow-y: auto; }
+
+        .form-dot { width: 25px; height: 25px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; color: white; margin: 0 2px; }
+
+        /* Badges */
+        .badge-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 15px; background: #f8fafc; margin-bottom: 10px; border: 1px solid #e2e8f0; cursor: pointer; }
+        .badge-icon { font-size: 2rem; }
+        .badge-info { flex: 1; text-align: right; }
+        .badge-title { font-weight: 800; color: var(--primary); display: block; font-size: 0.9rem; }
+        .badge-name { font-size: 0.85rem; color: #64748b; }
+
+        /* Leaderboard */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; height: 180px; margin-bottom: 20px; gap: 10px; }
+        .podium-item { display: flex; flex-direction: column; align-items: center; width: 30%; cursor: pointer; }
+        .podium-avatar { width: 50px; height: 50px; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: -10px; z-index: 1; background: #eee; object-fit: cover; }
+        .podium-rank { width: 100%; border-radius: 12px 12px 5px 5px; color: white; font-weight: bold; padding: 15px 0 5px; text-align: center; }
+        .rank-1 .podium-rank { height: 100px; background: linear-gradient(#FFD700, #FDB931); }
+        .rank-2 .podium-rank { height: 75px; background: linear-gradient(#E0E0E0, #BDBDBD); }
+        .rank-3 .podium-rank { height: 60px; background: linear-gradient(#CD7F32, #A0522D); }
+
+        .player-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .list-avatar { width: 40px; height: 40px; border-radius: 50%; margin: 0 10px; object-fit: cover; background: #eee; }
+        .list-score { margin-right: auto; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
+
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 100; }
+        .nav-item { text-align: center; color: #94a3b8; font-size: 0.75rem; cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item i { display: block; font-size: 1.4rem; font-style: normal; margin-bottom: 2px; }
+
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 10px; font-family: 'Cairo'; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; }
         .hidden { display: none !important; }
-        .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
-        .date-header { background: #f8fafc; padding: 8px 15px; font-weight: bold; font-size: 0.8rem; border-radius: 8px; margin: 20px 0 10px; color: #64748b; }
+        .date-header { background: #f8fafc; padding: 6px 12px; font-weight: bold; font-size: 0.8rem; border-radius: 6px; margin: 15px 0 8px; color: #64748b; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🏆 دوري الدومنة الملكي</h1>
-    <p style="margin:5px 0 0; opacity:0.8; font-size:0.85rem;">نظام الإحصائيات الاحترافي</p>
+    <h1 style="margin:0; font-size:1.4rem;">🏆 دوري الدومنة الملكي</h1>
 </header>
 
 <div class="container">
     <div id="profileModal" class="modal-overlay" onclick="closeProfile()">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div id="profileContent"></div>
-            <button class="btn" style="margin-top:20px; background:#f1f5f9; color:#333;" onclick="closeProfile()">إغلاق</button>
+            <button class="btn" style="margin-top:20px;" onclick="closeProfile()">إغلاق</button>
         </div>
     </div>
 
@@ -90,10 +100,12 @@
 
     <div id="page-teams" class="hidden">
         <div class="card">
-            <h3>🎲 قرعة عادلة</h3>
-            <div id="firebasePlayersSelection" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;"></div>
-            <button class="btn btn-primary" id="drawBtn" onclick="runTeamDraw()">توزيع الفرق 🔥</button>
-            <div id="teamsResults" style="margin-top:20px;"></div>
+            <h3>🎲 قرعة الفرق</h3>
+            <div id="firebasePlayersSelection" style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:15px;"></div>
+            <div id="selectedCount" style="font-size:0.8rem; margin-bottom:10px; color:var(--primary)">المختارين: 0</div>
+            <button class="btn btn-primary" onclick="runTeamDraw()">توزيع الفرق 🔥</button>
+            <div id="drawLoader" class="hidden" style="text-align:center; padding:15px;">جاري القرعة...</div>
+            <div id="teamsResults" style="margin-top:15px;"></div>
         </div>
     </div>
 
@@ -102,43 +114,43 @@
             <h3>📝 تسجيل نتيجة</h3>
             <input type="date" id="gameDate">
             <select id="playerSelect"></select>
-            <div style="display: flex; gap: 10px;">
-                <input type="number" id="winCount" placeholder="فوز (+)">
-                <input type="number" id="lossCount" placeholder="خسارة (-)">
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="winCount" placeholder="فوز">
+                <input type="number" id="lossCount" placeholder="خسارة">
             </div>
-            <button class="btn btn-primary" onclick="addRecord()">حفظ</button>
+            <button class="btn btn-primary" onclick="addRecord()">حفظ النتيجة</button>
         </div>
         <div class="card">
-            <h3>👤 إضافة لاعب</h3>
+            <h3>👤 لاعب جديد</h3>
             <input type="text" id="newPlayerName" placeholder="الاسم">
             <input type="url" id="newPlayerImg" placeholder="رابط الصورة">
-            <button class="btn btn-success" onclick="addPlayer()">إضافة</button>
+            <button class="btn btn-primary" style="background:var(--success)" onclick="addPlayer()">إضافة لاعب</button>
         </div>
         <div id="adminPlayersList"></div>
-        <button class="btn btn-primary" style="background:var(--danger); margin-top:10px;" onclick="logout()">خروج</button>
+        <button class="btn" style="background:var(--danger); color:white; margin-top:15px;" onclick="logout()">خروج</button>
     </div>
 </div>
 
 <div id="loginModal" class="modal-overlay">
     <div class="modal-box">
-        <h3>🔒 دخول الإدارة</h3>
-        <input type="password" id="adminPassword" placeholder="••••" style="text-align:center; padding:10px; width:80%;">
-        <button class="btn btn-primary" onclick="checkPassword()" style="margin-top:10px;">دخول</button>
-        <button class="btn" onclick="closeLogin()">إلغاء</button>
+        <h3>🔒 دخول المدير</h3>
+        <input type="password" id="adminPassword" placeholder="كلمة المرور">
+        <button class="btn btn-primary" onclick="checkPassword()">دخول</button>
+        <button class="btn" style="margin-top:10px;" onclick="closeLogin()">إلغاء</button>
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('page-home', this)"><i>🏠</i><span>الرئيسية</span></div>
-    <div class="nav-item" onclick="switchTab('page-stats', this)"><i>🏅</i><span>الأوسمة</span></div>
-    <div class="nav-item" onclick="switchTab('page-teams', this)"><i>🎲</i><span>القرعة</span></div>
-    <div class="nav-item" onclick="switchTab('page-history', this)"><i>📅</i><span>الأرشيف</span></div>
-    <div class="nav-item" onclick="requestAdmin(this)"><i>⚙️</i><span>الإدارة</span></div>
+    <div class="nav-item active" onclick="switchTab('page-home', this)"><i>🏠</i>الرئيسية</div>
+    <div class="nav-item" onclick="switchTab('page-stats', this)"><i>🏅</i>الأوسمة</div>
+    <div class="nav-item" onclick="switchTab('page-teams', this)"><i>🎲</i>القرعة</div>
+    <div class="nav-item" onclick="switchTab('page-history', this)"><i>📅</i>الأرشيف</div>
+    <div class="nav-item" onclick="requestAdmin(this)"><i>⚙️</i>الإدارة</div>
 </nav>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, onSnapshot, where, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
@@ -153,112 +165,114 @@
     const db = getFirestore(app);
 
     let playersData = {};
-    let isAdminUnlocked = false;
-    const ADMIN_PASS = "1234";
-    let cachedStats = {}; 
+    let cachedStats = {};
     let cachedHistory = {};
+    let isAdminUnlocked = false;
     let selectedForDraw = [];
+    const ADMIN_PASS = "1234";
 
     document.getElementById('gameDate').valueAsDate = new Date();
 
     window.switchTab = (pageId, elem) => {
-        document.querySelectorAll('.container > div[id^="page-"]').forEach(d => d.classList.add('hidden'));
+        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
         document.getElementById(pageId).classList.remove('hidden');
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         if(elem) elem.classList.add('active');
-        if (pageId === 'page-teams') updateSelectionList();
-        window.scrollTo(0,0);
+        if(pageId === 'page-teams') updateSelectionList();
     };
 
-    window.requestAdmin = (elem) => { 
-        if(isAdminUnlocked) window.switchTab('page-admin', elem);
+    window.requestAdmin = (elem) => {
+        if(isAdminUnlocked) switchTab('page-admin', elem);
         else document.getElementById('loginModal').classList.add('active');
     };
 
     window.checkPassword = () => {
-        if (document.getElementById('adminPassword').value === ADMIN_PASS) {
+        if(document.getElementById('adminPassword').value === ADMIN_PASS) {
             isAdminUnlocked = true;
             document.getElementById('loginModal').classList.remove('active');
-            window.switchTab('page-admin', document.querySelectorAll('.nav-item')[4]);
+            switchTab('page-admin', document.querySelectorAll('.nav-item')[4]);
             renderHistory(cachedHistory);
-        } else { alert("خطأ!"); }
+        } else alert("خطأ!");
     };
-
-    window.logout = () => { isAdminUnlocked = false; window.switchTab('page-home', document.querySelectorAll('.nav-item')[0]); };
     window.closeLogin = () => document.getElementById('loginModal').classList.remove('active');
+    window.logout = () => { isAdminUnlocked = false; switchTab('page-home', document.querySelectorAll('.nav-item')[0]); };
 
+    // --- وظائف البروفايل وبطل الأسبوع ---
     window.showProfile = (playerName) => {
         const p = cachedStats[playerName];
         if (!p) return;
 
+        // حساب عدد مرات بطل الأسبوع (من حصل على أعلى صافي نقاط في يوم معين)
         let weeklyTitles = 0;
-        let participatedWeeks = 0;
-
         Object.keys(cachedHistory).forEach(date => {
-            const daysMatches = cachedHistory[date];
+            const matches = cachedHistory[date];
             let dayScores = {};
-            let playedThisWeek = false;
-
-            daysMatches.forEach(m => {
-                if (!dayScores[m.name]) dayScores[m.name] = 0;
+            matches.forEach(m => {
+                if(!dayScores[m.name]) dayScores[m.name] = 0;
                 dayScores[m.name] += m.diff;
-                if (m.name === playerName) playedThisWeek = true;
             });
-
-            if (playedThisWeek) {
-                participatedWeeks++;
-                let maxScore = -999;
-                let topPlayer = "";
-                Object.entries(dayScores).forEach(([name, score]) => {
-                    if (score > maxScore) { maxScore = score; topPlayer = name; }
-                });
-                if (topPlayer === playerName) weeklyTitles++;
-            }
+            let topScore = -Infinity;
+            let winners = [];
+            Object.entries(dayScores).forEach(([name, score]) => {
+                if(score > topScore) { topScore = score; winners = [name]; }
+                else if(score === topScore) { winners.push(name); }
+            });
+            if(winners.includes(playerName) && topScore > 0) weeklyTitles++;
         });
 
-        let allMatches = [];
-        Object.keys(cachedHistory).forEach(date => {
-            cachedHistory[date].forEach(match => { if (match.name === playerName) allMatches.push({ ...match, date }); });
-        });
-        allMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
-        
-        let last5 = [];
-        let bestWin = 0;
-        allMatches.forEach(m => {
-            last5.push(m.diff > 0 ? 'W' : 'L');
-            if (m.win > bestWin) bestWin = m.win;
-        });
+        // آخر 5 مباريات
+        let myMatches = [];
+        Object.values(cachedHistory).flat().forEach(m => { if(m.name === playerName) myMatches.push(m); });
+        const recentForm = myMatches.slice(-5).reverse();
 
-        const recentForm = last5.slice(-5).reverse();
-        const winRate = p.total > 0 ? ((p.win / p.total) * 100).toFixed(1) : 0;
-        const rank = Object.values(cachedStats).sort((a,b) => b.diff - a.diff).findIndex(x => x.name === playerName) + 1;
-
-        document.getElementById('profileContent').innerHTML = `
-            <img src="${playersData[playerName]}" style="width:80px; height:80px; border-radius:50%; border:3px solid var(--primary);">
-            <h2>${playerName} (المركز ${rank})</h2>
+        const content = document.getElementById('profileContent');
+        content.innerHTML = `
+            <img src="${playersData[playerName]}" style="width:80px; height:80px; border-radius:50%; border:3px solid var(--primary); object-fit:cover;">
+            <h2 style="margin:10px 0 5px;">${playerName}</h2>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0;">
-                <div style="background:#f0fdf4; padding:10px; border-radius:12px;">🏆 بطل الأسبوع: <b>${weeklyTitles}</b></div>
-                <div style="background:#f8fafc; padding:10px; border-radius:12px;">📊 نسبة الفوز: <b>${winRate}%</b></div>
+                <div style="background:#f0fdf4; padding:10px; border-radius:12px; border:1px solid #dcfce7;">
+                    <small style="color:#15803d; font-weight:bold;">🏆 بطل الأسبوع</small><br>
+                    <b style="font-size:1.2rem;">${weeklyTitles}</b>
+                </div>
+                <div style="background:#f8fafc; padding:10px; border-radius:12px; border:1px solid #e2e8f0;">
+                    <small style="color:#64748b;">نسبة الفوز</small><br>
+                    <b style="font-size:1.2rem;">${p.total ? ((p.win/p.total)*100).toFixed(0) : 0}%</b>
+                </div>
             </div>
-            <div style="display:flex; gap:5px; justify-content:center; margin-bottom:15px;">
-                ${recentForm.map(r => `<div class="form-dot" style="background:${r==='W'?'#10b981':'#ef4444'}">${r}</div>`).join('')}
+            <div style="margin-bottom:15px;">
+                <small style="display:block; margin-bottom:5px; color:#64748b;">آخر المباريات:</small>
+                ${recentForm.map(m => `<div class="form-dot" style="background:${m.diff>0?'#10b981':'#ef4444'}">${m.diff>0?'W':'L'}</div>`).join('')}
             </div>
-            <div style="text-align:right; font-size:0.9rem; background:#f1f5f9; padding:10px; border-radius:10px;">
-                <div>فوز إجمالي: ${p.win}</div>
-                <div>خسارة إجمالية: ${p.loss}</div>
-                <div>أعلى قيم (Game): ${bestWin}</div>
-            </div>`;
+            <div style="text-align:right; background:#f1f5f9; padding:12px; border-radius:12px; font-size:0.9rem;">
+                فوز إجمالي: <b>${p.win}</b><br>
+                خسارة إجمالية: <b>${p.loss}</b><br>
+                صافي النقاط: <b>${p.diff}</b>
+            </div>
+        `;
         document.getElementById('profileModal').classList.add('active');
     };
-
     window.closeProfile = () => document.getElementById('profileModal').classList.remove('active');
 
+    // --- Firebase Logic ---
+    onSnapshot(collection(db, "players"), (snap) => {
+        const select = document.getElementById('playerSelect');
+        const adminList = document.getElementById('adminPlayersList');
+        select.innerHTML = '<option value="">اختر لاعباً</option>';
+        adminList.innerHTML = "<h4>إدارة اللاعبين:</h4>";
+        playersData = {};
+        snap.forEach(d => {
+            const p = d.data();
+            playersData[p.name] = p.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+            select.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+            adminList.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>${p.name}</span><button onclick="deletePlayer('${d.id}')">حذف</button></div>`;
+        });
+        fetchRecords();
+    });
+
     window.addPlayer = async () => {
-        const name = document.getElementById('newPlayerName').value.trim();
-        const img = document.getElementById('newPlayerImg').value.trim();
-        if(!name) return;
-        await addDoc(collection(db, "players"), { name, imageUrl: img || "https://cdn-icons-png.flaticon.com/512/847/847969.png" });
-        alert("تم!");
+        const name = document.getElementById('newPlayerName').value;
+        const img = document.getElementById('newPlayerImg').value;
+        if(name) { await addDoc(collection(db, "players"), { name, imageUrl: img }); alert("تم!"); }
     };
 
     window.addRecord = async () => {
@@ -266,34 +280,21 @@
         const date = document.getElementById('gameDate').value;
         const win = parseInt(document.getElementById('winCount').value) || 0;
         const loss = parseInt(document.getElementById('lossCount').value) || 0;
-        if(!name || !date) return alert("نقص بيانات");
-        await addDoc(collection(db, "game_records"), { name, date, win, loss, diff: win - loss, total: win + loss });
-        alert("تم الحفظ");
+        if(name && date) {
+            await addDoc(collection(db, "game_records"), { name, date, win, loss, diff: win-loss, total: win+loss });
+            alert("تم الحفظ");
+        }
     };
-
-    onSnapshot(collection(db, "players"), (snap) => {
-        const select = document.getElementById('playerSelect');
-        const adminList = document.getElementById('adminPlayersList');
-        select.innerHTML = '<option value="">اختر...</option>';
-        adminList.innerHTML = "";
-        snap.forEach(d => {
-            const p = d.data();
-            playersData[p.name] = p.imageUrl;
-            select.innerHTML += `<option value="${p.name}">${p.name}</option>`;
-            adminList.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px;"><span>${p.name}</span> <button onclick="deleteFullPlayer('${d.id}', '${p.name}')">حذف</button></div>`;
-        });
-        fetchRecords();
-    });
 
     function fetchRecords() {
         onSnapshot(query(collection(db, "game_records"), orderBy("date", "desc")), (snap) => {
             let stats = {}; let history = {};
             snap.forEach(d => {
                 const r = d.data();
-                if (!stats[r.name]) stats[r.name] = { name: r.name, win: 0, loss: 0, diff: 0, total: 0 };
+                if(!stats[r.name]) stats[r.name] = { name:r.name, win:0, loss:0, diff:0, total:0 };
                 stats[r.name].win += r.win; stats[r.name].loss += r.loss; stats[r.name].diff += r.diff; stats[r.name].total += r.total;
-                if (!history[r.date]) history[r.date] = [];
-                history[r.date].push({ ...r, id: d.id });
+                if(!history[r.date]) history[r.date] = [];
+                history[r.date].push({...r, id:d.id});
             });
             cachedStats = stats; cachedHistory = history;
             renderHome(stats); renderHistory(history); renderBadges(stats);
@@ -305,21 +306,23 @@
         const podium = document.getElementById('podiumUI');
         const list = document.getElementById('leaderboardList');
         podium.innerHTML = ""; list.innerHTML = "";
-        [1, 0, 2].forEach(idx => {
+
+        [1,0,2].forEach(idx => {
             if(sorted[idx]) {
                 const p = sorted[idx];
                 podium.innerHTML += `<div class="podium-item rank-${idx+1}" onclick="showProfile('${p.name}')">
                     <img src="${playersData[p.name]}" class="podium-avatar">
-                    <div class="podium-rank"><span>${p.diff}</span><small>${p.name}</small></div>
+                    <div class="podium-rank"><div>${p.diff}</div><small>${p.name}</small></div>
                 </div>`;
             }
         });
+
         sorted.forEach((p, i) => {
             list.innerHTML += `<div class="player-row" onclick="showProfile('${p.name}')">
-                <div style="width:25px;">${i+1}</div>
+                <span style="width:20px; font-weight:bold; color:#94a3b8;">${i+1}</span>
                 <img src="${playersData[p.name]}" class="list-avatar">
-                <div style="flex:1"><b>${p.name}</b></div>
-                <div class="list-score ${p.diff>=0?'score-pos':'score-neg'}">${p.diff}</div>
+                <span><b>${p.name}</b></span>
+                <span class="list-score ${p.diff>=0?'score-pos':'score-neg'}" style="background:${p.diff>=0?'#d1fae5':'#fee2e2'}; color:${p.diff>=0?'#065f46':'#991b1b'}">${p.diff}</span>
             </div>`;
         });
     }
@@ -329,46 +332,80 @@
         const container = document.getElementById('badgesContainer');
         container.innerHTML = "";
         if(players.length === 0) return;
+
         const king = [...players].sort((a,b) => b.diff - a.diff)[0];
-        if(king) container.innerHTML += `<div class="badge-item">👑 <div class="badge-info"><span class="badge-title">ملك الدومنة</span><span>${king.name}</span></div></div>`;
+        const warrior = [...players].sort((a,b) => b.total - a.total)[0];
+        const unlucky = [...players].sort((a,b) => b.loss - a.loss)[0];
+        const rock = [...players].sort((a,b) => a.loss - b.loss)[0];
+
+        const addBadge = (icon, title, p, label) => {
+            container.innerHTML += `<div class="badge-item" onclick="showProfile('${p.name}')">
+                <div class="badge-icon">${icon}</div>
+                <div class="badge-info">
+                    <span class="badge-title">${title}</span>
+                    <span class="badge-name">${p.name} - ${label}</span>
+                </div>
+            </div>`;
+        };
+
+        if(king) addBadge("👑", "ملك الدومنة", king, "الأعلى نقاطاً");
+        if(warrior) addBadge("⚔️", "المحارب", warrior, "الأكثر لعباً");
+        if(unlucky) addBadge("🧨", "المنحوس", unlucky, "الأكثر خسارة");
+        if(rock) addBadge("🛡️", "الجبل", rock, "الأقل خسارة");
     }
 
     function renderHistory(history) {
-        const container = document.getElementById('historyByDateList');
-        container.innerHTML = "";
+        const list = document.getElementById('historyByDateList');
+        list.innerHTML = "";
         Object.keys(history).sort().reverse().forEach(date => {
-            container.innerHTML += `<div class="date-header">📅 ${date}</div>`;
+            list.innerHTML += `<div class="date-header">📅 ${date}</div>`;
             history[date].forEach(r => {
-                container.innerHTML += `<div class="history-item"><span>${r.name}</span><span>+${r.win} / -${r.loss}</span></div>`;
+                list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f8fafc; font-size:0.9rem;">
+                    <span>${isAdminUnlocked?`<button onclick="deleteRecord('${r.id}')" style="background:none; border:none; color:red; cursor:pointer">×</button>`:''} ${r.name}</span>
+                    <span><b style="color:#10b981">+${r.win}</b> / <b style="color:#ef4444">-${r.loss}</b></span>
+                </div>`;
             });
         });
     }
 
+    window.deleteRecord = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "game_records", id)); };
+    window.deletePlayer = async (id) => { if(confirm("حذف اللاعب؟")) await deleteDoc(doc(db, "players", id)); };
+
+    // --- القرعة ---
     window.updateSelectionList = () => {
         const container = document.getElementById('firebasePlayersSelection');
         container.innerHTML = "";
         Object.keys(playersData).sort().forEach(name => {
             const isChecked = selectedForDraw.includes(name);
             const div = document.createElement('div');
-            div.style = `padding:8px; border-radius:10px; cursor:pointer; border:1px solid #ccc; background:${isChecked?'var(--primary)':'#fff'}; color:${isChecked?'#fff':'#000'}`;
+            div.style = `padding:10px; border-radius:10px; border:1px solid #eee; cursor:pointer; font-size:0.85rem; background:${isChecked?'var(--primary)':'white'}; color:${isChecked?'white':'black'}`;
             div.innerText = name;
             div.onclick = () => {
-                const i = selectedForDraw.indexOf(name);
-                if(i > -1) selectedForDraw.splice(i, 1); else selectedForDraw.push(name);
+                const idx = selectedForDraw.indexOf(name);
+                if(idx > -1) selectedForDraw.splice(idx, 1); else selectedForDraw.push(name);
                 updateSelectionList();
+                document.getElementById('selectedCount').innerText = `المختارين: ${selectedForDraw.length}`;
             };
             container.appendChild(div);
         });
     };
 
-    window.runTeamDraw = () => {
-        if(selectedForDraw.length < 2) return;
-        const shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
-        let html = "";
+    window.runTeamDraw = async () => {
+        if(selectedForDraw.length < 2) return alert("اختر لاعبين!");
+        const res = document.getElementById('teamsResults');
+        res.innerHTML = "";
+        document.getElementById('drawLoader').classList.remove('hidden');
+        await new Promise(r => setTimeout(r, 1000));
+        document.getElementById('drawLoader').classList.add('hidden');
+        
+        let shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
         for(let i=0; i<shuffled.length; i+=2) {
-            html += `<div class="card">${shuffled[i]} 🆚 ${shuffled[i+1] || 'انتظار'}</div>`;
+            res.innerHTML += `<div class="badge-item" style="justify-content:space-around; background:white;">
+                <div style="text-align:center;"><img src="${playersData[shuffled[i]]}" style="width:35px; height:35px; border-radius:50%"><br><small>${shuffled[i]}</small></div>
+                <div style="font-weight:bold; color:#cbd5e1">VS</div>
+                <div style="text-align:center;">${shuffled[i+1]?`<img src="${playersData[shuffled[i+1]]}" style="width:35px; height:35px; border-radius:50%"><br><small>${shuffled[i+1]}</small>`:'انتظار'}</div>
+            </div>`;
         }
-        document.getElementById('teamsResults').innerHTML = html;
     };
 </script>
 </body>
