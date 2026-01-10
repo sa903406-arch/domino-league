@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>دوري الدومنة الملكي | الإصدار الاحترافي الكامل</title>
+    <title>دوري الدومنة الملكي | الإصدار الاحترافي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -48,7 +48,7 @@
 
         /* منصة التتويج */
         .podium { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin-bottom: 30px; height: 220px; padding-top: 20px; }
-        .podium-p { display: flex; flex-direction: column; align-items: center; width: 32%; position: relative; }
+        .podium-p { display: flex; flex-direction: column; align-items: center; width: 32%; position: relative; cursor: pointer; }
         .pod-avatar { width: 65px; height: 65px; border-radius: 50%; border: 4px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.15); z-index: 5; object-fit: cover; }
         .pod-base { width: 100%; border-radius: 20px 20px 10px 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 15px; color: white; font-weight: 900; position: relative; margin-top: -20px; }
         .p-1 { height: 130px; background: linear-gradient(180deg, #FFD700, #f39c12); z-index: 3; }
@@ -67,7 +67,7 @@
         .comp-box { display: flex; flex-direction: column; gap: 15px; }
         .comp-vs-header { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 20px; border-radius: 25px; }
         .comp-player { text-align: center; width: 40%; }
-        .comp-player img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .comp-player img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover; }
         .comp-vs-circle { background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem; border: 4px solid white; }
 
         /* شريط التنقل السفلي */
@@ -77,12 +77,13 @@
         .nav-btn i { font-style: normal; font-size: 1.6rem; }
 
         /* الأزرار والمدخلات */
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 20px; font-weight: 900; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; font-size: 1rem; }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 20px; font-weight: 900; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; font-size: 1rem; margin-bottom: 10px; }
         .btn-primary { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(30,60,114,0.2); }
         .btn-accent { background: var(--accent); color: white; }
         .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: white; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2); }
         
-        input, select { width: 100%; padding: 16px; border: 2px solid #f1f5f9; border-radius: 20px; font-family: 'Cairo'; margin-bottom: 15px; font-weight: 600; font-size: 0.95rem; background: #f8fafc; transition: 0.3s; }
+        input, select { width: 100%; padding: 16px; border: 2px solid #f1f5f9; border-radius: 20px; font-family: 'Cairo'; margin-bottom: 15px; font-weight: 600; font-size: 0.95rem; background: #f8fafc; transition: 0.3s; box-sizing: border-box; }
         input:focus { border-color: var(--primary); outline: none; background: white; }
 
         .hidden { display: none !important; }
@@ -95,7 +96,7 @@
 
 <header>
     <h1>🏆 دوري الدومنة الملكي</h1>
-    <p>نظام الإحصائيات والقرعة الاحترافي</p>
+    <p>نظام الإحصائيات والقرعة الذكي</p>
 </header>
 
 <div class="container">
@@ -137,8 +138,11 @@
     <div id="page-teams" class="hidden">
         <div class="card">
             <h3>🎲 قرعة منع التكرار</h3>
+            <p style="font-size:0.8rem; color:#64748b; margin-bottom:15px;">حدد اللاعبين الحاضرين ثم اضغط على السحب. النظام سيقترح فرقاً لم تلعب معاً سابقاً.</p>
             <div class="draw-grid" id="drawSelectUI"></div>
+            
             <button class="btn btn-primary" id="drawBtn" onclick="runSmartDraw()">بدء سحب الفرق 🔥</button>
+            
             <div id="drawResults" style="margin-top:20px;"></div>
         </div>
     </div>
@@ -173,6 +177,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // إعدادات الفايربيس (كما أرسلتها سابقاً)
     const firebaseConfig = {
         apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
         authDomain: "koster-499c0.firebaseapp.com",
@@ -189,6 +194,7 @@
     let cachedStats = {}; 
     let cachedHistory = {};
     let selectedForDraw = [];
+    let currentDrawResult = []; // لتخزين النتيجة المؤقتة قبل الاعتماد
     let isAdminUnlocked = false;
 
     // --- نظام التنقل ---
@@ -200,11 +206,10 @@
         if(id === 'page-teams') renderDrawSelection();
     };
 
-    // --- منطق البروفايل "الأسطوري" ---
+    // --- منطق البروفايل ---
     window.showProfile = (name) => {
         const p = cachedStats[name]; if(!p) return;
         
-        // حساب بطولات الأسبوع
         let weeklyTitles = 0;
         Object.keys(cachedHistory).forEach(date => {
             let dayScores = {};
@@ -213,13 +218,13 @@
             if(dayScores[name] === top && top > 0) weeklyTitles++;
         });
 
-        // جلب آخر 5 مباريات للفورمة
         let historyArray = [];
         Object.keys(cachedHistory).sort().forEach(d => {
             cachedHistory[d].forEach(m => { if(m.name === name) historyArray.push(m); });
         });
         const last5 = historyArray.slice(-5).reverse();
         const peakWin = Math.max(...historyArray.map(m => m.win), 0);
+        const winRate = p.total > 0 ? ((p.win/p.total)*100).toFixed(0) : 0;
 
         document.getElementById('profileContent').innerHTML = `
             <div class="pro-profile-header">
@@ -233,7 +238,7 @@
             
             <div class="pro-stats-grid">
                 <div class="pro-stat-card"><span class="pro-stat-value" style="color:#fbbf24;">${weeklyTitles}</span><span class="pro-stat-label">🏆 ألقاب الأسبوع</span></div>
-                <div class="pro-stat-card"><span class="pro-stat-value" style="color:var(--success);">${((p.win/p.total)*100).toFixed(0)}%</span><span class="pro-stat-label">📈 نسبة الفوز</span></div>
+                <div class="pro-stat-card"><span class="pro-stat-value" style="color:var(--success);">${winRate}%</span><span class="pro-stat-label">📈 نسبة الفوز</span></div>
                 <div class="pro-stat-card"><span class="pro-stat-value">${p.diff}</span><span class="pro-stat-label">📊 صافي النقاط</span></div>
                 <div class="pro-stat-card"><span class="pro-stat-value" style="color:var(--accent);">${peakWin}</span><span class="pro-stat-label">🔥 أعلى سكور</span></div>
             </div>
@@ -266,8 +271,9 @@
         
         const p1 = cachedStats[n1]; const p2 = cachedStats[n2];
         const res = document.getElementById('compResult');
-        
         const check = (v1, v2) => v1 > v2 ? 'color:var(--success); font-weight:900;' : (v1 < v2 ? 'color:var(--danger);' : '');
+        const r1 = p1.total > 0 ? p1.win/p1.total : 0;
+        const r2 = p2.total > 0 ? p2.win/p2.total : 0;
 
         res.innerHTML = `
             <div class="comp-vs-header" style="margin-top:15px;">
@@ -277,7 +283,7 @@
             </div>
             <div style="margin-top:15px; border:1px solid #f1f5f9; border-radius:20px; overflow:hidden;">
                 ${renderCompRow("صافي النقاط", p1.diff, p2.diff, check(p1.diff, p2.diff), check(p2.diff, p1.diff))}
-                ${renderCompRow("نسبة الفوز", (p1.win/p1.total*100).toFixed(0)+'%', (p2.win/p2.total*100).toFixed(0)+'%', check(p1.win/p1.total, p2.win/p2.total), check(p2.win/p2.total, p1.win/p1.total))}
+                ${renderCompRow("نسبة الفوز", (r1*100).toFixed(0)+'%', (r2*100).toFixed(0)+'%', check(r1, r2), check(r2, r1))}
                 ${renderCompRow("إجمالي اللعب", p1.total, p2.total, check(p1.total, p2.total), check(p2.total, p1.total))}
             </div>
         `;
@@ -290,7 +296,7 @@
         </div>`;
     }
 
-    // --- جلب البيانات وتحديث الواجهة ---
+    // --- جلب البيانات ---
     onSnapshot(collection(db, "players"), (snap) => {
         const pSel = document.getElementById('playerSelect');
         const c1 = document.getElementById('comp1'); const c2 = document.getElementById('comp2');
@@ -324,7 +330,6 @@
         const list = document.getElementById('leaderboardList');
         podium.innerHTML = ""; list.innerHTML = "";
 
-        // رسم المنصة
         if(sorted.length >= 3) {
             const top3 = [sorted[1], sorted[0], sorted[2]];
             top3.forEach((p, i) => {
@@ -339,7 +344,6 @@
             });
         }
 
-        // رسم القائمة
         sorted.forEach((p, idx) => {
             list.innerHTML += `<div class="leader-row" onclick="showProfile('${p.name}')">
                 <div class="leader-rank">${idx+1}</div>
@@ -358,15 +362,17 @@
             { icon:"🛡️", title:"الدرع الحصين", p: [...ps].sort((a,b)=>a.loss-b.loss)[0], lbl:"الأقل خسارة" }
         ];
         config.forEach(c => {
-            container.innerHTML += `<div class="leader-row" onclick="showProfile('${c.p.name}')" style="border-right:5px solid var(--accent);">
-                <img src="${playersData[c.p.name]}" class="leader-img">
-                <div class="leader-name"><b>${c.icon} ${c.title}</b><br><small style="color:#64748b;">${c.p.name}</small></div>
-                <div style="font-size:0.7rem; background:var(--accent); color:white; padding:4px 10px; border-radius:10px;">${c.lbl}</div>
-            </div>`;
+            if(c.p) {
+                container.innerHTML += `<div class="leader-row" onclick="showProfile('${c.p.name}')" style="border-right:5px solid var(--accent);">
+                    <img src="${playersData[c.p.name]}" class="leader-img">
+                    <div class="leader-name"><b>${c.icon} ${c.title}</b><br><small style="color:#64748b;">${c.p.name}</small></div>
+                    <div style="font-size:0.7rem; background:var(--accent); color:white; padding:4px 10px; border-radius:10px;">${c.lbl}</div>
+                </div>`;
+            }
         });
     }
 
-    // --- نظام القرعة الذكي ---
+    // --- نظام القرعة الذكي (Fixed & Improved) ---
     function renderDrawSelection() {
         const ui = document.getElementById('drawSelectUI'); ui.innerHTML = "";
         Object.keys(playersData).sort().forEach(n => {
@@ -374,39 +380,129 @@
             ui.innerHTML += `<div class="draw-item ${active?'selected':''}" onclick="toggleDrawP('${n}')">${n}</div>`;
         });
     }
+    
     window.toggleDrawP = (n) => {
         const i = selectedForDraw.indexOf(n);
         if(i > -1) selectedForDraw.splice(i,1); else selectedForDraw.push(n);
         renderDrawSelection();
     };
 
-    window.runSmartDraw = async () => {
-        if(selectedForDraw.length < 2) return alert("اختر لاعبين!");
-        const btn = document.getElementById('drawBtn'); btn.innerText = "جاري التحليل...";
-        
-        const pastSnap = await getDocs(collection(db, "past_matchups"));
-        const past = pastSnap.docs.map(d => d.data().pair);
-        
-        let shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
-        let results = document.getElementById('drawResults'); results.innerHTML = "";
+    // دالة ترتيب الأسماء لضمان أن (أحمد-علي) هي نفسها (علي-أحمد)
+    function getPairKey(p1, p2) {
+        return [p1, p2].sort().join('-');
+    }
 
-        for(let i=0; i<shuffled.length; i+=2) {
-            let p1 = shuffled[i], p2 = shuffled[i+1];
-            if(p2) {
-                // محاولة منع التكرار
-                if(past.includes(p1+"-"+p2) || past.includes(p2+"-"+p1)) {
-                    shuffled.push(shuffled.shift()); // إعادة خلط بسيطة إذا وجد تكرار
+    window.runSmartDraw = async () => {
+        if(selectedForDraw.length < 2) return alert("اختر لاعبين اثنين على الأقل!");
+        
+        // إزالة زر الحفظ القديم إن وجد
+        let oldConfirm = document.getElementById('confirmDrawBtn');
+        if(oldConfirm) oldConfirm.remove();
+
+        const btn = document.getElementById('drawBtn'); 
+        btn.innerText = "جاري تحليل الاحتمالات...";
+        btn.disabled = true;
+        
+        // 1. جلب تاريخ المباريات السابقة
+        const pastSnap = await getDocs(collection(db, "past_matchups"));
+        const pastPairs = new Set(pastSnap.docs.map(d => d.data().pair));
+        
+        let bestSolution = null;
+        let minConflicts = Infinity;
+
+        // 2. المحاولة 500 مرة لإيجاد توزيعة فريدة
+        for(let attempt = 0; attempt < 500; attempt++) {
+            // خلط عشوائي
+            let shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
+            let conflicts = 0;
+            let currentPairs = [];
+
+            for(let i=0; i<shuffled.length; i+=2) {
+                let p1 = shuffled[i];
+                let p2 = shuffled[i+1];
+                if(p2) {
+                    const pairKey = getPairKey(p1, p2);
+                    if(pastPairs.has(pairKey)) conflicts++;
+                    currentPairs.push([p1, p2]);
+                } else {
+                    currentPairs.push([p1, null]); // لاعب انتظار
                 }
-                await addDoc(collection(db, "past_matchups"), { pair: p1+"-"+p2 });
             }
-            results.innerHTML += `
-                <div class="comp-vs-header" style="margin-bottom:10px; background:white; border:1px solid #eee;">
-                    <div style="text-align:center;"><img src="${playersData[p1]}" style="width:40px;height:40px;border-radius:50%"><br><small>${p1}</small></div>
-                    <div style="font-weight:900; color:#cbd5e1;">VS</div>
-                    <div style="text-align:center;">${p2?`<img src="${playersData[p2]}" style="width:40px;height:40px;border-radius:50%"><br><small>${p2}</small>`:'انتظار'}</div>
-                </div>`;
+
+            // إذا وجدنا حلاً مثالياً نتوقف
+            if(conflicts === 0) {
+                bestSolution = currentPairs;
+                minConflicts = 0;
+                break;
+            }
+
+            // نحتفظ بأفضل حل حتى الآن
+            if(conflicts < minConflicts) {
+                minConflicts = conflicts;
+                bestSolution = currentPairs;
+            }
         }
-        btn.innerText = "بدء سحب الفرق 🔥";
+
+        currentDrawResult = bestSolution; // حفظ مؤقت
+        displayDrawResults(bestSolution, minConflicts);
+        
+        btn.innerText = "إعادة الخلط 🔄";
+        btn.disabled = false;
+        
+        // إضافة زر الاعتماد
+        let confirmBtn = document.createElement('button');
+        confirmBtn.id = "confirmDrawBtn";
+        confirmBtn.className = "btn btn-success";
+        confirmBtn.style.marginTop = "15px";
+        confirmBtn.onclick = confirmAndSaveDraw;
+        confirmBtn.innerText = minConflicts === 0 ? "اعتماد القرعة وحفظ الفرق ✅" : "اعتماد (يوجد تكرار سابق) ⚠️";
+        document.getElementById('drawResults').after(confirmBtn);
+    };
+
+    function displayDrawResults(pairs, conflicts) {
+        let results = document.getElementById('drawResults'); 
+        results.innerHTML = "";
+        
+        if(conflicts > 0) {
+            results.innerHTML += `<div style="background:#fff1f2; color:#be123c; padding:10px; border-radius:10px; text-align:center; margin-bottom:10px; font-size:0.85rem;">⚠️ لم نجد توزيعة جديدة كلياً. هذه التوزيعة تحتوي على مواجهات تكررت سابقاً.</div>`;
+        } else {
+            results.innerHTML += `<div style="background:#ecfdf5; color:#047857; padding:10px; border-radius:10px; text-align:center; margin-bottom:10px; font-size:0.85rem;">✨ توزيعة مثالية! هذه الفرق تلعب معاً لأول مرة.</div>`;
+        }
+
+        pairs.forEach(pair => {
+            const p1 = pair[0];
+            const p2 = pair[1];
+            results.innerHTML += `
+                <div class="comp-vs-header" style="margin-bottom:10px; background:white; border:1px solid ${p2 ? '#eee' : '#fffbeb'};">
+                    <div style="text-align:center;"><img src="${playersData[p1]}" style="width:40px;height:40px;border-radius:50%; object-fit:cover;"><br><small>${p1}</small></div>
+                    <div style="font-weight:900; color:${p2 ? '#cbd5e1' : '#f59e0b'}; font-size:0.9rem;">${p2 ? 'مع' : 'انتظار'}</div>
+                    <div style="text-align:center;">${p2 ? `<img src="${playersData[p2]}" style="width:40px;height:40px;border-radius:50%; object-fit:cover;"><br><small>${p2}</small>` : '<span style="font-size:1.5rem;">☕</span>'}</div>
+                </div>`;
+        });
+    }
+
+    window.confirmAndSaveDraw = async () => {
+        if(!currentDrawResult || currentDrawResult.length === 0) return;
+        
+        if(!confirm("هل أنت متأكد من اعتماد هذه الفرق؟ سيتم حفظها في الذاكرة لعدم تكرارها مستقبلاً.")) return;
+
+        const btn = document.getElementById('confirmDrawBtn');
+        btn.innerText = "جاري الحفظ...";
+        btn.disabled = true;
+
+        // حفظ جميع الثنائيات في قاعدة البيانات
+        const promises = currentDrawResult
+            .filter(pair => pair[1]) // استبعاد الانتظار
+            .map(pair => addDoc(collection(db, "past_matchups"), { pair: getPairKey(pair[0], pair[1]) }));
+        
+        await Promise.all(promises);
+
+        alert("تم حفظ القرعة بنجاح! ✅");
+        btn.remove(); // إخفاء الزر بعد الحفظ
+        document.getElementById('drawBtn').innerText = "بدء سحب الفرق 🔥";
+        selectedForDraw = []; // تصفير الاختيار
+        renderDrawSelection();
+        document.getElementById('drawResults').innerHTML = "";
     };
 
     // --- الإدارة ---
@@ -416,12 +512,15 @@
         const win = parseInt(document.getElementById('winInp').value)||0;
         const loss = parseInt(document.getElementById('lossInp').value)||0;
         if(!name || !date) return alert("أكمل البيانات");
+        
         await addDoc(collection(db, "game_records"), { name, date, win, loss, diff: win-loss, total: win+loss });
         alert("تم الحفظ ✅");
+        document.getElementById('winInp').value = '';
+        document.getElementById('lossInp').value = '';
     };
 
     window.resetMatchups = async () => {
-        if(confirm("هل أنت متأكد من مسح ذاكرة القرعة؟")) {
+        if(confirm("تحذير: سيتم مسح كل ذاكرة القرعة وسيعود اللاعبون للعب مع بعضهم كأول مرة. هل أنت متأكد؟")) {
             const snap = await getDocs(collection(db, "past_matchups"));
             const batch = writeBatch(db);
             snap.forEach(d => batch.delete(d.ref));
