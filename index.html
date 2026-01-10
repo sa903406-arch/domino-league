@@ -6,6 +6,76 @@
     <title>دوري الدومنة الملكي | الإصدار الاحترافي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
+        /* تصميم البروفايل الاحترافي الجديد */
+.pro-card {
+    background: linear-gradient(145deg, #ffffff, #f0f4f8);
+    border-radius: 35px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.profile-header-premium {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    padding: 40px 20px;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.profile-avatar-frame {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 5px solid rgba(255, 215, 0, 0.5); /* إطار ذهبي */
+    margin: 0 auto 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.profile-avatar-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stats-grid-premium {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 20px;
+}
+
+.stat-box-v2 {
+    background: white;
+    padding: 15px 5px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+}
+
+.stat-box-v2 .val {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: #1e3c72;
+}
+
+.stat-box-v2 .lbl {
+    font-size: 0.65rem;
+    color: #64748b;
+    font-weight: bold;
+}
+
+.prediction-badge {
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    padding: 15px;
+    margin: 10px 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
         :root {
             --primary: #1e3c72; --secondary: #2a5298; --gold: #FFD700; 
             --silver: #C0C0C0; --bronze: #CD7F32; --bg: #f0f2f5; 
@@ -226,47 +296,66 @@
     // --- منطق البروفايل ---
 // 1. دالة عرض البروفايل المحدثة
 window.showProfile = (name) => {
-    const p = cachedStats[name]; 
+    const p = cachedStats[name];
     if (!p) return;
 
     const modal = document.getElementById('profileModal');
     const content = document.getElementById('profileContent');
-    
-    // أهم سطر: تنظيف محتوى النافذة القديم تماماً قبل بناء الجديد
-    content.innerHTML = ""; 
+    content.innerHTML = ""; // تنظيف
 
-    // جلب بيانات الفورمة والأداء
+    // حسابات متقدمة
+    const winRate = p.total > 0 ? ((p.win / p.total) * 100).toFixed(1) : 0;
+    const performanceColor = winRate > 50 ? "#10b981" : "#ef4444";
+    
+    // توقع المباراة القادمة (بناءً على آخر 3 مباريات)
     let historyArray = [];
     Object.keys(cachedHistory).sort().forEach(d => {
         cachedHistory[d].forEach(m => { if(m.name === name) historyArray.push(m); });
     });
-    const last5 = historyArray.slice(-5).reverse();
-    const peakWin = historyArray.length > 0 ? Math.max(...historyArray.map(m => m.win)) : 0;
+    const last3 = historyArray.slice(-3);
+    const formSum = last3.reduce((acc, curr) => acc + curr.diff, 0);
+    const prediction = formSum > 0 ? "متوقع فوزه (مستوى تصاعدي) 📈" : "مخاطرة (مستوى متذبذب) ⚠️";
 
-    // بناء واجهة البروفايل داخل النافذة
     content.innerHTML = `
-        <div class="pro-profile-header" style="background: linear-gradient(to bottom, var(--primary), var(--secondary)); padding: 30px; text-align: center; color: white;">
-            <img src="${playersData[name]}" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid white; object-fit: cover;">
-            <h2 style="margin-top:10px;">${name}</h2>
-        </div>
-        <div class="pro-stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px;">
-            <div class="pro-stat-card" style="text-align:center; padding:10px; background:#f8fafc; border-radius:15px;">
-                <b style="display:block; font-size:1.2rem;">${p.diff}</b><small>النقاط</small>
+        <div class="pro-card">
+            <div class="profile-header-premium">
+                <div class="profile-avatar-frame">
+                    <img src="${playersData[name]}" onerror="this.src='https://via.placeholder.com/150'">
+                </div>
+                <h2 style="margin:0; font-size:1.6rem;">${name}</h2>
+                <span style="background:rgba(255,255,255,0.2); padding:5px 15px; border-radius:15px; font-size:0.8rem;">رتبة: ${winRate > 60 ? 'أسطوري ⭐' : 'لاعب محترف'}</span>
             </div>
-            <div class="pro-stat-card" style="text-align:center; padding:10px; background:#f8fafc; border-radius:15px;">
-                <b style="display:block; font-size:1.2rem;">${peakWin}</b><small>أعلى سكور</small>
-            </div>
-        </div>
-        <div style="padding: 0 20px 20px; text-align: center;">
-            <small style="color: #64748b;">آخر 5 مباريات</small>
-            <div style="display: flex; justify-content: center; gap: 5px; margin-top: 5px;">
-                ${last5.map(m => `<div style="width:25px; height:25px; border-radius:50%; color:white; font-size:0.7rem; display:flex; align-items:center; justify-content:center; background:${m.diff > 0 ? 'var(--success)' : 'var(--danger)'}">${m.diff > 0 ? 'W' : 'L'}</div>`).join('')}
-            </div>
-        </div>`;
 
-    modal.classList.add('active'); // إظهار النافذة
+            <div class="stats-grid-premium">
+                <div class="stat-box-v2"><span class="val">${p.diff}</span><span class="lbl">النقاط</span></div>
+                <div class="stat-box-v2"><span class="val" style="color:${performanceColor}">${winRate}%</span><span class="lbl">نسبة الفوز</span></div>
+                <div class="stat-box-v2"><span class="val">${p.total}</span><span class="lbl">المباريات</span></div>
+            </div>
+
+            <div class="prediction-badge">
+                <div style="font-size:1.5rem;">🔮</div>
+                <div>
+                    <div style="font-size:0.7rem; font-weight:bold; color:#b45309;">توقعات النظام للمباراة القادمة</div>
+                    <div style="font-size:0.85rem; font-weight:900; color:#1e3c72;">${prediction}</div>
+                </div>
+            </div>
+
+            <div style="padding:10px 20px 25px;">
+                <h4 style="margin-bottom:10px; font-size:0.9rem;">تحليل الأداء الأخير:</h4>
+                <div style="display:flex; gap:8px;">
+                    ${historyArray.slice(-7).map(m => `
+                        <div style="flex:1; height:35px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:white; font-weight:900; background:${m.diff > 0 ? '#10b981' : '#ef4444'}">
+                            ${m.diff > 0 ? 'W' : 'L'}
+                        </div>
+                    `).join('')}
+                </div>
+                <p style="font-size:0.7rem; color:#94a3b8; text-align:center; margin-top:15px;">آخر 7 مباريات مسجلة في السجل</p>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add('active');
 };
-
 // 2. دالة إغلاق البروفايل
 window.closeProfile = () => {
     document.getElementById('profileModal').classList.remove('active');
