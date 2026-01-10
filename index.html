@@ -198,19 +198,24 @@
     window.logout = () => { isAdminUnlocked = false; switchTab('page-home', document.querySelectorAll('.nav-item')[0]); };
 
     // --- وظائف البروفايل وبطل الأسبوع ---
+   // --- نظام البروفايل الاحترافي المطور ---
     window.showProfile = (playerName) => {
         const p = cachedStats[playerName];
         if (!p) return;
 
-        // حساب عدد مرات بطل الأسبوع (من حصل على أعلى صافي نقاط في يوم معين)
+        // 1. حساب ألقاب بطل الأسبوع
         let weeklyTitles = 0;
+        let participatedWeeks = 0;
         Object.keys(cachedHistory).forEach(date => {
             const matches = cachedHistory[date];
             let dayScores = {};
+            let played = false;
             matches.forEach(m => {
                 if(!dayScores[m.name]) dayScores[m.name] = 0;
                 dayScores[m.name] += m.diff;
+                if(m.name === playerName) played = true;
             });
+            if(played) participatedWeeks++;
             let topScore = -Infinity;
             let winners = [];
             Object.entries(dayScores).forEach(([name, score]) => {
@@ -220,34 +225,74 @@
             if(winners.includes(playerName) && topScore > 0) weeklyTitles++;
         });
 
-        // آخر 5 مباريات
+        // 2. تحليل المباريات والفورمة
         let myMatches = [];
-        Object.values(cachedHistory).flat().forEach(m => { if(m.name === playerName) myMatches.push(m); });
+        Object.keys(cachedHistory).sort().forEach(date => {
+            cachedHistory[date].forEach(m => { if(m.name === playerName) myMatches.push(m); });
+        });
         const recentForm = myMatches.slice(-5).reverse();
+        const bestWin = Math.max(...myMatches.map(m => m.win), 0);
+        
+        // 3. الترتيب العام
+        const rank = Object.values(cachedStats).sort((a,b) => b.diff - a.diff).findIndex(x => x.name === playerName) + 1;
 
         const content = document.getElementById('profileContent');
         content.innerHTML = `
-            <img src="${playersData[playerName]}" style="width:80px; height:80px; border-radius:50%; border:3px solid var(--primary); object-fit:cover;">
-            <h2 style="margin:10px 0 5px;">${playerName}</h2>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0;">
-                <div style="background:#f0fdf4; padding:10px; border-radius:12px; border:1px solid #dcfce7;">
-                    <small style="color:#15803d; font-weight:bold;">🏆 بطل الأسبوع</small><br>
-                    <b style="font-size:1.2rem;">${weeklyTitles}</b>
+            <div style="position:relative; margin-bottom:20px;">
+                <div style="position:absolute; top:0; right:0; background:var(--gold); color:black; padding:4px 12px; border-radius:10px; font-weight:900; font-size:0.8rem; box-shadow:0 4px 10px rgba(0,0,0,0.1);">المركز #${rank}</div>
+                <img src="${playersData[playerName]}" style="width:110px; height:110px; border-radius:50%; border:4px solid var(--primary); padding:3px; object-fit:cover; background:white;">
+                <h2 style="margin:10px 0 0; color:var(--primary); font-size:1.6rem; font-weight:900;">${playerName}</h2>
+                <div style="color:#64748b; font-size:0.8rem;">عضو احترافي في دوري الدومنة</div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:20px;">
+                <div style="background:linear-gradient(135deg, #fffbeb, #fef3c7); padding:15px; border-radius:18px; border:1px solid #fde68a; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <span style="font-size:1.5rem; display:block;">🏆</span>
+                    <small style="color:#92400e; font-weight:bold;">بطل الأسبوع</small>
+                    <div style="font-size:1.6rem; font-weight:900; color:#92400e;">${weeklyTitles}</div>
                 </div>
-                <div style="background:#f8fafc; padding:10px; border-radius:12px; border:1px solid #e2e8f0;">
-                    <small style="color:#64748b;">نسبة الفوز</small><br>
-                    <b style="font-size:1.2rem;">${p.total ? ((p.win/p.total)*100).toFixed(0) : 0}%</b>
+                <div style="background:linear-gradient(135deg, #f0fdf4, #dcfce7); padding:15px; border-radius:18px; border:1px solid #bbf7d0; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <span style="font-size:1.5rem; display:block;">📈</span>
+                    <small style="color:#166534; font-weight:bold;">نسبة الفوز</small>
+                    <div style="font-size:1.6rem; font-weight:900; color:#166534;">${p.total ? ((p.win/p.total)*100).toFixed(0) : 0}%</div>
                 </div>
             </div>
-            <div style="margin-bottom:15px;">
-                <small style="display:block; margin-bottom:5px; color:#64748b;">آخر المباريات:</small>
-                ${recentForm.map(m => `<div class="form-dot" style="background:${m.diff>0?'#10b981':'#ef4444'}">${m.diff>0?'W':'L'}</div>`).join('')}
+
+            <div style="background:#f8fafc; padding:15px; border-radius:18px; margin-bottom:20px; border:1px solid #e2e8f0;">
+                <small style="display:block; margin-bottom:10px; color:#64748b; font-weight:bold; text-align:center;">تحليل الأداء الأخير (FORM)</small>
+                <div style="display:flex; gap:8px; justify-content:center;">
+                    ${recentForm.length > 0 ? recentForm.map(m => `
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+                            <div class="form-dot" style="width:32px; height:32px; border-radius:10px; background:${m.diff > 0 ? 'var(--success)' : 'var(--danger)'}; font-size:0.8rem; box-shadow:0 3px 6px rgba(0,0,0,0.1);">
+                                ${m.diff > 0 ? 'W' : 'L'}
+                            </div>
+                            <small style="font-size:0.6rem; font-weight:bold; color:${m.diff > 0 ? '#059669' : '#dc2626'}">${m.diff > 0 ? '+' : ''}${m.diff}</small>
+                        </div>
+                    `).join('') : '<span style="color:#94a3b8;">لا توجد بيانات كافية</span>'}
+                </div>
             </div>
-            <div style="text-align:right; background:#f1f5f9; padding:12px; border-radius:12px; font-size:0.9rem;">
-                فوز إجمالي: <b>${p.win}</b><br>
-                خسارة إجمالية: <b>${p.loss}</b><br>
-                صافي النقاط: <b>${p.diff}</b>
+
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                <div style="text-align:center; padding:10px; background:white; border-radius:12px; border:1px solid #f1f5f9;">
+                    <small style="color:#64748b; font-size:0.7rem;">فوز</small>
+                    <div style="font-weight:900; color:var(--success);">${p.win}</div>
+                </div>
+                <div style="text-align:center; padding:10px; background:white; border-radius:12px; border:1px solid #f1f5f9;">
+                    <small style="color:#64748b; font-size:0.7rem;">خسارة</small>
+                    <div style="font-weight:900; color:var(--danger);">${p.loss}</div>
+                </div>
+                <div style="text-align:center; padding:10px; background:white; border-radius:12px; border:1px solid #f1f5f9;">
+                    <small style="color:#64748b; font-size:0.7rem;">إجمالي</small>
+                    <div style="font-weight:900; color:var(--primary);">${p.total}</div>
+                </div>
             </div>
+
+            <div style="margin-top:15px; padding:12px; background:linear-gradient(to left, #1e3c72, #2a5298); border-radius:15px; color:white; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.85rem;">أعلى سكور في قيم واحد (Peak):</span>
+                <span style="font-size:1.1rem; font-weight:900; color:var(--gold);">${bestWin}</span>
+            </div>
+            
+            <p style="font-size:0.7rem; color:#94a3b8; margin-top:15px;">تاريخ آخر نشاط: ${myMatches.length ? myMatches[myMatches.length-1].date : '---'}</p>
         `;
         document.getElementById('profileModal').classList.add('active');
     };
