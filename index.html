@@ -126,6 +126,11 @@
         <div style="text-align: left; margin-bottom: 10px;">
             <button onclick="logout()" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;">خروج 🔒</button>
         </div>
+        <div class="card" style="border-right: 5px solid var(--danger);">
+    <h3>⚠️ ذاكرة القرعة</h3>
+    <p style="font-size:0.7rem;">مسح سجل اللقاءات السابقة للسماح بتكرار الفرق مرة أخرى.</p>
+    <button class="btn" style="background:var(--danger); color:white;" onclick="resetMatchups()">تصفير سجل اللقاءات</button>
+</div>
         <div class="card" style="border-right: 5px solid var(--success);">
             <h3>👤 إضافة لاعب</h3>
             <input type="text" id="newPlayerName" placeholder="الاسم">
@@ -350,25 +355,105 @@
 
     window.clearSelection = () => { selectedForDraw = []; updateSelectionList(); };
 
-    window.runTeamDraw = async () => {
-        if (selectedForDraw.length < 2) return alert("اختر لاعبين!");
+   window.runTeamDraw = async () => {
+        if (selectedForDraw.length < 2) return alert("يرجى اختيار لاعبين اثنين على الأقل!");
+        
         const loader = document.getElementById('drawLoader');
         const results = document.getElementById('teamsResults');
-        results.innerHTML = ""; loader.classList.remove('hidden');
-        await new Promise(r => setTimeout(r, 1500));
-        loader.classList.add('hidden');
-        let shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
-        let html = `<h4 style="text-align:center;">الفرق 🏆</h4>`;
-        for (let i = 0; i < shuffled.length; i += 2) {
-            let p1 = shuffled[i], p2 = shuffled[i+1];
-            html += `<div class="badge-item" style="justify-content:space-around; background:white; border-right:5px solid var(--accent);">
-                <div style="text-align:center;"><img src="${playersData[p1]}" style="width:40px; height:40px; border-radius:50%"><br><small>${p1}</small></div>
-                <div>VS</div>
-                <div style="text-align:center;">${p2?`<img src="${playersData[p2]}" style="width:40px; height:40px; border-radius:50%"><br><small>${p2}</small>`:'--'}</div>
-            </div>`;
+        const btn = document.getElementById('drawBtn');
+
+        results.innerHTML = "";
+        loader.classList.remove('hidden');
+        btn.disabled = true;
+
+        try {
+            // 1. جلب اللقاءات السابقة من Firebase لمنع تكرارها
+            const pastSnap = await getDocs(collection(db, "past_matchups"));
+            let pastMatchups = [];
+            pastSnap.forEach(d => pastMatchups.push(d.data().pair));
+
+            let shuffled;
+            let attempts = 0;
+            let foundNewMatchup = false;
+            let currentPairs = [];
+
+            // 2. خوارزمية الخلط الذكي (تحاول حتى 15 مرة لإيجاد مواجهات جديدة)
+            while (attempts < 15 && !foundNewMatchup) {
+                shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
+                currentPairs = [];
+                let isRepeated = false;
+
+                for (let i = 0; i < shuffled.length; i += 2) {
+                    if (shuffled[i+1]) {
+                        // ترتيب الأسماء أبجدياً لضمان أن (أحمد ضد علي) هي نفسها (علي ضد أحمد)
+                        let pair = [shuffled[i], shuffled[i+1]].sort().join("_vs_");
+                        if (pastMatchups.includes(pair)) {
+                            isRepeated = true;
+                            break;
+                        }
+                        currentPairs.push(pair);
+                    }
+                }
+
+                if (!isRepeated) {
+                    foundNewMatchup = true;
+                }
+                attempts++;
+            }
+
+            // 3. حفظ اللقاءات الجديدة في Firebase لكي لا تتكرر مستقبلاً
+            if (currentPairs.length > 0) {
+                const batch = writeBatch(db);
+                currentPairs.forEach(pair => {
+                    const newMatchRef = doc(collection(db, "past_matchups"));
+                    batch.set(newMatchRef, { pair: pair, timestamp: Date.now() });
+                });
+                await batch.commit();
+            }
+
+            // 4. عرض النتيجة
+            loader.classList.add('hidden');
+            btn.disabled = false;
+
+            let html = `<h4 style="text-align:center; color:var(--accent);">الفرق النهائية 🎲</h4>`;
+            if (attempts >= 15) html += `<p style="text-align:center; font-size:0.7rem; color:red;">(ملاحظة: تم تكرار بعض الفرق لعدم وجود احتمالات جديدة)</p>`;
+            
+            for (let i = 0; i < shuffled.length; i += 2) {
+                let p1 = shuffled[i], p2 = shuffled[i+1];
+                html += `
+                    <div class="badge-item" style="justify-content:space-around; background:white; border-right:5px solid var(--accent); margin-bottom:10px;">
+                        <div style="text-align:center; width:40%;">
+                            <img src="${playersData[p1]}" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">
+                            <div style="font-size:0.8rem; font-weight:bold;">${p1}</div>
+                        </div>
+                        <div style="font-weight:900; color:var(--primary);">VS</div>
+                        <div style="text-align:center; width:40%;">
+                            ${p2 ? `
+                                <img src="${playersData[p2]}" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">
+                                <div style="font-size:0.8rem; font-weight:bold;">${p2}</div>
+                            ` : '<div style="color:#999">انتظار</div>'}
+                        </div>
+                    </div>`;
+            }
+            results.innerHTML = html;
+            results.scrollIntoView({ behavior: 'smooth' });
+
+        } catch (error) {
+            console.error(error);
+            alert("حدث خطأ أثناء جلب البيانات من فايربيس");
+            loader.classList.add('hidden');
+            btn.disabled = false;
         }
-        results.innerHTML = html;
-        results.scrollIntoView({ behavior: 'smooth' });
+    };
+    window.resetMatchups = async () => {
+        if (!isAdminUnlocked) return;
+        if (confirm("هل أنت متأكد؟ سيتم السماح بظهور مواجهات قديمة في القرعة القادمة.")) {
+            const snap = await getDocs(collection(db, "past_matchups"));
+            const batch = writeBatch(db);
+            snap.forEach(d => batch.delete(d.ref));
+            await batch.commit();
+            alert("تم تصفير السجل بنجاح!");
+        }
     };
 </script>
 </body>
