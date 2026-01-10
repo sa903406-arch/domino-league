@@ -303,10 +303,10 @@
                     <span class="badge-value">${val} ${label}</span>
                 </div>
             </div>`;
-        container.innerHTML += createBadge("👑", "ملك الفوز", king, king.win, "فوز");
-        container.innerHTML += createBadge("⚔️", "المحارب الأكبر", warrior, warrior.total, "مباراة");
-        container.innerHTML += createBadge("🧨", "المنحوس", unlucky, unlucky.loss, "خسارة");
-        if(rock) container.innerHTML += createBadge("🛡️", "الصخرة", rock, rock.loss, "خسارة");
+        container.innerHTML += createBadge("👑", "واحد عراق", king, king.win, "فوز");
+        container.innerHTML += createBadge("⚔️", "اكثر واحد يلعب **", warrior, warrior.total, "مباراة");
+        container.innerHTML += createBadge("🧨", "مطي العراق", unlucky, unlucky.loss, "خسارة");
+        if(rock) container.innerHTML += createBadge("🛡️", "اقل واحد يخسر", rock, rock.loss, "خسارة");
     }
 
     function renderHistory(history) {
