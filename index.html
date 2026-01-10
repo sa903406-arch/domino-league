@@ -351,11 +351,51 @@
     window.closeLogin = () => document.getElementById('loginModal').classList.remove('active');
 
     // --- نظام البروفايل المطور ---
+  // --- نظام البروفايل (نسخة بطل الأسبوع) ---
     window.showProfile = (playerName) => {
         const p = cachedStats[playerName];
         if (!p) return;
 
-        // 1. جلب وتحليل البيانات التاريخية
+        // 1. حساب عدد مرات تصدر الأسبوع (Weekly Champion)
+        let weeklyTitles = 0; // عدد المرات التي كان فيها الأول
+        let participatedWeeks = 0; // عدد الأسابيع التي حضرها
+
+        // نمر على كل تاريخ (كل أسبوع) في السجل
+        Object.keys(cachedHistory).forEach(date => {
+            const daysMatches = cachedHistory[date];
+            
+            // حساب مجموع نقاط كل اللاعبين في هذا التاريخ
+            let dayScores = {};
+            let playedThisWeek = false;
+
+            daysMatches.forEach(m => {
+                if (!dayScores[m.name]) dayScores[m.name] = 0;
+                dayScores[m.name] += m.diff; // نجمع الفارق (النقاط)
+                if (m.name === playerName) playedThisWeek = true;
+            });
+
+            if (playedThisWeek) {
+                participatedWeeks++;
+                
+                // معرفة من هو صاحب أعلى رصيد في هذا التاريخ
+                let maxScore = -9999;
+                let topPlayer = "";
+                
+                Object.entries(dayScores).forEach(([name, score]) => {
+                    if (score > maxScore) {
+                        maxScore = score;
+                        topPlayer = name;
+                    }
+                });
+
+                // هل اللاعب الحالي هو المتصدر لهذا الأسبوع؟
+                if (topPlayer === playerName) {
+                    weeklyTitles++;
+                }
+            }
+        });
+
+        // 2. تحليل الأداء (آخر 5 مباريات)
         let allMatches = [];
         Object.keys(cachedHistory).forEach(date => {
             cachedHistory[date].forEach(match => {
@@ -364,22 +404,14 @@
                 }
             });
         });
-
-        // ترتيب زمني صحيح
+        
+        // ترتيب زمني
         allMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-        let currentStreak = 0;
-        let maxStreak = 0;
+        
         let last5 = [];
         let bestWin = 0;
 
         allMatches.forEach(m => {
-            if (m.diff > 0) { // فوز
-                currentStreak++;
-                if (currentStreak > maxStreak) maxStreak = currentStreak;
-            } else if (m.diff < 0) { // خسارة
-                currentStreak = 0;
-            }
             last5.push(m.diff > 0 ? 'W' : 'L');
             if (m.win > bestWin) bestWin = m.win;
         });
@@ -387,7 +419,7 @@
         const recentForm = last5.slice(-5).reverse();
         const winRate = p.total > 0 ? ((p.win / p.total) * 100).toFixed(1) : 0;
         
-        // حساب الترتيب
+        // حساب الترتيب العام
         const allPlayers = Object.values(cachedStats).sort((a,b) => b.diff - a.diff);
         const rank = allPlayers.findIndex(player => player.name === playerName) + 1;
 
@@ -400,12 +432,12 @@
             </div>
             
             <h2 style="margin:0; color:var(--primary); font-size:1.5rem;">${playerName}</h2>
-            <p style="font-size:0.75rem; color:#888; margin-bottom:15px;">إحصائيات الأداء الاحترافية</p>
+            <p style="font-size:0.75rem; color:#888; margin-bottom:15px;">حضر ${participatedWeeks} تجمع/أسبوع</p>
 
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
-                <div style="background:#f8fafc; padding:10px; border-radius:15px; border:1px solid #edf2f7;">
-                    <small style="color:#64748b; display:block;">أطول سلسلة فوز</small>
-                    <b style="font-size:1.2rem; color:#059669;">${maxStreak} 🔥</b>
+                <div style="background:#f0fdf4; padding:10px; border-radius:15px; border:1px solid #dcfce7;">
+                    <small style="color:#15803d; display:block; font-weight:bold;">🏆 بطل الأسبوع</small>
+                    <b style="font-size:1.4rem; color:#15803d;">${weeklyTitles} <span style="font-size:0.8rem;">مرات</span></b>
                 </div>
                 <div style="background:#f8fafc; padding:10px; border-radius:15px; border:1px solid #edf2f7;">
                     <small style="color:#64748b; display:block;">نسبة الفوز</small>
@@ -414,7 +446,7 @@
             </div>
 
             <div style="text-align:right; margin-bottom:15px;">
-                <small style="color:#64748b; margin-bottom:8px; display:block;">آخر 5 مباريات (Form):</small>
+                <small style="color:#64748b; margin-bottom:8px; display:block;">فورمة آخر 5 مباريات:</small>
                 <div style="display:flex; gap:6px; justify-content:center; flex-direction:row-reverse;">
                     ${recentForm.length > 0 ? recentForm.map(res => `
                         <div class="form-dot" style="background:${res==='W'?'#10b981':'#ef4444'}">${res}</div>
@@ -432,18 +464,14 @@
                     <span style="font-weight:bold; color:#ef4444;">${p.loss}</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; border-top:1px solid #cbd5e1; padding-top:8px; margin-top:8px;">
-                    <span>أعلى نتيجة (Win):</span>
+                    <span>أعلى نتيجة (Game):</span>
                     <span style="font-weight:bold; color:var(--primary);">${bestWin}</span>
                 </div>
             </div>
-
-            <div style="margin-top:15px; padding:12px; border-radius:15px; background:linear-gradient(135deg, #fff9db, #fff3bf); border:1px solid #fab005; text-align:center;">
-                <span style="font-size:0.8rem; font-weight:bold; color:#856404;">🔮 احتمال الفوز القادم:</span>
-                <div style="font-size:1.4rem; font-weight:900; color:#e67e22;">
-                    ${(parseFloat(winRate) + (currentStreak * 2)).toFixed(0)}%
-                </div>
-            </div>
         `;
+
+        document.getElementById('profileModal').classList.add('active');
+    };
 
         document.getElementById('profileModal').classList.add('active');
     };
