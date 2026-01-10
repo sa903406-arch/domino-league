@@ -3,109 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>دوري الدومنة الملكي</title>
+    <title>دوري الدومنة الملكي | Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e3c72; --secondary: #2a5298;
-            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
+            --primary: #1e3c72; --secondary: #2a5298; --gold: #FFD700; 
             --bg: #f3f4f6; --white: #ffffff; --text: #1f2937;
             --danger: #ef4444; --success: #10b981; --accent: #8e44ad;
         }
-
         body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--white); padding: 30px 20px 50px; text-align: center; border-radius: 0 0 40px 40px; }
+        .container { max-width: 500px; margin: -40px auto 0; padding: 0 15px; }
+        .card { background: var(--white); border-radius: 25px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        /* تصميم الأوسمة الجديد */
+        .badge-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 20px; background: white; margin-bottom: 12px; border: 1px solid #eef2f6; cursor: pointer; transition: 0.3s; }
+        .badge-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .badge-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #f1f5f9; }
+        .badge-info { flex: 1; }
+        .badge-title { font-weight: 900; color: var(--primary); font-size: 1rem; display: block; }
+        .badge-label { font-size: 0.75rem; color: white; background: var(--accent); padding: 2px 10px; border-radius: 20px; display: inline-block; margin-top: 5px; }
 
-        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--white); padding: 25px 20px 40px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        
-        .container { max-width: 500px; margin: -30px auto 0; padding: 0 15px; position: relative; z-index: 2; }
-        
-        .card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        
-        h3 { color: var(--primary); margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; font-size: 1.1rem; }
-
-        /* Modal */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        /* البروفايل */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-box { background: white; padding: 25px; border-radius: 25px; width: 85%; max-width: 350px; text-align: center; max-height: 85vh; overflow-y: auto; }
+        .modal-box { background: white; padding: 30px; border-radius: 35px; width: 85%; max-width: 400px; text-align: center; }
 
-        .form-dot { width: 25px; height: 25px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold; color: white; margin: 0 2px; }
-
-        /* Badges */
-        .badge-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 15px; background: #f8fafc; margin-bottom: 10px; border: 1px solid #e2e8f0; cursor: pointer; }
-        .badge-icon { font-size: 2rem; }
-        .badge-info { flex: 1; text-align: right; }
-        .badge-title { font-weight: 800; color: var(--primary); display: block; font-size: 0.9rem; }
-        .badge-name { font-size: 0.85rem; color: #64748b; }
-
-        /* Leaderboard */
-        .podium-container { display: flex; justify-content: center; align-items: flex-end; height: 180px; margin-bottom: 20px; gap: 10px; }
+        /* الترتيب */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; height: 180px; margin-bottom: 25px; gap: 10px; }
         .podium-item { display: flex; flex-direction: column; align-items: center; width: 30%; cursor: pointer; }
-        .podium-avatar { width: 50px; height: 50px; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: -10px; z-index: 1; background: #eee; object-fit: cover; }
-        .podium-rank { width: 100%; border-radius: 12px 12px 5px 5px; color: white; font-weight: bold; padding: 15px 0 5px; text-align: center; }
-        .rank-1 .podium-rank { height: 100px; background: linear-gradient(#FFD700, #FDB931); }
-        .rank-2 .podium-rank { height: 75px; background: linear-gradient(#E0E0E0, #BDBDBD); }
-        .rank-3 .podium-rank { height: 60px; background: linear-gradient(#CD7F32, #A0522D); }
+        .podium-avatar { width: 60px; height: 60px; border-radius: 50%; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 2; margin-bottom: -15px; object-fit: cover; }
+        .podium-rank { width: 100%; border-radius: 20px 20px 10px 10px; color: white; font-weight: bold; padding: 25px 0 10px; text-align: center; font-size: 1.2rem; }
+        .rank-1 .podium-rank { height: 110px; background: linear-gradient(#FFD700, #f39c12); }
+        .rank-2 .podium-rank { height: 85px; background: linear-gradient(#bdc3c7, #95a5a6); }
+        .rank-3 .podium-rank { height: 65px; background: linear-gradient(#e67e22, #d35400); }
 
-        .player-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
-        .list-avatar { width: 40px; height: 40px; border-radius: 50%; margin: 0 10px; object-fit: cover; background: #eee; }
-        .list-score { margin-right: auto; padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; }
+        .player-row { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .list-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin-left: 12px; }
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 15px 0 30px; border-top: 1px solid #eee; z-index: 100; border-radius: 25px 25px 0 0; }
+        .nav-item { text-align: center; color: #94a3b8; font-size: 0.75rem; cursor: pointer; }
+        .nav-item.active { color: var(--primary); font-weight: 900; }
+        .nav-item i { display: block; font-size: 1.6rem; margin-bottom: 3px; font-style: normal; }
 
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 100; }
-        .nav-item { text-align: center; color: #94a3b8; font-size: 0.75rem; cursor: pointer; flex: 1; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
-        .nav-item i { display: block; font-size: 1.4rem; font-style: normal; margin-bottom: 2px; }
-
-        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 10px; font-family: 'Cairo'; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
         .btn-primary { background: var(--primary); color: white; }
         .hidden { display: none !important; }
-        .date-header { background: #f8fafc; padding: 6px 12px; font-weight: bold; font-size: 0.8rem; border-radius: 6px; margin: 15px 0 8px; color: #64748b; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-family: 'Cairo'; margin-bottom: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1 style="margin:0; font-size:1.4rem;">🏆 دوري الدومنة الملكي</h1>
-</header>
+<header><h1 style="margin:0;">🏆 دوري الدومنة الملكي</h1></header>
 
 <div class="container">
     <div id="profileModal" class="modal-overlay" onclick="closeProfile()">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div id="profileContent"></div>
-            <button class="btn" style="margin-top:20px;" onclick="closeProfile()">إغلاق</button>
-        </div>
+        <div class="modal-box" onclick="event.stopPropagation()"><div id="profileContent"></div></div>
     </div>
 
     <div id="page-home">
         <div class="podium-container" id="podiumUI"></div>
-        <div class="card">
-            <h3>📊 الترتيب العام</h3>
-            <div id="leaderboardList"></div>
-        </div>
+        <div class="card"><h3>📊 الترتيب العام</h3><div id="leaderboardList"></div></div>
     </div>
 
     <div id="page-stats" class="hidden">
         <div class="card">
-            <h3>🏅 لوحة الشرف</h3>
-            <div id="badgesContainer"></div>
+            <h3>⚔️ مقارنة العمالقة</h3>
+            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <select id="comp1"></select><select id="comp2"></select>
+            </div>
+            <button class="btn btn-primary" style="background:var(--accent)" onclick="runComparison()">قارن الأداء ⚔️</button>
+            <div id="compResult" style="margin-top:15px;"></div>
         </div>
-    </div>
-
-    <div id="page-history" class="hidden">
-        <div class="card">
-            <h3>📅 سجل المباريات</h3>
-            <div id="historyByDateList"></div>
-        </div>
+        <div class="card"><h3>🏅 لوحة الشرف</h3><div id="badgesContainer"></div></div>
     </div>
 
     <div id="page-teams" class="hidden">
         <div class="card">
-            <h3>🎲 قرعة الفرق</h3>
-            <div id="firebasePlayersSelection" style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:15px;"></div>
-            <div id="selectedCount" style="font-size:0.8rem; margin-bottom:10px; color:var(--primary)">المختارين: 0</div>
-            <button class="btn btn-primary" onclick="runTeamDraw()">توزيع الفرق 🔥</button>
-            <div id="drawLoader" class="hidden" style="text-align:center; padding:15px;">جاري القرعة...</div>
-            <div id="teamsResults" style="margin-top:15px;"></div>
+            <h3>🎲 قرعة ذكية (ضد التكرار)</h3>
+            <div id="drawSelectUI" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;"></div>
+            <button class="btn btn-primary" onclick="runSmartDraw()">سحب الفرق 🔥</button>
+            <button class="btn" style="margin-top:10px; background:#f1f5f9; font-size:0.8rem;" onclick="resetMatchups()">تصفير ذاكرة القرعة ⚙️</button>
+            <div id="drawResults" style="margin-top:20px;"></div>
         </div>
     </div>
 
@@ -115,28 +95,11 @@
             <input type="date" id="gameDate">
             <select id="playerSelect"></select>
             <div style="display:flex; gap:10px;">
-                <input type="number" id="winCount" placeholder="فوز">
-                <input type="number" id="lossCount" placeholder="خسارة">
+                <input type="number" id="winInp" placeholder="فوز">
+                <input type="number" id="lossInp" placeholder="خسارة">
             </div>
             <button class="btn btn-primary" onclick="addRecord()">حفظ النتيجة</button>
         </div>
-        <div class="card">
-            <h3>👤 لاعب جديد</h3>
-            <input type="text" id="newPlayerName" placeholder="الاسم">
-            <input type="url" id="newPlayerImg" placeholder="رابط الصورة">
-            <button class="btn btn-primary" style="background:var(--success)" onclick="addPlayer()">إضافة لاعب</button>
-        </div>
-        <div id="adminPlayersList"></div>
-        <button class="btn" style="background:var(--danger); color:white; margin-top:15px;" onclick="logout()">خروج</button>
-    </div>
-</div>
-
-<div id="loginModal" class="modal-overlay">
-    <div class="modal-box">
-        <h3>🔒 دخول المدير</h3>
-        <input type="password" id="adminPassword" placeholder="كلمة المرور">
-        <button class="btn btn-primary" onclick="checkPassword()">دخول</button>
-        <button class="btn" style="margin-top:10px;" onclick="closeLogin()">إلغاء</button>
     </div>
 </div>
 
@@ -144,13 +107,12 @@
     <div class="nav-item active" onclick="switchTab('page-home', this)"><i>🏠</i>الرئيسية</div>
     <div class="nav-item" onclick="switchTab('page-stats', this)"><i>🏅</i>الأوسمة</div>
     <div class="nav-item" onclick="switchTab('page-teams', this)"><i>🎲</i>القرعة</div>
-    <div class="nav-item" onclick="switchTab('page-history', this)"><i>📅</i>الأرشيف</div>
     <div class="nav-item" onclick="requestAdmin(this)"><i>⚙️</i>الإدارة</div>
 </nav>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, query, orderBy, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
@@ -164,174 +126,59 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let playersData = {};
-    let cachedStats = {};
-    let cachedHistory = {};
-    let isAdminUnlocked = false;
-    let selectedForDraw = [];
-    const ADMIN_PASS = "1234";
+    let playersData = {}; let cachedStats = {}; let cachedHistory = {};
+    let selectedDraw = []; let isAdmin = false;
 
-    document.getElementById('gameDate').valueAsDate = new Date();
-
-    window.switchTab = (pageId, elem) => {
+    window.switchTab = (id, el) => {
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
-        document.getElementById(pageId).classList.remove('hidden');
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        if(elem) elem.classList.add('active');
-        if(pageId === 'page-teams') updateSelectionList();
+        document.getElementById(id).classList.remove('hidden');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+        if(id === 'page-teams') renderDrawSelect();
     };
 
-    window.requestAdmin = (elem) => {
-        if(isAdminUnlocked) switchTab('page-admin', elem);
-        else document.getElementById('loginModal').classList.add('active');
-    };
-
-    window.checkPassword = () => {
-        if(document.getElementById('adminPassword').value === ADMIN_PASS) {
-            isAdminUnlocked = true;
-            document.getElementById('loginModal').classList.remove('active');
-            switchTab('page-admin', document.querySelectorAll('.nav-item')[4]);
-            renderHistory(cachedHistory);
-        } else alert("خطأ!");
-    };
-    window.closeLogin = () => document.getElementById('loginModal').classList.remove('active');
-    window.logout = () => { isAdminUnlocked = false; switchTab('page-home', document.querySelectorAll('.nav-item')[0]); };
-
-    // --- وظائف البروفايل وبطل الأسبوع ---
-   // --- نظام البروفايل الاحترافي المطور ---
-    window.showProfile = (playerName) => {
-        const p = cachedStats[playerName];
-        if (!p) return;
-
-        // 1. حساب ألقاب بطل الأسبوع
-        let weeklyTitles = 0;
-        let participatedWeeks = 0;
+    // --- البروفايل وبطل الأسبوع ---
+    window.showProfile = (name) => {
+        const p = cachedStats[name]; if(!p) return;
+        let titles = 0;
         Object.keys(cachedHistory).forEach(date => {
-            const matches = cachedHistory[date];
             let dayScores = {};
-            let played = false;
-            matches.forEach(m => {
-                if(!dayScores[m.name]) dayScores[m.name] = 0;
-                dayScores[m.name] += m.diff;
-                if(m.name === playerName) played = true;
-            });
-            if(played) participatedWeeks++;
-            let topScore = -Infinity;
-            let winners = [];
-            Object.entries(dayScores).forEach(([name, score]) => {
-                if(score > topScore) { topScore = score; winners = [name]; }
-                else if(score === topScore) { winners.push(name); }
-            });
-            if(winners.includes(playerName) && topScore > 0) weeklyTitles++;
+            cachedHistory[date].forEach(m => { dayScores[m.name] = (dayScores[m.name]||0) + m.diff; });
+            let top = Math.max(...Object.values(dayScores));
+            if(dayScores[name] === top && top > 0) titles++;
         });
 
-        // 2. تحليل المباريات والفورمة
-        let myMatches = [];
-        Object.keys(cachedHistory).sort().forEach(date => {
-            cachedHistory[date].forEach(m => { if(m.name === playerName) myMatches.push(m); });
-        });
-        const recentForm = myMatches.slice(-5).reverse();
-        const bestWin = Math.max(...myMatches.map(m => m.win), 0);
-        
-        // 3. الترتيب العام
-        const rank = Object.values(cachedStats).sort((a,b) => b.diff - a.diff).findIndex(x => x.name === playerName) + 1;
-
-        const content = document.getElementById('profileContent');
-        content.innerHTML = `
-            <div style="position:relative; margin-bottom:20px;">
-                <div style="position:absolute; top:0; right:0; background:var(--gold); color:black; padding:4px 12px; border-radius:10px; font-weight:900; font-size:0.8rem; box-shadow:0 4px 10px rgba(0,0,0,0.1);">المركز #${rank}</div>
-                <img src="${playersData[playerName]}" style="width:110px; height:110px; border-radius:50%; border:4px solid var(--primary); padding:3px; object-fit:cover; background:white;">
-                <h2 style="margin:10px 0 0; color:var(--primary); font-size:1.6rem; font-weight:900;">${playerName}</h2>
-                <div style="color:#64748b; font-size:0.8rem;">عضو احترافي في دوري الدومنة</div>
+        document.getElementById('profileContent').innerHTML = `
+            <img src="${playersData[name]}" style="width:100px; height:100px; border-radius:50%; border:4px solid var(--primary); object-fit:cover; margin-bottom:10px;">
+            <h2 style="margin:0;">${name}</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0;">
+                <div style="background:#fffbeb; padding:15px; border-radius:20px; border:1px solid #fde68a;">🏆 بطل الأسبوع<br><b style="font-size:1.4rem;">${titles}</b></div>
+                <div style="background:#f0fdf4; padding:15px; border-radius:20px; border:1px solid #bbf7d0;">📈 الفوز<br><b style="font-size:1.4rem;">${((p.win/p.total)*100).toFixed(0)}%</b></div>
             </div>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:20px;">
-                <div style="background:linear-gradient(135deg, #fffbeb, #fef3c7); padding:15px; border-radius:18px; border:1px solid #fde68a; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <span style="font-size:1.5rem; display:block;">🏆</span>
-                    <small style="color:#92400e; font-weight:bold;">بطل الأسبوع</small>
-                    <div style="font-size:1.6rem; font-weight:900; color:#92400e;">${weeklyTitles}</div>
-                </div>
-                <div style="background:linear-gradient(135deg, #f0fdf4, #dcfce7); padding:15px; border-radius:18px; border:1px solid #bbf7d0; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <span style="font-size:1.5rem; display:block;">📈</span>
-                    <small style="color:#166534; font-weight:bold;">نسبة الفوز</small>
-                    <div style="font-size:1.6rem; font-weight:900; color:#166534;">${p.total ? ((p.win/p.total)*100).toFixed(0) : 0}%</div>
-                </div>
+            <div style="text-align:right; font-size:0.9rem; background:#f8fafc; padding:15px; border-radius:15px;">
+                <div>إجمالي النقاط: <b>${p.diff}</b></div>
+                <div>إجمالي المباريات: <b>${p.total}</b></div>
             </div>
-
-            <div style="background:#f8fafc; padding:15px; border-radius:18px; margin-bottom:20px; border:1px solid #e2e8f0;">
-                <small style="display:block; margin-bottom:10px; color:#64748b; font-weight:bold; text-align:center;">تحليل الأداء الأخير (FORM)</small>
-                <div style="display:flex; gap:8px; justify-content:center;">
-                    ${recentForm.length > 0 ? recentForm.map(m => `
-                        <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
-                            <div class="form-dot" style="width:32px; height:32px; border-radius:10px; background:${m.diff > 0 ? 'var(--success)' : 'var(--danger)'}; font-size:0.8rem; box-shadow:0 3px 6px rgba(0,0,0,0.1);">
-                                ${m.diff > 0 ? 'W' : 'L'}
-                            </div>
-                            <small style="font-size:0.6rem; font-weight:bold; color:${m.diff > 0 ? '#059669' : '#dc2626'}">${m.diff > 0 ? '+' : ''}${m.diff}</small>
-                        </div>
-                    `).join('') : '<span style="color:#94a3b8;">لا توجد بيانات كافية</span>'}
-                </div>
-            </div>
-
-            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
-                <div style="text-align:center; padding:10px; background:white; border-radius:12px; border:1px solid #f1f5f9;">
-                    <small style="color:#64748b; font-size:0.7rem;">فوز</small>
-                    <div style="font-weight:900; color:var(--success);">${p.win}</div>
-                </div>
-                <div style="text-align:center; padding:10px; background:white; border-radius:12px; border:1px solid #f1f5f9;">
-                    <small style="color:#64748b; font-size:0.7rem;">خسارة</small>
-                    <div style="font-weight:900; color:var(--danger);">${p.loss}</div>
-                </div>
-                <div style="text-align:center; padding:10px; background:white; border-radius:12px; border:1px solid #f1f5f9;">
-                    <small style="color:#64748b; font-size:0.7rem;">إجمالي</small>
-                    <div style="font-weight:900; color:var(--primary);">${p.total}</div>
-                </div>
-            </div>
-
-            <div style="margin-top:15px; padding:12px; background:linear-gradient(to left, #1e3c72, #2a5298); border-radius:15px; color:white; display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:0.85rem;">أعلى سكور في قيم واحد (Peak):</span>
-                <span style="font-size:1.1rem; font-weight:900; color:var(--gold);">${bestWin}</span>
-            </div>
-            
-            <p style="font-size:0.7rem; color:#94a3b8; margin-top:15px;">تاريخ آخر نشاط: ${myMatches.length ? myMatches[myMatches.length-1].date : '---'}</p>
+            <button class="btn" style="margin-top:20px; background:#f1f5f9;" onclick="closeProfile()">إغلاق</button>
         `;
         document.getElementById('profileModal').classList.add('active');
     };
     window.closeProfile = () => document.getElementById('profileModal').classList.remove('active');
 
-    // --- Firebase Logic ---
+    // --- البيانات ---
     onSnapshot(collection(db, "players"), (snap) => {
-        const select = document.getElementById('playerSelect');
-        const adminList = document.getElementById('adminPlayersList');
-        select.innerHTML = '<option value="">اختر لاعباً</option>';
-        adminList.innerHTML = "<h4>إدارة اللاعبين:</h4>";
-        playersData = {};
+        const sel = document.getElementById('playerSelect');
+        const c1 = document.getElementById('comp1'); const c2 = document.getElementById('comp2');
+        sel.innerHTML = ""; c1.innerHTML = ""; c2.innerHTML = "";
         snap.forEach(d => {
-            const p = d.data();
-            playersData[p.name] = p.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
-            select.innerHTML += `<option value="${p.name}">${p.name}</option>`;
-            adminList.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>${p.name}</span><button onclick="deletePlayer('${d.id}')">حذف</button></div>`;
+            const p = d.data(); playersData[p.name] = p.imageUrl;
+            const h = `<option value="${p.name}">${p.name}</option>`;
+            sel.innerHTML += h; c1.innerHTML += h; c2.innerHTML += h;
         });
-        fetchRecords();
+        fetchData();
     });
 
-    window.addPlayer = async () => {
-        const name = document.getElementById('newPlayerName').value;
-        const img = document.getElementById('newPlayerImg').value;
-        if(name) { await addDoc(collection(db, "players"), { name, imageUrl: img }); alert("تم!"); }
-    };
-
-    window.addRecord = async () => {
-        const name = document.getElementById('playerSelect').value;
-        const date = document.getElementById('gameDate').value;
-        const win = parseInt(document.getElementById('winCount').value) || 0;
-        const loss = parseInt(document.getElementById('lossCount').value) || 0;
-        if(name && date) {
-            await addDoc(collection(db, "game_records"), { name, date, win, loss, diff: win-loss, total: win+loss });
-            alert("تم الحفظ");
-        }
-    };
-
-    function fetchRecords() {
+    function fetchData() {
         onSnapshot(query(collection(db, "game_records"), orderBy("date", "desc")), (snap) => {
             let stats = {}; let history = {};
             snap.forEach(d => {
@@ -339,118 +186,114 @@
                 if(!stats[r.name]) stats[r.name] = { name:r.name, win:0, loss:0, diff:0, total:0 };
                 stats[r.name].win += r.win; stats[r.name].loss += r.loss; stats[r.name].diff += r.diff; stats[r.name].total += r.total;
                 if(!history[r.date]) history[r.date] = [];
-                history[r.date].push({...r, id:d.id});
+                history[r.date].push(r);
             });
             cachedStats = stats; cachedHistory = history;
-            renderHome(stats); renderHistory(history); renderBadges(stats);
+            renderHome(); renderBadges();
         });
     }
 
-    function renderHome(stats) {
-        const sorted = Object.values(stats).sort((a,b) => b.diff - a.diff);
+    function renderHome() {
+        const sorted = Object.values(cachedStats).sort((a,b) => b.diff - a.diff);
         const podium = document.getElementById('podiumUI');
         const list = document.getElementById('leaderboardList');
         podium.innerHTML = ""; list.innerHTML = "";
-
-        [1,0,2].forEach(idx => {
-            if(sorted[idx]) {
-                const p = sorted[idx];
-                podium.innerHTML += `<div class="podium-item rank-${idx+1}" onclick="showProfile('${p.name}')">
+        [1,0,2].forEach(i => {
+            if(sorted[i]) {
+                const p = sorted[i];
+                podium.innerHTML += `<div class="podium-item rank-${i+1}" onclick="showProfile('${p.name}')">
                     <img src="${playersData[p.name]}" class="podium-avatar">
-                    <div class="podium-rank"><div>${p.diff}</div><small>${p.name}</small></div>
+                    <div class="podium-rank"><div>${p.diff}</div><small style="font-size:0.7rem;">${p.name}</small></div>
                 </div>`;
             }
         });
-
-        sorted.forEach((p, i) => {
+        sorted.forEach((p, idx) => {
             list.innerHTML += `<div class="player-row" onclick="showProfile('${p.name}')">
-                <span style="width:20px; font-weight:bold; color:#94a3b8;">${i+1}</span>
+                <span style="width:25px; color:#94a3b8; font-weight:bold;">${idx+1}</span>
                 <img src="${playersData[p.name]}" class="list-avatar">
-                <span><b>${p.name}</b></span>
-                <span class="list-score ${p.diff>=0?'score-pos':'score-neg'}" style="background:${p.diff>=0?'#d1fae5':'#fee2e2'}; color:${p.diff>=0?'#065f46':'#991b1b'}">${p.diff}</span>
+                <b style="flex:1;">${p.name}</b>
+                <span style="background:${p.diff>=0?'#d1fae5':'#fee2e2'}; color:${p.diff>=0?'#065f46':'#991b1b'}; padding:5px 12px; border-radius:10px; font-weight:900;">${p.diff}</span>
             </div>`;
         });
     }
 
-    function renderBadges(stats) {
-        const players = Object.values(stats);
-        const container = document.getElementById('badgesContainer');
-        container.innerHTML = "";
-        if(players.length === 0) return;
-
-        const king = [...players].sort((a,b) => b.diff - a.diff)[0];
-        const warrior = [...players].sort((a,b) => b.total - a.total)[0];
-        const unlucky = [...players].sort((a,b) => b.loss - a.loss)[0];
-        const rock = [...players].sort((a,b) => a.loss - b.loss)[0];
-
-        const addBadge = (icon, title, p, label) => {
-            container.innerHTML += `<div class="badge-item" onclick="showProfile('${p.name}')">
-                <div class="badge-icon">${icon}</div>
+    function renderBadges() {
+        const ps = Object.values(cachedStats); if(!ps.length) return;
+        const container = document.getElementById('badgesContainer'); container.innerHTML = "";
+        const awards = [
+            { icon:"👑", title:"ملك الدومنة", p: [...ps].sort((a,b)=>b.diff-a.diff)[0], label:"الأعلى سكور" },
+            { icon:"⚔️", title:"المحارب", p: [...ps].sort((a,b)=>b.total-a.total)[0], label:"الأكثر حضوراً" },
+            { icon:"🛡️", title:"الجبل", p: [...ps].sort((a,b)=>a.loss-b.loss)[0], label:"الأقل خسارة" }
+        ];
+        awards.forEach(a => {
+            container.innerHTML += `<div class="badge-item" onclick="showProfile('${a.p.name}')">
+                <img src="${playersData[a.p.name]}" class="badge-img">
                 <div class="badge-info">
-                    <span class="badge-title">${title}</span>
-                    <span class="badge-name">${p.name} - ${label}</span>
+                    <span class="badge-title">${a.icon} ${a.title}</span>
+                    <span style="font-size:0.85rem; color:#64748b;">${a.p.name}</span><br>
+                    <span class="badge-label">${a.label}</span>
                 </div>
             </div>`;
-        };
-
-        if(king) addBadge("👑", "ملك الدومنة", king, "الأعلى نقاطاً");
-        if(warrior) addBadge("⚔️", "المحارب", warrior, "الأكثر لعباً");
-        if(unlucky) addBadge("🧨", "المنحوس", unlucky, "الأكثر خسارة");
-        if(rock) addBadge("🛡️", "الجبل", rock, "الأقل خسارة");
-    }
-
-    function renderHistory(history) {
-        const list = document.getElementById('historyByDateList');
-        list.innerHTML = "";
-        Object.keys(history).sort().reverse().forEach(date => {
-            list.innerHTML += `<div class="date-header">📅 ${date}</div>`;
-            history[date].forEach(r => {
-                list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #f8fafc; font-size:0.9rem;">
-                    <span>${isAdminUnlocked?`<button onclick="deleteRecord('${r.id}')" style="background:none; border:none; color:red; cursor:pointer">×</button>`:''} ${r.name}</span>
-                    <span><b style="color:#10b981">+${r.win}</b> / <b style="color:#ef4444">-${r.loss}</b></span>
-                </div>`;
-            });
         });
     }
 
-    window.deleteRecord = async (id) => { if(confirm("حذف؟")) await deleteDoc(doc(db, "game_records", id)); };
-    window.deletePlayer = async (id) => { if(confirm("حذف اللاعب؟")) await deleteDoc(doc(db, "players", id)); };
-
-    // --- القرعة ---
-    window.updateSelectionList = () => {
-        const container = document.getElementById('firebasePlayersSelection');
-        container.innerHTML = "";
-        Object.keys(playersData).sort().forEach(name => {
-            const isChecked = selectedForDraw.includes(name);
-            const div = document.createElement('div');
-            div.style = `padding:10px; border-radius:10px; border:1px solid #eee; cursor:pointer; font-size:0.85rem; background:${isChecked?'var(--primary)':'white'}; color:${isChecked?'white':'black'}`;
-            div.innerText = name;
-            div.onclick = () => {
-                const idx = selectedForDraw.indexOf(name);
-                if(idx > -1) selectedForDraw.splice(idx, 1); else selectedForDraw.push(name);
-                updateSelectionList();
-                document.getElementById('selectedCount').innerText = `المختارين: ${selectedForDraw.length}`;
-            };
-            container.appendChild(div);
+    // --- القرعة الذكية ---
+    function renderDrawSelect() {
+        const ui = document.getElementById('drawSelectUI'); ui.innerHTML = "";
+        Object.keys(playersData).sort().forEach(n => {
+            const active = selectedDraw.includes(n);
+            ui.innerHTML += `<div onclick="toggleDrawP('${n}')" style="padding:12px; border-radius:15px; border:1px solid #eee; text-align:center; cursor:pointer; background:${active?'var(--primary)':'white'}; color:${active?'white':'black'}; font-size:0.8rem;">${n}</div>`;
         });
+    }
+    window.toggleDrawP = (n) => {
+        const i = selectedDraw.indexOf(n);
+        if(i > -1) selectedDraw.splice(i,1); else selectedDraw.push(n);
+        renderDrawSelect();
     };
 
-    window.runTeamDraw = async () => {
-        if(selectedForDraw.length < 2) return alert("اختر لاعبين!");
-        const res = document.getElementById('teamsResults');
-        res.innerHTML = "";
-        document.getElementById('drawLoader').classList.remove('hidden');
-        await new Promise(r => setTimeout(r, 1000));
-        document.getElementById('drawLoader').classList.add('hidden');
+    window.runSmartDraw = async () => {
+        if(selectedDraw.length < 2) return alert("اختر لاعبين!");
+        const pastSnap = await getDocs(collection(db, "past_matchups"));
+        const past = pastSnap.docs.map(d => d.data().pair);
         
-        let shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
+        let shuffled = [...selectedDraw].sort(() => Math.random() - 0.5);
+        // تجنب تكرار المواجهة الأولى
+        if(past.includes(shuffled[0]+shuffled[1])) shuffled.reverse();
+
+        const res = document.getElementById('drawResults'); res.innerHTML = "<h4>الفرق الناتجة:</h4>";
         for(let i=0; i<shuffled.length; i+=2) {
-            res.innerHTML += `<div class="badge-item" style="justify-content:space-around; background:white;">
-                <div style="text-align:center;"><img src="${playersData[shuffled[i]]}" style="width:35px; height:35px; border-radius:50%"><br><small>${shuffled[i]}</small></div>
-                <div style="font-weight:bold; color:#cbd5e1">VS</div>
-                <div style="text-align:center;">${shuffled[i+1]?`<img src="${playersData[shuffled[i+1]]}" style="width:35px; height:35px; border-radius:50%"><br><small>${shuffled[i+1]}</small>`:'انتظار'}</div>
+            let p1 = shuffled[i], p2 = shuffled[i+1];
+            if(p2) await addDoc(collection(db, "past_matchups"), { pair: p1+p2 });
+            res.innerHTML += `<div class="badge-item" style="justify-content:space-around; background:#f8fafc;">
+                <div style="text-align:center;"><img src="${playersData[p1]}" style="width:35px; height:35px; border-radius:50%"><br><small>${p1}</small></div>
+                <div style="font-weight:900; color:#cbd5e1;">VS</div>
+                <div style="text-align:center;">${p2?`<img src="${playersData[p2]}" style="width:35px; height:35px; border-radius:50%"><br><small>${p2}</small>`:'انتظار'}</div>
             </div>`;
         }
+    };
+
+    window.resetMatchups = async () => {
+        if(confirm("تصفير الذاكرة؟")) {
+            const snap = await getDocs(collection(db, "past_matchups"));
+            const batch = writeBatch(db); snap.forEach(d => batch.delete(d.ref));
+            await batch.commit(); alert("تم التصفير");
+        }
+    };
+
+    window.addRecord = async () => {
+        const name = document.getElementById('playerSelect').value;
+        const date = document.getElementById('gameDate').value;
+        const win = parseInt(document.getElementById('winInp').value) || 0;
+        const loss = parseInt(document.getElementById('lossInp').value) || 0;
+        if(name && date) {
+            await addDoc(collection(db, "game_records"), { name, date, win, loss, diff: win-loss, total: win+loss });
+            alert("تم التسجيل ✅");
+        }
+    };
+
+    window.requestAdmin = (el) => {
+        let p = prompt("كلمة المرور:");
+        if(p === "1234") { isAdmin = true; switchTab('page-admin', el); }
     };
 </script>
 </body>
