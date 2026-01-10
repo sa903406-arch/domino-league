@@ -7,161 +7,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e3c72; 
-            --secondary: #2a5298;
-            --gold: #FFD700; 
-            --silver: #C0C0C0; 
-            --bronze: #CD7F32;
-            --bg: #f3f4f6; 
-            --white: #ffffff; 
-            --text: #1f2937;
-            --danger: #ef4444; 
-            --success: #10b981; 
-            --accent: #8e44ad;
+            --primary: #1e3c72; --secondary: #2a5298; --gold: #FFD700; 
+            --silver: #C0C0C0; --bronze: #CD7F32; --bg: #f3f4f6; 
+            --white: #ffffff; --text: #1f2937; --danger: #ef4444; 
+            --success: #10b981; --accent: #8e44ad;
         }
-
-        body { 
-            font-family: 'Cairo', sans-serif; 
-            background-color: var(--bg); 
-            color: var(--text); 
-            margin: 0; 
-            padding-bottom: 90px; 
-            user-select: none; /* منع تحديد النص لتجربة تشبه التطبيق */
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* --- الهيدر --- */
-        header { 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            color: var(--white); 
-            padding: 20px 20px 45px; 
-            text-align: center; 
-            border-radius: 0 0 35px 35px; 
-            box-shadow: 0 10px 30px rgba(30,60,114,0.25); 
-        }
-        header h1 { margin: 0; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-
-        /* --- الحاوية والبطاقات --- */
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; -webkit-tap-highlight-color: transparent; }
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--white); padding: 20px 20px 45px; text-align: center; border-radius: 0 0 35px 35px; box-shadow: 0 10px 30px rgba(30,60,114,0.25); }
         .container { max-width: 600px; margin: -35px auto 0; padding: 0 15px; position: relative; z-index: 2; }
-        
-        .card { 
-            background: var(--white); 
-            border-radius: 24px; 
-            padding: 20px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-            border: 1px solid rgba(255,255,255,0.8);
-        }
-        
-        h3 { 
-            color: var(--primary); 
-            margin-top: 0; 
-            display: flex; align-items: center; gap: 8px; 
-            font-size: 1.1rem; 
-            border-bottom: 2px solid #f1f5f9; 
-            padding-bottom: 12px; 
-        }
-
-        /* --- نافذة البروفايل (MODAL) --- */
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-            background: rgba(0,0,0,0.6); 
-            backdrop-filter: blur(8px); /* تأثير الزجاج */
-            z-index: 1000; 
-            display: flex; justify-content: center; align-items: center; 
-            opacity: 0; pointer-events: none; transition: 0.3s;
-        }
+        .card { background: var(--white); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); }
+        h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-
-        .modal-box { 
-            background: white; 
-            padding: 25px; 
-            border-radius: 30px; 
-            width: 85%; max-width: 350px; 
-            text-align: center; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); 
-            transform: translateY(20px); transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            max-height: 90vh; overflow-y: auto;
-        }
+        .modal-box { background: white; padding: 25px; border-radius: 30px; width: 85%; max-width: 350px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: translateY(20px); transition: 0.3s; max-height: 90vh; overflow-y: auto; }
         .modal-overlay.active .modal-box { transform: translateY(0); }
-
-        /* نقاط الأداء (Form Dots) */
-        .form-dot {
-            width: 28px; height: 28px; border-radius: 8px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 0.75rem; font-weight: bold; color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        /* --- الأوسمة (Badges) --- */
-        .badge-item { 
-            display: flex; align-items: center; gap: 15px; 
-            padding: 15px; border-radius: 18px; 
-            background: #fff; 
-            margin-bottom: 12px; 
-            border: 1px solid #e2e8f0; 
-            transition: 0.2s;
-            cursor: pointer; /* قابل للضغط */
-            position: relative; overflow: hidden;
-        }
-        .badge-item:active { transform: scale(0.98); background: #f8fafc; }
-        .badge-item::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--gold);
-        }
+        .form-dot { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: white; }
+        .badge-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 18px; background: #fff; margin-bottom: 12px; border: 1px solid #e2e8f0; position: relative; cursor: pointer; }
         .badge-icon { font-size: 2.2rem; min-width: 50px; text-align: center; }
         .badge-img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 3px solid #f1f5f9; }
         .badge-info { flex: 1; }
-        .badge-title { font-weight: 900; color: var(--primary); font-size: 0.95rem; display: block; margin-bottom: 2px; }
-        .badge-name { font-weight: 600; font-size: 0.9rem; color: #64748b; }
+        .badge-title { font-weight: 900; color: var(--primary); font-size: 0.95rem; display: block; }
         .badge-value { font-size: 0.75rem; background: var(--primary); color: white; padding: 3px 10px; border-radius: 20px; margin-top: 5px; display: inline-block; }
-
-        /* --- الترتيب والمنصة --- */
         .podium-container { display: flex; justify-content: center; align-items: flex-end; height: 210px; margin-bottom: 25px; gap: 8px; }
-        .podium-item { display: flex; flex-direction: column; align-items: center; width: 32%; cursor: pointer; transition: 0.2s; }
-        .podium-item:active { transform: scale(0.95); }
-        .podium-avatar { width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: -15px; z-index: 2; background: #eee; object-fit: cover; }
-        .podium-rank { width: 100%; border-radius: 15px 15px 10px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--white); font-weight: bold; padding: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        
+        .podium-item { display: flex; flex-direction: column; align-items: center; width: 32%; cursor: pointer; }
+        .podium-avatar { width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: -15px; z-index: 2; object-fit: cover; background: #eee; }
+        .podium-rank { width: 100%; border-radius: 15px 15px 10px 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--white); font-weight: bold; padding: 10px 0; }
         .rank-1 .podium-rank { height: 120px; background: linear-gradient(180deg, #FFD700 0%, #FDB931 100%); }
         .rank-2 .podium-rank { height: 90px; background: linear-gradient(180deg, #E0E0E0 0%, #BDBDBD 100%); }
         .rank-3 .podium-rank { height: 70px; background: linear-gradient(180deg, #CD7F32 0%, #A0522D 100%); }
-
-        .player-row { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s; }
-        .player-row:active { background-color: #f8fafc; }
-        .player-row:last-child { border-bottom: none; }
-        .list-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; margin: 0 12px; background: #eee; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .list-score { padding: 6px 12px; border-radius: 10px; font-weight: 800; min-width: 35px; text-align: center; font-size: 0.9rem; }
+        .player-row { display: flex; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .list-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; margin: 0 12px; background: #eee; }
+        .list-score { padding: 6px 12px; border-radius: 10px; font-weight: 800; min-width: 35px; text-align: center; }
         .score-pos { color: #065f46; background: #d1fae5; }
         .score-neg { color: #991b1b; background: #fee2e2; }
-
-        /* --- التنقل السفلي --- */
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(255,255,255,0.95); 
-            backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around; 
-            padding: 12px 0 20px; 
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.05); 
-            z-index: 100; border-radius: 25px 25px 0 0; border-top: 1px solid rgba(255,255,255,0.5);
-        }
-        .nav-item { text-align: center; color: #94a3b8; cursor: pointer; flex: 1; transition: 0.3s; position: relative; }
-        .nav-item i { font-style: normal; font-size: 1.4rem; display: block; margin-bottom: 2px; transition: 0.3s; }
-        .nav-item span { font-size: 0.7rem; font-weight: 700; display: block; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 20px; z-index: 100; border-radius: 25px 25px 0 0; }
+        .nav-item { text-align: center; color: #94a3b8; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--primary); }
-        .nav-item.active i { transform: translateY(-5px); }
-
-        /* --- المدخلات والأزرار --- */
-        input, select { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 14px; font-family: 'Cairo'; box-sizing: border-box; font-size: 0.95rem; outline: none; transition: 0.3s; }
-        input:focus, select:focus { border-color: var(--primary); }
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; font-family: 'Cairo'; font-size: 1rem; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(30,60,114,0.3); }
-        .btn-success { background: var(--success); color: white; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
-        
-        /* أدوات المساعدة */
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; font-family: 'Cairo'; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
         .hidden { display: none !important; }
-        .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
-        .date-header { background: #f8fafc; padding: 8px 15px; font-weight: bold; font-size: 0.8rem; border-radius: 8px; margin: 20px 0 10px; color: #64748b; letter-spacing: 0.5px; }
+        .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+        .date-header { background: #f8fafc; padding: 8px 15px; font-weight: bold; font-size: 0.8rem; border-radius: 8px; margin: 20px 0 10px; color: #64748b; }
     </style>
 </head>
 <body>
@@ -172,11 +59,9 @@
 </header>
 
 <div class="container">
-
     <div id="profileModal" class="modal-overlay" onclick="closeProfile()">
         <div class="modal-box" onclick="event.stopPropagation()">
-            <div id="profileContent">
-                </div>
+            <div id="profileContent"></div>
             <button class="btn" style="margin-top:20px; background:#f1f5f9; color:#333;" onclick="closeProfile()">إغلاق</button>
         </div>
     </div>
@@ -192,10 +77,7 @@
     <div id="page-stats" class="hidden">
         <div class="card">
             <h3>🏅 لوحة الشرف</h3>
-            <p style="font-size:0.8rem; color:#666; margin-bottom:15px;">اضغط على أي وسام لرؤية التفاصيل</p>
-            <div id="badgesContainer">
-                <p style="text-align:center; color:#888;">جاري تحليل البيانات...</p>
-            </div>
+            <div id="badgesContainer"></div>
         </div>
     </div>
 
@@ -207,72 +89,42 @@
     </div>
 
     <div id="page-teams" class="hidden">
-        <div class="card" style="border-right: 5px solid var(--accent);">
+        <div class="card">
             <h3>🎲 قرعة عادلة</h3>
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">حدد اللاعبين الحاضرين:</p>
-            
-            <div id="firebasePlayersSelection" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 250px; overflow-y: auto; padding: 10px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 15px; background: #fafafa;">
-                <p style="grid-column: 1/-1; text-align: center; color: #999;">جاري جلب اللاعبين...</p>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <small id="selectedCount" style="font-weight: bold; color: var(--primary);">المختارين: 0</small>
-                <button onclick="clearSelection()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.8rem; font-family:'Cairo'">إلغاء الكل</button>
-            </div>
-            
-            <button class="btn btn-primary" id="drawBtn" onclick="runTeamDraw()" style="background:var(--accent)">توزيع الفرق 🔥</button>
-            
-            <div id="drawLoader" class="hidden" style="text-align:center; margin: 20px 0;">
-                <p>🔄 جاري خلط الأوراق...</p>
-            </div>
-
+            <div id="firebasePlayersSelection" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;"></div>
+            <button class="btn btn-primary" id="drawBtn" onclick="runTeamDraw()">توزيع الفرق 🔥</button>
             <div id="teamsResults" style="margin-top:20px;"></div>
         </div>
     </div>
 
     <div id="page-admin" class="hidden">
-        <div style="text-align: left; margin-bottom: 15px;">
-            <button onclick="logout()" style="background:var(--danger); color:white; border:none; padding:8px 15px; border-radius:10px; cursor:pointer;">تسجيل خروج 🔒</button>
-        </div>
-        
-        <div class="card" style="border-right: 5px solid var(--primary);">
-            <h3>📝 تسجيل نتيجة جديدة</h3>
+        <div class="card">
+            <h3>📝 تسجيل نتيجة</h3>
             <input type="date" id="gameDate">
             <select id="playerSelect"></select>
             <div style="display: flex; gap: 10px;">
-                <input type="number" id="winCount" placeholder="فوز (+)" style="border-color:var(--success)">
-                <input type="number" id="lossCount" placeholder="خسارة (-)" style="border-color:var(--danger)">
+                <input type="number" id="winCount" placeholder="فوز (+)">
+                <input type="number" id="lossCount" placeholder="خسارة (-)">
             </div>
-            <button class="btn btn-primary" onclick="addRecord()">حفظ النتيجة</button>
+            <button class="btn btn-primary" onclick="addRecord()">حفظ</button>
         </div>
-
-        <div class="card" style="border-right: 5px solid var(--success);">
+        <div class="card">
             <h3>👤 إضافة لاعب</h3>
             <input type="text" id="newPlayerName" placeholder="الاسم">
-            <input type="url" id="newPlayerImg" placeholder="رابط الصورة (اختياري)">
-            <button class="btn btn-success" onclick="addPlayer()">إضافة للقائمة</button>
+            <input type="url" id="newPlayerImg" placeholder="رابط الصورة">
+            <button class="btn btn-success" onclick="addPlayer()">إضافة</button>
         </div>
-        
-        <div class="card" style="border-right: 5px solid var(--danger);">
-            <h3>⚠️ إعدادات القرعة</h3>
-            <p style="font-size:0.75rem; color:#666;">امسح ذاكرة المواجهات للسماح بتكرار الفرق مرة أخرى.</p>
-            <button class="btn" style="background:var(--danger); color:white;" onclick="resetMatchups()">تصفير ذاكرة المواجهات</button>
-        </div>
-
-        <div class="card">
-            <h3>🗑️ إدارة اللاعبين</h3>
-            <div id="adminPlayersList"></div>
-        </div>
+        <div id="adminPlayersList"></div>
+        <button class="btn btn-primary" style="background:var(--danger); margin-top:10px;" onclick="logout()">خروج</button>
     </div>
 </div>
 
 <div id="loginModal" class="modal-overlay">
     <div class="modal-box">
-        <h3>🔒 منطقة الإدارة</h3>
-        <p style="color:#666; font-size:0.9rem;">أدخل الرمز السري للمتابعة</p>
-        <input type="password" id="adminPassword" placeholder="••••" style="text-align:center; letter-spacing:5px;">
-        <button class="btn btn-primary" onclick="checkPassword()">دخول</button>
-        <button class="btn" style="margin-top:10px; background:white; color:#666" onclick="closeLogin()">إلغاء</button>
+        <h3>🔒 دخول الإدارة</h3>
+        <input type="password" id="adminPassword" placeholder="••••" style="text-align:center; padding:10px; width:80%;">
+        <button class="btn btn-primary" onclick="checkPassword()" style="margin-top:10px;">دخول</button>
+        <button class="btn" onclick="closeLogin()">إلغاء</button>
     </div>
 </div>
 
@@ -288,7 +140,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy, onSnapshot, where, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // إعدادات فايربيس
     const firebaseConfig = {
         apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
         authDomain: "koster-499c0.firebaseapp.com",
@@ -301,18 +152,15 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // متغيرات النظام
-    let playersData = {}; 
+    let playersData = {};
     let isAdminUnlocked = false;
     const ADMIN_PASS = "1234";
     let cachedStats = {}; 
     let cachedHistory = {};
     let selectedForDraw = [];
 
-    // تعيين التاريخ الافتراضي لليوم
     document.getElementById('gameDate').valueAsDate = new Date();
 
-    // --- وظائف التنقل والعرض ---
     window.switchTab = (pageId, elem) => {
         document.querySelectorAll('.container > div[id^="page-"]').forEach(d => d.classList.add('hidden'));
         document.getElementById(pageId).classList.remove('hidden');
@@ -323,11 +171,8 @@
     };
 
     window.requestAdmin = (elem) => { 
-        if(isAdminUnlocked) {
-            window.switchTab('page-admin', elem);
-        } else {
-            document.getElementById('loginModal').classList.add('active');
-        }
+        if(isAdminUnlocked) window.switchTab('page-admin', elem);
+        else document.getElementById('loginModal').classList.add('active');
     };
 
     window.checkPassword = () => {
@@ -335,82 +180,50 @@
             isAdminUnlocked = true;
             document.getElementById('loginModal').classList.remove('active');
             window.switchTab('page-admin', document.querySelectorAll('.nav-item')[4]);
-            renderHistory(cachedHistory); // تحديث الأرشيف ليظهر زر الحذف
-        } else { 
-            alert("رمز المرور خاطئ!"); 
-        }
+            renderHistory(cachedHistory);
+        } else { alert("خطأ!"); }
     };
 
-    window.logout = () => { 
-        isAdminUnlocked = false; 
-        document.getElementById('adminPassword').value = "";
-        renderHistory(cachedHistory); 
-        window.switchTab('page-home', document.querySelectorAll('.nav-item')[0]); 
-    };
-
+    window.logout = () => { isAdminUnlocked = false; window.switchTab('page-home', document.querySelectorAll('.nav-item')[0]); };
     window.closeLogin = () => document.getElementById('loginModal').classList.remove('active');
 
-    // --- نظام البروفايل المطور ---
-  // --- نظام البروفايل (نسخة بطل الأسبوع) ---
     window.showProfile = (playerName) => {
         const p = cachedStats[playerName];
         if (!p) return;
 
-        // 1. حساب عدد مرات تصدر الأسبوع (Weekly Champion)
-        let weeklyTitles = 0; // عدد المرات التي كان فيها الأول
-        let participatedWeeks = 0; // عدد الأسابيع التي حضرها
+        let weeklyTitles = 0;
+        let participatedWeeks = 0;
 
-        // نمر على كل تاريخ (كل أسبوع) في السجل
         Object.keys(cachedHistory).forEach(date => {
             const daysMatches = cachedHistory[date];
-            
-            // حساب مجموع نقاط كل اللاعبين في هذا التاريخ
             let dayScores = {};
             let playedThisWeek = false;
 
             daysMatches.forEach(m => {
                 if (!dayScores[m.name]) dayScores[m.name] = 0;
-                dayScores[m.name] += m.diff; // نجمع الفارق (النقاط)
+                dayScores[m.name] += m.diff;
                 if (m.name === playerName) playedThisWeek = true;
             });
 
             if (playedThisWeek) {
                 participatedWeeks++;
-                
-                // معرفة من هو صاحب أعلى رصيد في هذا التاريخ
-                let maxScore = -9999;
+                let maxScore = -999;
                 let topPlayer = "";
-                
                 Object.entries(dayScores).forEach(([name, score]) => {
-                    if (score > maxScore) {
-                        maxScore = score;
-                        topPlayer = name;
-                    }
+                    if (score > maxScore) { maxScore = score; topPlayer = name; }
                 });
-
-                // هل اللاعب الحالي هو المتصدر لهذا الأسبوع؟
-                if (topPlayer === playerName) {
-                    weeklyTitles++;
-                }
+                if (topPlayer === playerName) weeklyTitles++;
             }
         });
 
-        // 2. تحليل الأداء (آخر 5 مباريات)
         let allMatches = [];
         Object.keys(cachedHistory).forEach(date => {
-            cachedHistory[date].forEach(match => {
-                if (match.name === playerName) {
-                    allMatches.push({ ...match, date });
-                }
-            });
+            cachedHistory[date].forEach(match => { if (match.name === playerName) allMatches.push({ ...match, date }); });
         });
-        
-        // ترتيب زمني
         allMatches.sort((a, b) => new Date(a.date) - new Date(b.date));
         
         let last5 = [];
         let bestWin = 0;
-
         allMatches.forEach(m => {
             last5.push(m.diff > 0 ? 'W' : 'L');
             if (m.win > bestWin) bestWin = m.win;
@@ -418,82 +231,34 @@
 
         const recentForm = last5.slice(-5).reverse();
         const winRate = p.total > 0 ? ((p.win / p.total) * 100).toFixed(1) : 0;
-        
-        // حساب الترتيب العام
-        const allPlayers = Object.values(cachedStats).sort((a,b) => b.diff - a.diff);
-        const rank = allPlayers.findIndex(player => player.name === playerName) + 1;
+        const rank = Object.values(cachedStats).sort((a,b) => b.diff - a.diff).findIndex(x => x.name === playerName) + 1;
 
-        // بناء الواجهة
-        const content = document.getElementById('profileContent');
-        content.innerHTML = `
-            <div style="position:relative; margin-bottom:15px; display:inline-block;">
-                <img src="${playersData[playerName]}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:4px solid var(--primary); box-shadow:0 4px 15px rgba(0,0,0,0.1);">
-                <div style="position:absolute; bottom:5px; right:5px; background:var(--gold); color:black; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; border:2px solid white; font-size:0.9rem;">${rank}</div>
+        document.getElementById('profileContent').innerHTML = `
+            <img src="${playersData[playerName]}" style="width:80px; height:80px; border-radius:50%; border:3px solid var(--primary);">
+            <h2>${playerName} (المركز ${rank})</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0;">
+                <div style="background:#f0fdf4; padding:10px; border-radius:12px;">🏆 بطل الأسبوع: <b>${weeklyTitles}</b></div>
+                <div style="background:#f8fafc; padding:10px; border-radius:12px;">📊 نسبة الفوز: <b>${winRate}%</b></div>
             </div>
-            
-            <h2 style="margin:0; color:var(--primary); font-size:1.5rem;">${playerName}</h2>
-            <p style="font-size:0.75rem; color:#888; margin-bottom:15px;">حضر ${participatedWeeks} تجمع/أسبوع</p>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px;">
-                <div style="background:#f0fdf4; padding:10px; border-radius:15px; border:1px solid #dcfce7;">
-                    <small style="color:#15803d; display:block; font-weight:bold;">🏆 بطل الأسبوع</small>
-                    <b style="font-size:1.4rem; color:#15803d;">${weeklyTitles} <span style="font-size:0.8rem;">مرات</span></b>
-                </div>
-                <div style="background:#f8fafc; padding:10px; border-radius:15px; border:1px solid #edf2f7;">
-                    <small style="color:#64748b; display:block;">نسبة الفوز</small>
-                    <b style="font-size:1.2rem; color:var(--accent);">${winRate}%</b>
-                </div>
+            <div style="display:flex; gap:5px; justify-content:center; margin-bottom:15px;">
+                ${recentForm.map(r => `<div class="form-dot" style="background:${r==='W'?'#10b981':'#ef4444'}">${r}</div>`).join('')}
             </div>
-
-            <div style="text-align:right; margin-bottom:15px;">
-                <small style="color:#64748b; margin-bottom:8px; display:block;">فورمة آخر 5 مباريات:</small>
-                <div style="display:flex; gap:6px; justify-content:center; flex-direction:row-reverse;">
-                    ${recentForm.length > 0 ? recentForm.map(res => `
-                        <div class="form-dot" style="background:${res==='W'?'#10b981':'#ef4444'}">${res}</div>
-                    `).join('') : '<span style="color:#ccc;">لا توجد بيانات</span>'}
-                </div>
-            </div>
-
-            <div style="background:#f1f5f9; border-radius:15px; padding:15px; text-align:right; font-size:0.9rem;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <span>إجمالي الفوز:</span>
-                    <span style="font-weight:bold; color:#059669;">${p.win}</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <span>إجمالي الخسارة:</span>
-                    <span style="font-weight:bold; color:#ef4444;">${p.loss}</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; border-top:1px solid #cbd5e1; padding-top:8px; margin-top:8px;">
-                    <span>أعلى نتيجة (Game):</span>
-                    <span style="font-weight:bold; color:var(--primary);">${bestWin}</span>
-                </div>
-            </div>
-        `;
-
+            <div style="text-align:right; font-size:0.9rem; background:#f1f5f9; padding:10px; border-radius:10px;">
+                <div>فوز إجمالي: ${p.win}</div>
+                <div>خسارة إجمالية: ${p.loss}</div>
+                <div>أعلى قيم (Game): ${bestWin}</div>
+            </div>`;
         document.getElementById('profileModal').classList.add('active');
     };
 
-        document.getElementById('profileModal').classList.add('active');
-    };
+    window.closeProfile = () => document.getElementById('profileModal').classList.remove('active');
 
-    window.closeProfile = () => {
-        document.getElementById('profileModal').classList.remove('active');
-    };
-
-    // --- التعامل مع البيانات (CRUD) ---
     window.addPlayer = async () => {
         const name = document.getElementById('newPlayerName').value.trim();
         const img = document.getElementById('newPlayerImg').value.trim();
         if(!name) return;
-        const snap = await getDocs(query(collection(db, "players"), where("name", "==", name)));
-        if(!snap.empty) return alert("الاسم موجود بالفعل!");
-        
-        await addDoc(collection(db, "players"), { 
-            name, 
-            imageUrl: img || "https://cdn-icons-png.flaticon.com/512/847/847969.png" 
-        });
-        document.getElementById('newPlayerName').value = '';
-        alert("تمت الإضافة بنجاح");
+        await addDoc(collection(db, "players"), { name, imageUrl: img || "https://cdn-icons-png.flaticon.com/512/847/847969.png" });
+        alert("تم!");
     };
 
     window.addRecord = async () => {
@@ -501,118 +266,61 @@
         const date = document.getElementById('gameDate').value;
         const win = parseInt(document.getElementById('winCount').value) || 0;
         const loss = parseInt(document.getElementById('lossCount').value) || 0;
-        
-        if(!name || !date) return alert("الرجاء تعبئة البيانات");
-        
-        await addDoc(collection(db, "game_records"), { 
-            name, date, win, loss, 
-            diff: win - loss, 
-            total: win + loss 
-        });
-        
-        document.getElementById('winCount').value = '';
-        document.getElementById('lossCount').value = '';
-        alert("تم حفظ النتيجة");
+        if(!name || !date) return alert("نقص بيانات");
+        await addDoc(collection(db, "game_records"), { name, date, win, loss, diff: win - loss, total: win + loss });
+        alert("تم الحفظ");
     };
 
-    // --- الاستماع للبيانات الحية (Realtime Listeners) ---
-    // 1. اللاعبين
     onSnapshot(collection(db, "players"), (snap) => {
         const select = document.getElementById('playerSelect');
         const adminList = document.getElementById('adminPlayersList');
-        
-        select.innerHTML = '<option value="">اختر لاعباً...</option>';
+        select.innerHTML = '<option value="">اختر...</option>';
         adminList.innerHTML = "";
-        playersData = {};
-        
         snap.forEach(d => {
             const p = d.data();
-            const imgUrl = p.imageUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png";
-            playersData[p.name] = imgUrl;
-            
+            playersData[p.name] = p.imageUrl;
             select.innerHTML += `<option value="${p.name}">${p.name}</option>`;
-            
-            // قائمة المدير
-            adminList.innerHTML += `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #eee">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <img src="${imgUrl}" style="width:30px; height:30px; border-radius:50%">
-                        <span>${p.name}</span>
-                    </div>
-                    <button class="btn" style="width:auto; padding:5px 12px; font-size:0.8rem; background:#fee2e2; color:#ef4444;" onclick="deleteFullPlayer('${d.id}', '${p.name}')">حذف</button>
-                </div>`;
+            adminList.innerHTML += `<div style="display:flex; justify-content:space-between; padding:5px;"><span>${p.name}</span> <button onclick="deleteFullPlayer('${d.id}', '${p.name}')">حذف</button></div>`;
         });
-        
-        // إعادة جلب السجلات لتحديث الصور
         fetchRecords();
     });
 
-    // 2. السجلات
     function fetchRecords() {
         onSnapshot(query(collection(db, "game_records"), orderBy("date", "desc")), (snap) => {
-            let stats = {}; 
-            let history = {};
-            
+            let stats = {}; let history = {};
             snap.forEach(d => {
                 const r = d.data();
-                
-                // تجميع الإحصائيات
                 if (!stats[r.name]) stats[r.name] = { name: r.name, win: 0, loss: 0, diff: 0, total: 0 };
-                stats[r.name].win += r.win;
-                stats[r.name].loss += r.loss;
-                stats[r.name].diff += r.diff;
-                stats[r.name].total += r.total;
-                
-                // تجميع التاريخ
+                stats[r.name].win += r.win; stats[r.name].loss += r.loss; stats[r.name].diff += r.diff; stats[r.name].total += r.total;
                 if (!history[r.date]) history[r.date] = [];
                 history[r.date].push({ ...r, id: d.id });
             });
-            
-            cachedStats = stats; 
-            cachedHistory = history;
-            
-            renderHome(stats);
-            renderHistory(history);
-            renderBadges(stats);
+            cachedStats = stats; cachedHistory = history;
+            renderHome(stats); renderHistory(history); renderBadges(stats);
         });
     }
 
-    // --- دوال الرسم (Rendering) ---
     function renderHome(stats) {
         const sorted = Object.values(stats).sort((a,b) => b.diff - a.diff);
         const podium = document.getElementById('podiumUI');
         const list = document.getElementById('leaderboardList');
-        
-        podium.innerHTML = ""; 
-        list.innerHTML = "";
-
-        // رسم المنصة (3 أوائل)
+        podium.innerHTML = ""; list.innerHTML = "";
         [1, 0, 2].forEach(idx => {
             if(sorted[idx]) {
                 const p = sorted[idx];
-                podium.innerHTML += `
-                    <div class="podium-item rank-${idx+1}" onclick="showProfile('${p.name}')">
-                        <img src="${playersData[p.name]}" class="podium-avatar">
-                        <div class="podium-rank">
-                            <span style="font-size:1.2rem">${p.diff}</span>
-                            <small>${p.name}</small>
-                        </div>
-                    </div>`;
+                podium.innerHTML += `<div class="podium-item rank-${idx+1}" onclick="showProfile('${p.name}')">
+                    <img src="${playersData[p.name]}" class="podium-avatar">
+                    <div class="podium-rank"><span>${p.diff}</span><small>${p.name}</small></div>
+                </div>`;
             }
         });
-
-        // رسم القائمة
         sorted.forEach((p, i) => {
-            list.innerHTML += `
-                <div class="player-row" onclick="showProfile('${p.name}')">
-                    <div style="width:25px; font-weight:bold; color:#cbd5e1; text-align:center;">${i+1}</div>
-                    <img src="${playersData[p.name]}" class="list-avatar">
-                    <div style="flex:1">
-                        <b style="font-size:0.95rem;">${p.name}</b>
-                        <div style="font-size:0.7rem; color:#64748b;">لعب: ${p.total} | فاز: ${p.win}</div>
-                    </div>
-                    <div class="list-score ${p.diff>=0?'score-pos':'score-neg'}">${p.diff > 0 ? '+'+p.diff : p.diff}</div>
-                </div>`;
+            list.innerHTML += `<div class="player-row" onclick="showProfile('${p.name}')">
+                <div style="width:25px;">${i+1}</div>
+                <img src="${playersData[p.name]}" class="list-avatar">
+                <div style="flex:1"><b>${p.name}</b></div>
+                <div class="list-score ${p.diff>=0?'score-pos':'score-neg'}">${p.diff}</div>
+            </div>`;
         });
     }
 
@@ -620,194 +328,47 @@
         const players = Object.values(stats);
         const container = document.getElementById('badgesContainer');
         container.innerHTML = "";
-        
-        if(players.length === 0) {
-            container.innerHTML = "<p style='text-align:center'>لا توجد بيانات كافية</p>";
-            return;
-        }
-
+        if(players.length === 0) return;
         const king = [...players].sort((a,b) => b.diff - a.diff)[0];
-        const warrior = [...players].sort((a,b) => b.total - a.total)[0];
-        const unlucky = [...players].sort((a,b) => b.loss - a.loss)[0];
-        const rock = [...players].filter(p => p.total >= 3).sort((a,b) => a.loss - b.loss)[0]; // أقل خسارة (بشرط لعب 3 مباريات)
-
-        const createBadge = (icon, title, p, val, label) => `
-            <div class="badge-item" onclick="showProfile('${p.name}')">
-                <div class="badge-icon">${icon}</div>
-                <img src="${playersData[p.name]}" class="badge-img">
-                <div class="badge-info">
-                    <span class="badge-title">${title}</span>
-                    <span class="badge-name">${p.name}</span><br>
-                    <span class="badge-value">${val} ${label}</span>
-                </div>
-            </div>`;
-
-        if(king) container.innerHTML += createBadge("👑", "ملك الدومنة (المتصدر)", king, king.diff, "نقطة");
-        if(warrior) container.innerHTML += createBadge("⚔️", "المحارب (الأكثر لعباً)", warrior, warrior.total, "مباراة");
-        if(unlucky) container.innerHTML += createBadge("🧨", "المنحوس (الأكثر خسارة)", unlucky, unlucky.loss, "خسارة");
-        if(rock) container.innerHTML += createBadge("🛡️", "الجبل (الأقل خسارة)", rock, rock.loss, "خسارة");
+        if(king) container.innerHTML += `<div class="badge-item">👑 <div class="badge-info"><span class="badge-title">ملك الدومنة</span><span>${king.name}</span></div></div>`;
     }
 
     function renderHistory(history) {
         const container = document.getElementById('historyByDateList');
         container.innerHTML = "";
-        
         Object.keys(history).sort().reverse().forEach(date => {
             container.innerHTML += `<div class="date-header">📅 ${date}</div>`;
             history[date].forEach(r => {
-                const deleteBtn = isAdminUnlocked ? 
-                    `<span onclick="deleteRecord('${r.id}')" style="color:#ef4444; margin-left:10px; cursor:pointer;">✕</span>` : '';
-                
-                container.innerHTML += `
-                    <div class="history-item">
-                        <span>${deleteBtn} <b>${r.name}</b></span>
-                        <span>
-                            <span style="color:#10b981; font-weight:bold;">+${r.win}</span> 
-                            <span style="color:#ef4444; font-weight:bold; margin-right:5px;">-${r.loss}</span>
-                        </span>
-                    </div>`;
+                container.innerHTML += `<div class="history-item"><span>${r.name}</span><span>+${r.win} / -${r.loss}</span></div>`;
             });
         });
     }
 
-    // --- وظائف الحذف ---
-    window.deleteRecord = async (id) => { 
-        if(confirm("هل أنت متأكد من حذف هذا السجل؟")) await deleteDoc(doc(db, "game_records", id)); 
-    };
-    
-    window.deleteFullPlayer = async (id, name) => {
-        if(confirm(`تحذير: سيتم حذف اللاعب ${name} وجميع نتائجه المسجلة!\nهل أنت متأكد؟`)) {
-            // حذف اللاعب
-            await deleteDoc(doc(db, "players", id));
-            
-            // حذف سجلاته
-            const snap = await getDocs(query(collection(db, "game_records"), where("name", "==", name)));
-            const batch = writeBatch(db);
-            snap.forEach(d => batch.delete(d.ref));
-            await batch.commit();
-            alert("تم الحذف بنجاح");
-        }
-    };
-
-    // --- منطق القرعة الذكي ---
     window.updateSelectionList = () => {
         const container = document.getElementById('firebasePlayersSelection');
-        if (!container) return;
         container.innerHTML = "";
-        
         Object.keys(playersData).sort().forEach(name => {
             const isChecked = selectedForDraw.includes(name);
             const div = document.createElement('div');
-            div.style = `display:flex; align-items:center; gap:8px; background:${isChecked?'var(--primary)':'white'}; color:${isChecked?'white':'var(--text)'}; padding:8px 12px; border-radius:12px; cursor:pointer; border:1px solid #e2e8f0; transition:0.2s`;
+            div.style = `padding:8px; border-radius:10px; cursor:pointer; border:1px solid #ccc; background:${isChecked?'var(--primary)':'#fff'}; color:${isChecked?'#fff':'#000'}`;
+            div.innerText = name;
             div.onclick = () => {
-                const idx = selectedForDraw.indexOf(name);
-                if (idx > -1) selectedForDraw.splice(idx, 1); else selectedForDraw.push(name);
+                const i = selectedForDraw.indexOf(name);
+                if(i > -1) selectedForDraw.splice(i, 1); else selectedForDraw.push(name);
                 updateSelectionList();
             };
-            div.innerHTML = `<img src="${playersData[name]}" style="width:25px; height:25px; border-radius:50%; object-fit:cover;"> <span style="font-size:0.85rem; font-weight:bold;">${name}</span>`;
             container.appendChild(div);
         });
-        document.getElementById('selectedCount').innerText = `المختارين: ${selectedForDraw.length}`;
     };
 
-    window.clearSelection = () => { selectedForDraw = []; updateSelectionList(); };
-
-    window.runTeamDraw = async () => {
-        if (selectedForDraw.length < 2) return alert("اختر لاعبين اثنين على الأقل!");
-        
-        const loader = document.getElementById('drawLoader');
-        const results = document.getElementById('teamsResults');
-        const btn = document.getElementById('drawBtn');
-
-        results.innerHTML = "";
-        loader.classList.remove('hidden');
-        btn.disabled = true;
-
-        try {
-            const pastSnap = await getDocs(collection(db, "past_matchups"));
-            let pastMatchups = [];
-            pastSnap.forEach(d => pastMatchups.push(d.data().pair));
-
-            let shuffled;
-            let attempts = 0;
-            let foundNewMatchup = false;
-            let currentPairs = [];
-
-            // محاولة إيجاد تشكيلة جديدة (بحد أقصى 15 محاولة)
-            while (attempts < 15 && !foundNewMatchup) {
-                shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
-                currentPairs = [];
-                let isRepeated = false;
-
-                for (let i = 0; i < shuffled.length; i += 2) {
-                    if (shuffled[i+1]) {
-                        // ترتيب الأسماء أبجدياً للتخزين
-                        let pair = [shuffled[i], shuffled[i+1]].sort().join("_vs_");
-                        if (pastMatchups.includes(pair)) {
-                            isRepeated = true;
-                            break;
-                        }
-                        currentPairs.push(pair);
-                    }
-                }
-
-                if (!isRepeated) foundNewMatchup = true;
-                attempts++;
-            }
-
-            // حفظ المواجهات الجديدة
-            if (currentPairs.length > 0) {
-                const batch = writeBatch(db);
-                currentPairs.forEach(pair => {
-                    const newRef = doc(collection(db, "past_matchups"));
-                    batch.set(newRef, { pair: pair, timestamp: Date.now() });
-                });
-                await batch.commit();
-            }
-
-            loader.classList.add('hidden');
-            btn.disabled = false;
-
-            let html = `<h4 style="text-align:center; color:var(--accent); margin-bottom:15px;">الفرق النهائية 🎲</h4>`;
-            if (attempts >= 15) html += `<p style="text-align:center; font-size:0.7rem; color:red; margin-top:-10px;">(ملاحظة: تم تكرار بعض الفرق)</p>`;
-            
-            for (let i = 0; i < shuffled.length; i += 2) {
-                let p1 = shuffled[i], p2 = shuffled[i+1];
-                html += `
-                    <div class="badge-item" style="justify-content:space-between; background:white; border-right:5px solid var(--accent); margin-bottom:10px; padding:10px 15px; cursor:default;">
-                        <div style="text-align:center; width:40%;">
-                            <img src="${playersData[p1]}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; margin-bottom:5px;">
-                            <div style="font-size:0.8rem; font-weight:bold;">${p1}</div>
-                        </div>
-                        <div style="font-weight:900; color:#cbd5e1; font-size:1.2rem;">VS</div>
-                        <div style="text-align:center; width:40%;">
-                            ${p2 ? `
-                                <img src="${playersData[p2]}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; margin-bottom:5px;">
-                                <div style="font-size:0.8rem; font-weight:bold;">${p2}</div>
-                            ` : '<div style="color:#999; font-size:0.8rem; line-height:40px;">انتظار</div>'}
-                        </div>
-                    </div>`;
-            }
-            results.innerHTML = html;
-            results.scrollIntoView({ behavior: 'smooth' });
-
-        } catch (error) {
-            console.error(error);
-            alert("حدث خطأ في الاتصال");
-            loader.classList.add('hidden');
-            btn.disabled = false;
+    window.runTeamDraw = () => {
+        if(selectedForDraw.length < 2) return;
+        const shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
+        let html = "";
+        for(let i=0; i<shuffled.length; i+=2) {
+            html += `<div class="card">${shuffled[i]} 🆚 ${shuffled[i+1] || 'انتظار'}</div>`;
         }
-    };
-
-    window.resetMatchups = async () => {
-        if (!isAdminUnlocked) return;
-        if (confirm("هل أنت متأكد؟ سيتم حذف ذاكرة القرعة والسماح بتكرار الفرق.")) {
-            const snap = await getDocs(collection(db, "past_matchups"));
-            const batch = writeBatch(db);
-            snap.forEach(d => batch.delete(d.ref));
-            await batch.commit();
-            alert("تم تصفير الذاكرة!");
-        }
+        document.getElementById('teamsResults').innerHTML = html;
     };
 </script>
 </body>
