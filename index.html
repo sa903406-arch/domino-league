@@ -93,7 +93,29 @@
             <div id="historyByDateList"></div>
         </div>
     </div>
+<div id="page-teams" class="hidden">
+        <div class="card" style="border-right: 5px solid var(--accent);">
+            <h3>🎲 اختيار لاعبي القرعة</h3>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">حدد اللاعبين الحاضرين الآن:</p>
+            
+            <div id="firebasePlayersSelection" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 250px; overflow-y: auto; padding: 10px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 15px; background: #fafafa;">
+                <p style="grid-column: 1/-1; text-align: center; color: #999;">جاري جلب اللاعبين...</p>
+            </div>
 
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <small id="selectedCount" style="font-weight: bold; color: var(--primary);">المختارين: 0</small>
+                <button onclick="clearSelection()" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.8rem; font-family:'Cairo'">إلغاء التحديد ×</button>
+            </div>
+            
+            <button class="btn btn-primary" id="drawBtn" onclick="runTeamDraw()" style="background:var(--accent)">بدء توزيع الفرق 🔥</button>
+            
+            <div id="drawLoader" class="hidden" style="text-align:center; margin: 20px 0;">
+                <p>🔄 جاري خلط الأوراق...</p>
+            </div>
+
+            <div id="teamsResults" style="margin-top:20px;"></div>
+        </div>
+    </div>
     <div id="page-admin" class="hidden">
         <div style="text-align: left; margin-bottom: 10px;">
             <button onclick="logout()" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;">خروج 🔒</button>
@@ -133,6 +155,7 @@
 <nav class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('page-home', this)"><i>🏠</i><span>الرئيسية</span></div>
     <div class="nav-item" onclick="switchTab('page-stats', this)"><i>🏅</i><span>الأوسمة</span></div>
+    <div class="nav-item" onclick="switchTab('page-teams', this)"><i>🎲</i><span>القرعة</span></div>
     <div class="nav-item" onclick="switchTab('page-history', this)"><i>📅</i><span>الأرشيف</span></div>
     <div class="nav-item" onclick="requestAdmin(this)"><i>⚙️</i><span>الإدارة</span></div>
 </nav>
@@ -302,6 +325,113 @@
             await batch.commit();
         }
     };
+    // --- برمجة صفحة القرعة والربط مع Firebase ---
+
+    // 1. مصفوفة لتخزين اللاعبين الذين تختارهم للقرعة
+    let selectedForDraw = [];
+
+    // 2. وظيفة لتوليد قائمة اللاعبين من Firebase داخل صفحة القرعة
+    window.updateSelectionList = () => {
+        const container = document.getElementById('firebasePlayersSelection');
+        if (!container) return;
+        
+        // مسح القائمة الحالية قبل إعادة بنائها
+        container.innerHTML = "";
+        
+        // استخدام playersData (المتغير الموجود أصلاً في كودك والذي يحتوي على بيانات اللاعبين)
+        Object.keys(playersData).sort().forEach(playerName => {
+            const isChecked = selectedForDraw.includes(playerName);
+            
+            const card = document.createElement('div');
+            // تغيير ستايل البطاقة بناءً على ما إذا كانت مختارة أم لا
+            card.style = `
+                display:flex; align-items:center; gap:8px; 
+                background:${isChecked ? 'var(--primary)' : 'white'}; 
+                color:${isChecked ? 'white' : 'var(--text)'}; 
+                padding:10px; border-radius:12px; cursor:pointer; 
+                border: 1px solid ${isChecked ? 'var(--primary)' : '#eee'}; 
+                transition: 0.3s ease;
+                box-shadow: ${isChecked ? '0 4px 10px rgba(0,0,0,0.2)' : 'none'};
+            `;
+
+            card.onclick = () => {
+                const index = selectedForDraw.indexOf(playerName);
+                if (index > -1) {
+                    selectedForDraw.splice(index, 1); // إلغاء الاختيار
+                } else {
+                    selectedForDraw.push(playerName); // إضافة للاختيار
+                }
+                updateSelectionList(); // إعادة التحديث فوراً
+            };
+            
+            card.innerHTML = `
+                <img src="${playersData[playerName]}" style="width:30px; height:30px; border-radius:50%; object-fit:cover; border:1px solid #fff;">
+                <span style="font-size:0.85rem; font-weight:bold;">${playerName}</span>
+            `;
+            container.appendChild(card);
+        });
+        
+        // تحديث الرقم في الأسفل
+        document.getElementById('selectedCount').innerText = `المختارين: ${selectedForDraw.length}`;
+    };
+
+    // 3. تعديل وظيفة التبديل بين الصفحات (switchTab)
+    // لكي يتم تحديث قائمة الأسماء بمجرد الضغط على زر "القرعة"
+    const originalSwitchTab = window.switchTab;
+    window.switchTab = (pageId, elem) => {
+        originalSwitchTab(pageId, elem); // تشغيل الوظيفة الأصلية (إخفاء وإظهار الصفحات)
+        if (pageId === 'page-teams') {
+            updateSelectionList(); // إذا كانت الصفحة المختارة هي القرعة، حدّث القائمة
+        }
+    };
+
+    // 4. وظيفة مسح جميع الاختيارات
+    window.clearSelection = () => {
+        selectedForDraw = [];
+        updateSelectionList();
+    };
+
+    // 5. وظيفة إجراء القرعة (الخلط العشوائي)
+    window.runTeamDraw = async () => {
+        if (selectedForDraw.length < 2) {
+            alert("يرجى اختيار لاعبين اثنين على الأقل من القائمة!");
+            return;
+        }
+        
+        const loader = document.getElementById('drawLoader');
+        const results = document.getElementById('teamsResults');
+        const btn = document.getElementById('drawBtn');
+
+        // تجهيز الواجهة
+        results.innerHTML = "";
+        loader.classList.remove('hidden');
+        btn.disabled = true;
+
+        // تأثير الحماس (انتظار لمدة ثانية ونصف)
+        await new Promise(r => setTimeout(r, 1500));
+
+        loader.classList.add('hidden');
+        btn.disabled = false;
+
+        // خلط المصفوفة عشوائياً
+        let shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
+        
+        let html = `<h4 style="text-align:center; color:var(--primary); margin:20px 0;">الفرق المختارة 🏆</h4>`;
+        
+        for (let i = 0; i < shuffled.length; i += 2) {
+            let p1 = shuffled[i];
+            let p2 = shuffled[i+1]; // قد يكون فارغاً إذا كان العدد فردياً
+            
+            html += `
+                <div class="badge-item" style="background:var(--white); border:1px solid #eee; border-right:6px solid var(--accent); margin-bottom:12px; padding:15px; display:flex; justify-content:space-around; align-items:center;">
+                    <div style="text-align:center; width:40%;">
+                        <img src="${playersData[p1]}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; margin-bottom:5px;">
+                        <div style="font-weight:bold; font-size:0.9rem;">${p1}</div>
+                    </div>
+                    <div style="font-weight:900; color:var(--accent); font-size:1.2rem;">VS</div>
+                    <div style="text-align:center; width:40%;">
+                        ${p2 ? `
+                            <img src="${playersData[p2]}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;
 </script>
 </body>
 </html>
