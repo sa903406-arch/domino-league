@@ -27,8 +27,25 @@
         h3 { color: var(--primary); margin: 0 0 20px; display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: 900; }
 
         /* البروفايل المذهل */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
+      /* ابحث عن modal-overlay واستبدله بهذا */
+.modal-overlay { 
+    position: fixed; 
+    inset: 0; 
+    background: rgba(15, 23, 42, 0.9); 
+    backdrop-filter: blur(15px); 
+    z-index: 2000; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    opacity: 0; 
+    pointer-events: none; /* هام جداً لإلغاء تجميد الصفحة */
+    transition: 0.4s; 
+}
+
+.modal-overlay.active { 
+    opacity: 1; 
+    pointer-events: all; /* يسمح باللمس فقط عند الظهور */
+}
         .modal-box { background: white; width: 90%; max-width: 420px; border-radius: 40px; overflow: hidden; position: relative; transform: translateY(50px); transition: 0.4s; }
         .modal-overlay.active .modal-box { transform: translateY(0); }
 
@@ -207,61 +224,53 @@
     };
 
     // --- منطق البروفايل ---
-    window.showProfile = (name) => {
-        const p = cachedStats[name]; if(!p) return;
-        
-        let weeklyTitles = 0;
-        Object.keys(cachedHistory).forEach(date => {
-            let dayScores = {};
-            cachedHistory[date].forEach(m => dayScores[m.name] = (dayScores[m.name]||0) + m.diff);
-            let top = Math.max(...Object.values(dayScores));
-            if(dayScores[name] === top && top > 0) weeklyTitles++;
-        });
+// 1. دالة عرض البروفايل المحدثة
+window.showProfile = (name) => {
+    const p = cachedStats[name]; 
+    if (!p) return;
 
-        let historyArray = [];
-        Object.keys(cachedHistory).sort().forEach(d => {
-            cachedHistory[d].forEach(m => { if(m.name === name) historyArray.push(m); });
-        });
-        const last5 = historyArray.slice(-5).reverse();
-        const peakWin = Math.max(...historyArray.map(m => m.win), 0);
-        const winRate = p.total > 0 ? ((p.win/p.total)*100).toFixed(0) : 0;
+    const modal = document.getElementById('profileModal');
+    const content = document.getElementById('profileContent');
+    
+    // أهم سطر: تنظيف محتوى النافذة القديم تماماً قبل بناء الجديد
+    content.innerHTML = ""; 
 
-        document.getElementById('profileContent').innerHTML = `
-            <div class="pro-profile-header">
-                <div class="pro-img-wrapper">
-                    <img src="${playersData[name]}" class="pro-img">
-                    <div class="pro-rank-tag">لاعب محترف</div>
-                </div>
-                <h2 style="margin:15px 0 5px; font-weight:900;">${name}</h2>
-                <div style="font-size:0.85rem; opacity:0.9;">عضو منذ بداية الموسم</div>
-            </div>
-            
-            <div class="pro-stats-grid">
-                <div class="pro-stat-card"><span class="pro-stat-value" style="color:#fbbf24;">${weeklyTitles}</span><span class="pro-stat-label">🏆 ألقاب الأسبوع</span></div>
-                <div class="pro-stat-card"><span class="pro-stat-value" style="color:var(--success);">${winRate}%</span><span class="pro-stat-label">📈 نسبة الفوز</span></div>
-                <div class="pro-stat-card"><span class="pro-stat-value">${p.diff}</span><span class="pro-stat-label">📊 صافي النقاط</span></div>
-                <div class="pro-stat-card"><span class="pro-stat-value" style="color:var(--accent);">${peakWin}</span><span class="pro-stat-label">🔥 أعلى سكور</span></div>
-            </div>
+    // جلب بيانات الفورمة والأداء
+    let historyArray = [];
+    Object.keys(cachedHistory).sort().forEach(d => {
+        cachedHistory[d].forEach(m => { if(m.name === name) historyArray.push(m); });
+    });
+    const last5 = historyArray.slice(-5).reverse();
+    const peakWin = historyArray.length > 0 ? Math.max(...historyArray.map(m => m.win)) : 0;
 
-            <div class="form-container">
-                <span style="font-size:0.75rem; font-weight:900; color:#64748b; display:block; margin-bottom:10px;">تحليل الفورمة (آخر 5 مباريات)</span>
-                <div class="form-dots">
-                    ${last5.length > 0 ? last5.map(m => `
-                        <div class="form-dot" style="background:${m.diff > 0 ? 'var(--success)' : 'var(--danger)'}">
-                            ${m.diff > 0 ? 'W' : 'L'}
-                        </div>
-                    `).join('') : '<span style="color:#cbd5e1;">لا توجد بيانات</span>'}
-                </div>
+    // بناء واجهة البروفايل داخل النافذة
+    content.innerHTML = `
+        <div class="pro-profile-header" style="background: linear-gradient(to bottom, var(--primary), var(--secondary)); padding: 30px; text-align: center; color: white;">
+            <img src="${playersData[name]}" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid white; object-fit: cover;">
+            <h2 style="margin-top:10px;">${name}</h2>
+        </div>
+        <div class="pro-stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 20px;">
+            <div class="pro-stat-card" style="text-align:center; padding:10px; background:#f8fafc; border-radius:15px;">
+                <b style="display:block; font-size:1.2rem;">${p.diff}</b><small>النقاط</small>
             </div>
+            <div class="pro-stat-card" style="text-align:center; padding:10px; background:#f8fafc; border-radius:15px;">
+                <b style="display:block; font-size:1.2rem;">${peakWin}</b><small>أعلى سكور</small>
+            </div>
+        </div>
+        <div style="padding: 0 20px 20px; text-align: center;">
+            <small style="color: #64748b;">آخر 5 مباريات</small>
+            <div style="display: flex; justify-content: center; gap: 5px; margin-top: 5px;">
+                ${last5.map(m => `<div style="width:25px; height:25px; border-radius:50%; color:white; font-size:0.7rem; display:flex; align-items:center; justify-content:center; background:${m.diff > 0 ? 'var(--success)' : 'var(--danger)'}">${m.diff > 0 ? 'W' : 'L'}</div>`).join('')}
+            </div>
+        </div>`;
 
-            <div style="padding:0 25px 25px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <div style="background:#f1f5f9; padding:10px; border-radius:15px; text-align:center;"><small>فوز: ${p.win}</small></div>
-                <div style="background:#f1f5f9; padding:10px; border-radius:15px; text-align:center;"><small>خسارة: ${p.loss}</small></div>
-            </div>
-        `;
-        document.getElementById('profileModal').classList.add('active');
-    };
-    window.closeProfile = () => document.getElementById('profileModal').classList.remove('active');
+    modal.classList.add('active'); // إظهار النافذة
+};
+
+// 2. دالة إغلاق البروفايل
+window.closeProfile = () => {
+    document.getElementById('profileModal').classList.remove('active');
+};
 
     // --- المقارنة ---
     window.runComparison = () => {
