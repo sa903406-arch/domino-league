@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>دوري الدومنة الملكي | Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3c72; --secondary: #2a5298; --gold: #FFD700; 
+            --bg: #f3f4f6; --white: #ffffff; --text: #1f2937;
+            --danger: #ef4444; --success: #10b981; --accent: #8e44ad;
+        }
+        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; user-select: none; }
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: var(--white); padding: 30px 20px 50px; text-align: center; border-radius: 0 0 40px 40px; }
+        .container { max-width: 500px; margin: -40px auto 0; padding: 0 15px; }
+        .card { background: var(--white); border-radius: 25px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        /* تصميم الأوسمة الجديد */
+        .badge-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-radius: 20px; background: white; margin-bottom: 12px; border: 1px solid #eef2f6; cursor: pointer; transition: 0.3s; }
+        .badge-item:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .badge-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #f1f5f9; }
+        .badge-info { flex: 1; }
+        .badge-title { font-weight: 900; color: var(--primary); font-size: 1rem; display: block; }
+        .badge-label { font-size: 0.75rem; color: white; background: var(--accent); padding: 2px 10px; border-radius: 20px; display: inline-block; margin-top: 5px; }
+
+        /* البروفايل */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box { background: white; padding: 30px; border-radius: 35px; width: 85%; max-width: 400px; text-align: center; }
+
+        /* الترتيب */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; height: 180px; margin-bottom: 25px; gap: 10px; }
+        .podium-item { display: flex; flex-direction: column; align-items: center; width: 30%; cursor: pointer; }
+        .podium-avatar { width: 60px; height: 60px; border-radius: 50%; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); z-index: 2; margin-bottom: -15px; object-fit: cover; }
+        .podium-rank { width: 100%; border-radius: 20px 20px 10px 10px; color: white; font-weight: bold; padding: 25px 0 10px; text-align: center; font-size: 1.2rem; }
+        .rank-1 .podium-rank { height: 110px; background: linear-gradient(#FFD700, #f39c12); }
+        .rank-2 .podium-rank { height: 85px; background: linear-gradient(#bdc3c7, #95a5a6); }
+        .rank-3 .podium-rank { height: 65px; background: linear-gradient(#e67e22, #d35400); }
+
+        .player-row { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9; cursor: pointer; }
+        .list-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin-left: 12px; }
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 15px 0 30px; border-top: 1px solid #eee; z-index: 100; border-radius: 25px 25px 0 0; }
+        .nav-item { text-align: center; color: #94a3b8; font-size: 0.75rem; cursor: pointer; }
+        .nav-item.active { color: var(--primary); font-weight: 900; }
+        .nav-item i { display: block; font-size: 1.6rem; margin-bottom: 3px; font-style: normal; }
+
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; font-family: 'Cairo'; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; }
+        .hidden { display: none !important; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-family: 'Cairo'; margin-bottom: 10px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+<header><h1 style="margin:0;">🏆 دوري الدومنة الملكي</h1></header>
+
+<div class="container">
+    <div id="profileModal" class="modal-overlay" onclick="closeProfile()">
+        <div class="modal-box" onclick="event.stopPropagation()"><div id="profileContent"></div></div>
+    </div>
+
+    <div id="page-home">
+        <div class="podium-container" id="podiumUI"></div>
+        <div class="card"><h3>📊 الترتيب العام</h3><div id="leaderboardList"></div></div>
+    </div>
+
+    <div id="page-stats" class="hidden">
+        <div class="card">
+            <h3>⚔️ مقارنة العمالقة</h3>
+            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <select id="comp1"></select><select id="comp2"></select>
+            </div>
+            <button class="btn btn-primary" style="background:var(--accent)" onclick="runComparison()">قارن الأداء ⚔️</button>
+            <div id="compResult" style="margin-top:15px;"></div>
+        </div>
+        <div class="card"><h3>🏅 لوحة الشرف</h3><div id="badgesContainer"></div></div>
+    </div>
+
+    <div id="page-teams" class="hidden">
+        <div class="card">
+            <h3>🎲 قرعة ذكية (ضد التكرار)</h3>
+            <div id="drawSelectUI" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;"></div>
+            <button class="btn btn-primary" onclick="runSmartDraw()">سحب الفرق 🔥</button>
+            <button class="btn" style="margin-top:10px; background:#f1f5f9; font-size:0.8rem;" onclick="resetMatchups()">تصفير ذاكرة القرعة ⚙️</button>
+            <div id="drawResults" style="margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <div id="page-admin" class="hidden">
+        <div class="card">
+            <h3>📝 تسجيل نتيجة</h3>
+            <input type="date" id="gameDate">
+            <select id="playerSelect"></select>
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="winInp" placeholder="فوز">
+                <input type="number" id="lossInp" placeholder="خسارة">
+            </div>
+            <button class="btn btn-primary" onclick="addRecord()">حفظ النتيجة</button>
+        </div>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('page-home', this)"><i>🏠</i>الرئيسية</div>
+    <div class="nav-item" onclick="switchTab('page-stats', this)"><i>🏅</i>الأوسمة</div>
+    <div class="nav-item" onclick="switchTab('page-teams', this)"><i>🎲</i>القرعة</div>
+    <div class="nav-item" onclick="requestAdmin(this)"><i>⚙️</i>الإدارة</div>
+</nav>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, query, orderBy, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
+        authDomain: "koster-499c0.firebaseapp.com",
+        projectId: "koster-499c0",
+        storageBucket: "koster-499c0.firebasestorage.app",
+        messagingSenderId: "170205849470",
+        appId: "1:170205849470:web:7133888e3051c7ab47b52f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let playersData = {}; let cachedStats = {}; let cachedHistory = {};
+    let selectedDraw = []; let isAdmin = false;
+
+    window.switchTab = (id, el) => {
+        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+        if(id === 'page-teams') renderDrawSelect();
+    };
+
+    // --- البروفايل وبطل الأسبوع ---
+    window.showProfile = (name) => {
+        const p = cachedStats[name]; if(!p) return;
+        let titles = 0;
+        Object.keys(cachedHistory).forEach(date => {
+            let dayScores = {};
+            cachedHistory[date].forEach(m => { dayScores[m.name] = (dayScores[m.name]||0) + m.diff; });
+            let top = Math.max(...Object.values(dayScores));
+            if(dayScores[name] === top && top > 0) titles++;
+        });
+
+        document.getElementById('profileContent').innerHTML = `
+            <img src="${playersData[name]}" style="width:100px; height:100px; border-radius:50%; border:4px solid var(--primary); object-fit:cover; margin-bottom:10px;">
+            <h2 style="margin:0;">${name}</h2>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:20px 0;">
+                <div style="background:#fffbeb; padding:15px; border-radius:20px; border:1px solid #fde68a;">🏆 بطل الأسبوع<br><b style="font-size:1.4rem;">${titles}</b></div>
+                <div style="background:#f0fdf4; padding:15px; border-radius:20px; border:1px solid #bbf7d0;">📈 الفوز<br><b style="font-size:1.4rem;">${((p.win/p.total)*100).toFixed(0)}%</b></div>
+            </div>
+            <div style="text-align:right; font-size:0.9rem; background:#f8fafc; padding:15px; border-radius:15px;">
+                <div>إجمالي النقاط: <b>${p.diff}</b></div>
+                <div>إجمالي المباريات: <b>${p.total}</b></div>
+            </div>
+            <button class="btn" style="margin-top:20px; background:#f1f5f9;" onclick="closeProfile()">إغلاق</button>
+        `;
+        document.getElementById('profileModal').classList.add('active');
+    };
+    window.closeProfile = () => document.getElementById('profileModal').classList.remove('active');
+
+    // --- البيانات ---
+    onSnapshot(collection(db, "players"), (snap) => {
+        const sel = document.getElementById('playerSelect');
+        const c1 = document.getElementById('comp1'); const c2 = document.getElementById('comp2');
+        sel.innerHTML = ""; c1.innerHTML = ""; c2.innerHTML = "";
+        snap.forEach(d => {
+            const p = d.data(); playersData[p.name] = p.imageUrl;
+            const h = `<option value="${p.name}">${p.name}</option>`;
+            sel.innerHTML += h; c1.innerHTML += h; c2.innerHTML += h;
+        });
+        fetchData();
+    });
+
+    function fetchData() {
+        onSnapshot(query(collection(db, "game_records"), orderBy("date", "desc")), (snap) => {
+            let stats = {}; let history = {};
+            snap.forEach(d => {
+                const r = d.data();
+                if(!stats[r.name]) stats[r.name] = { name:r.name, win:0, loss:0, diff:0, total:0 };
+                stats[r.name].win += r.win; stats[r.name].loss += r.loss; stats[r.name].diff += r.diff; stats[r.name].total += r.total;
+                if(!history[r.date]) history[r.date] = [];
+                history[r.date].push(r);
+            });
+            cachedStats = stats; cachedHistory = history;
+            renderHome(); renderBadges();
+        });
+    }
+
+    function renderHome() {
+        const sorted = Object.values(cachedStats).sort((a,b) => b.diff - a.diff);
+        const podium = document.getElementById('podiumUI');
+        const list = document.getElementById('leaderboardList');
+        podium.innerHTML = ""; list.innerHTML = "";
+        [1,0,2].forEach(i => {
+            if(sorted[i]) {
+                const p = sorted[i];
+                podium.innerHTML += `<div class="podium-item rank-${i+1}" onclick="showProfile('${p.name}')">
+                    <img src="${playersData[p.name]}" class="podium-avatar">
+                    <div class="podium-rank"><div>${p.diff}</div><small style="font-size:0.7rem;">${p.name}</small></div>
+                </div>`;
+            }
+        });
+        sorted.forEach((p, idx) => {
+            list.innerHTML += `<div class="player-row" onclick="showProfile('${p.name}')">
+                <span style="width:25px; color:#94a3b8; font-weight:bold;">${idx+1}</span>
+                <img src="${playersData[p.name]}" class="list-avatar">
+                <b style="flex:1;">${p.name}</b>
+                <span style="background:${p.diff>=0?'#d1fae5':'#fee2e2'}; color:${p.diff>=0?'#065f46':'#991b1b'}; padding:5px 12px; border-radius:10px; font-weight:900;">${p.diff}</span>
+            </div>`;
+        });
+    }
+
+    function renderBadges() {
+        const ps = Object.values(cachedStats); if(!ps.length) return;
+        const container = document.getElementById('badgesContainer'); container.innerHTML = "";
+        const awards = [
+            { icon:"👑", title:"ملك الدومنة", p: [...ps].sort((a,b)=>b.diff-a.diff)[0], label:"الأعلى سكور" },
+            { icon:"⚔️", title:"المحارب", p: [...ps].sort((a,b)=>b.total-a.total)[0], label:"الأكثر حضوراً" },
+            { icon:"🛡️", title:"الجبل", p: [...ps].sort((a,b)=>a.loss-b.loss)[0], label:"الأقل خسارة" }
+        ];
+        awards.forEach(a => {
+            container.innerHTML += `<div class="badge-item" onclick="showProfile('${a.p.name}')">
+                <img src="${playersData[a.p.name]}" class="badge-img">
+                <div class="badge-info">
+                    <span class="badge-title">${a.icon} ${a.title}</span>
+                    <span style="font-size:0.85rem; color:#64748b;">${a.p.name}</span><br>
+                    <span class="badge-label">${a.label}</span>
+                </div>
+            </div>`;
+        });
+    }
+
+    // --- القرعة الذكية ---
+    function renderDrawSelect() {
+        const ui = document.getElementById('drawSelectUI'); ui.innerHTML = "";
+        Object.keys(playersData).sort().forEach(n => {
+            const active = selectedDraw.includes(n);
+            ui.innerHTML += `<div onclick="toggleDrawP('${n}')" style="padding:12px; border-radius:15px; border:1px solid #eee; text-align:center; cursor:pointer; background:${active?'var(--primary)':'white'}; color:${active?'white':'black'}; font-size:0.8rem;">${n}</div>`;
+        });
+    }
+    window.toggleDrawP = (n) => {
+        const i = selectedDraw.indexOf(n);
+        if(i > -1) selectedDraw.splice(i,1); else selectedDraw.push(n);
+        renderDrawSelect();
+    };
+
+    window.runSmartDraw = async () => {
+        if(selectedDraw.length < 2) return alert("اختر لاعبين!");
+        const pastSnap = await getDocs(collection(db, "past_matchups"));
+        const past = pastSnap.docs.map(d => d.data().pair);
+        
+        let shuffled = [...selectedDraw].sort(() => Math.random() - 0.5);
+        // تجنب تكرار المواجهة الأولى
+        if(past.includes(shuffled[0]+shuffled[1])) shuffled.reverse();
+
+        const res = document.getElementById('drawResults'); res.innerHTML = "<h4>الفرق الناتجة:</h4>";
+        for(let i=0; i<shuffled.length; i+=2) {
+            let p1 = shuffled[i], p2 = shuffled[i+1];
+            if(p2) await addDoc(collection(db, "past_matchups"), { pair: p1+p2 });
+            res.innerHTML += `<div class="badge-item" style="justify-content:space-around; background:#f8fafc;">
+                <div style="text-align:center;"><img src="${playersData[p1]}" style="width:35px; height:35px; border-radius:50%"><br><small>${p1}</small></div>
+                <div style="font-weight:900; color:#cbd5e1;">VS</div>
+                <div style="text-align:center;">${p2?`<img src="${playersData[p2]}" style="width:35px; height:35px; border-radius:50%"><br><small>${p2}</small>`:'انتظار'}</div>
+            </div>`;
+        }
+    };
+
+    window.resetMatchups = async () => {
+        if(confirm("تصفير الذاكرة؟")) {
+            const snap = await getDocs(collection(db, "past_matchups"));
+            const batch = writeBatch(db); snap.forEach(d => batch.delete(d.ref));
+            await batch.commit(); alert("تم التصفير");
+        }
+    };
+
+    window.addRecord = async () => {
+        const name = document.getElementById('playerSelect').value;
+        const date = document.getElementById('gameDate').value;
+        const win = parseInt(document.getElementById('winInp').value) || 0;
+        const loss = parseInt(document.getElementById('lossInp').value) || 0;
+        if(name && date) {
+            await addDoc(collection(db, "game_records"), { name, date, win, loss, diff: win-loss, total: win+loss });
+            alert("تم التسجيل ✅");
+        }
+    };
+
+    window.requestAdmin = (el) => {
+        let p = prompt("كلمة المرور:");
+        if(p === "1234") { isAdmin = true; switchTab('page-admin', el); }
+    };
+</script>
+</body>
+</html>
