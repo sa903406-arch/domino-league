@@ -60,12 +60,16 @@
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 200; display: flex; justify-content: center; align-items: center; }
         .modal-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 300px; text-align: center; }
         .hidden { display: none !important; }
+        
+        /* تحسينات القرعة */
+        .history-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .date-header { background: #eee; padding: 5px 15px; font-weight: bold; font-size: 0.8rem; border-radius: 10px; margin: 15px 0 5px; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🏆 دوري الدومنة</h1>
+    <h1>🏆 دوري الدومنة الملكي</h1>
 </header>
 
 <div class="container">
@@ -93,7 +97,8 @@
             <div id="historyByDateList"></div>
         </div>
     </div>
-<div id="page-teams" class="hidden">
+
+    <div id="page-teams" class="hidden">
         <div class="card" style="border-right: 5px solid var(--accent);">
             <h3>🎲 اختيار لاعبي القرعة</h3>
             <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">حدد اللاعبين الحاضرين الآن:</p>
@@ -116,6 +121,7 @@
             <div id="teamsResults" style="margin-top:20px;"></div>
         </div>
     </div>
+
     <div id="page-admin" class="hidden">
         <div style="text-align: left; margin-bottom: 10px;">
             <button onclick="logout()" style="background:var(--danger); color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;">خروج 🔒</button>
@@ -189,6 +195,7 @@
         document.getElementById(pageId).classList.remove('hidden');
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         elem.classList.add('active');
+        if (pageId === 'page-teams') updateSelectionList();
     };
 
     window.requestAdmin = (elem) => { isAdminUnlocked ? window.switchTab('page-admin', elem) : document.getElementById('loginModal').classList.remove('hidden'); };
@@ -198,13 +205,12 @@
             document.getElementById('loginModal').classList.add('hidden');
             renderHome(cachedStats);
             renderHistory(cachedHistory);
-            switchTab('page-admin', document.querySelectorAll('.nav-item')[3]);
+            switchTab('page-admin', document.querySelectorAll('.nav-item')[4]);
         } else { alert("خطأ!"); }
     };
     window.logout = () => { isAdminUnlocked = false; renderHistory(cachedHistory); switchTab('page-home', document.querySelectorAll('.nav-item')[0]); };
     window.closeLogin = () => document.getElementById('loginModal').classList.add('hidden');
 
-    // العمليات
     window.addPlayer = async () => {
         const name = document.getElementById('newPlayerName').value.trim();
         const img = document.getElementById('newPlayerImg').value.trim();
@@ -225,7 +231,6 @@
         alert("تم الحفظ");
     };
 
-    // الاستماع للبيانات
     onSnapshot(collection(db, "players"), (snap) => {
         const select = document.getElementById('playerSelect');
         const adminList = document.getElementById('adminPlayersList');
@@ -277,15 +282,12 @@
     function renderBadges(stats) {
         const players = Object.values(stats);
         if(players.length === 0) return;
-        
         const king = [...players].sort((a,b) => b.win - a.win)[0];
         const warrior = [...players].sort((a,b) => b.total - a.total)[0];
         const unlucky = [...players].sort((a,b) => b.loss - a.loss)[0];
         const rock = [...players].filter(p => p.total >= 3).sort((a,b) => a.loss - b.loss)[0];
-
         const container = document.getElementById('badgesContainer');
         container.innerHTML = "";
-
         const createBadge = (icon, title, p, val, label) => `
             <div class="badge-item">
                 <div class="badge-icon">${icon}</div>
@@ -296,11 +298,10 @@
                     <span class="badge-value">${val} ${label}</span>
                 </div>
             </div>`;
-
         container.innerHTML += createBadge("👑", "ملك الفوز", king, king.win, "فوز");
         container.innerHTML += createBadge("⚔️", "المحارب الأكبر", warrior, warrior.total, "مباراة");
         container.innerHTML += createBadge("🧨", "المنحوس", unlucky, unlucky.loss, "خسارة");
-        if(rock) container.innerHTML += createBadge("🛡️", "الصخرة (أقل خسارة)", rock, rock.loss, "خسارة");
+        if(rock) container.innerHTML += createBadge("🛡️", "الصخرة", rock, rock.loss, "خسارة");
     }
 
     function renderHistory(history) {
@@ -317,7 +318,7 @@
 
     window.deleteRecord = async (id) => { if(isAdminUnlocked && confirm("حذف؟")) await deleteDoc(doc(db, "game_records", id)); };
     window.deleteFullPlayer = async (id, name) => {
-        if(isAdminUnlocked && confirm("حذف اللاعب وكل سجلاته؟")) {
+        if(isAdminUnlocked && confirm("حذف؟")) {
             await deleteDoc(doc(db, "players", id));
             const snap = await getDocs(query(collection(db, "game_records"), where("name", "==", name)));
             const batch = writeBatch(db);
@@ -325,113 +326,50 @@
             await batch.commit();
         }
     };
-    // --- برمجة صفحة القرعة والربط مع Firebase ---
 
-    // 1. مصفوفة لتخزين اللاعبين الذين تختارهم للقرعة
+    // --- منطق القرعة ---
     let selectedForDraw = [];
-
-    // 2. وظيفة لتوليد قائمة اللاعبين من Firebase داخل صفحة القرعة
     window.updateSelectionList = () => {
         const container = document.getElementById('firebasePlayersSelection');
         if (!container) return;
-        
-        // مسح القائمة الحالية قبل إعادة بنائها
         container.innerHTML = "";
-        
-        // استخدام playersData (المتغير الموجود أصلاً في كودك والذي يحتوي على بيانات اللاعبين)
-        Object.keys(playersData).sort().forEach(playerName => {
-            const isChecked = selectedForDraw.includes(playerName);
-            
+        Object.keys(playersData).sort().forEach(name => {
+            const isChecked = selectedForDraw.includes(name);
             const card = document.createElement('div');
-            // تغيير ستايل البطاقة بناءً على ما إذا كانت مختارة أم لا
-            card.style = `
-                display:flex; align-items:center; gap:8px; 
-                background:${isChecked ? 'var(--primary)' : 'white'}; 
-                color:${isChecked ? 'white' : 'var(--text)'}; 
-                padding:10px; border-radius:12px; cursor:pointer; 
-                border: 1px solid ${isChecked ? 'var(--primary)' : '#eee'}; 
-                transition: 0.3s ease;
-                box-shadow: ${isChecked ? '0 4px 10px rgba(0,0,0,0.2)' : 'none'};
-            `;
-
+            card.style = `display:flex; align-items:center; gap:8px; background:${isChecked?'var(--primary)':'white'}; color:${isChecked?'white':'var(--text)'}; padding:10px; border-radius:12px; cursor:pointer; border:1px solid #eee;`;
             card.onclick = () => {
-                const index = selectedForDraw.indexOf(playerName);
-                if (index > -1) {
-                    selectedForDraw.splice(index, 1); // إلغاء الاختيار
-                } else {
-                    selectedForDraw.push(playerName); // إضافة للاختيار
-                }
-                updateSelectionList(); // إعادة التحديث فوراً
+                const idx = selectedForDraw.indexOf(name);
+                if (idx > -1) selectedForDraw.splice(idx, 1); else selectedForDraw.push(name);
+                updateSelectionList();
             };
-            
-            card.innerHTML = `
-                <img src="${playersData[playerName]}" style="width:30px; height:30px; border-radius:50%; object-fit:cover; border:1px solid #fff;">
-                <span style="font-size:0.85rem; font-weight:bold;">${playerName}</span>
-            `;
+            card.innerHTML = `<img src="${playersData[name]}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;"><span style="font-size:0.85rem;">${name}</span>`;
             container.appendChild(card);
         });
-        
-        // تحديث الرقم في الأسفل
         document.getElementById('selectedCount').innerText = `المختارين: ${selectedForDraw.length}`;
     };
 
-    // 3. تعديل وظيفة التبديل بين الصفحات (switchTab)
-    // لكي يتم تحديث قائمة الأسماء بمجرد الضغط على زر "القرعة"
-    const originalSwitchTab = window.switchTab;
-    window.switchTab = (pageId, elem) => {
-        originalSwitchTab(pageId, elem); // تشغيل الوظيفة الأصلية (إخفاء وإظهار الصفحات)
-        if (pageId === 'page-teams') {
-            updateSelectionList(); // إذا كانت الصفحة المختارة هي القرعة، حدّث القائمة
-        }
-    };
+    window.clearSelection = () => { selectedForDraw = []; updateSelectionList(); };
 
-    // 4. وظيفة مسح جميع الاختيارات
-    window.clearSelection = () => {
-        selectedForDraw = [];
-        updateSelectionList();
-    };
-
-    // 5. وظيفة إجراء القرعة (الخلط العشوائي)
     window.runTeamDraw = async () => {
-        if (selectedForDraw.length < 2) {
-            alert("يرجى اختيار لاعبين اثنين على الأقل من القائمة!");
-            return;
-        }
-        
+        if (selectedForDraw.length < 2) return alert("اختر لاعبين!");
         const loader = document.getElementById('drawLoader');
         const results = document.getElementById('teamsResults');
-        const btn = document.getElementById('drawBtn');
-
-        // تجهيز الواجهة
-        results.innerHTML = "";
-        loader.classList.remove('hidden');
-        btn.disabled = true;
-
-        // تأثير الحماس (انتظار لمدة ثانية ونصف)
+        results.innerHTML = ""; loader.classList.remove('hidden');
         await new Promise(r => setTimeout(r, 1500));
-
         loader.classList.add('hidden');
-        btn.disabled = false;
-
-        // خلط المصفوفة عشوائياً
         let shuffled = [...selectedForDraw].sort(() => Math.random() - 0.5);
-        
-        let html = `<h4 style="text-align:center; color:var(--primary); margin:20px 0;">الفرق المختارة 🏆</h4>`;
-        
+        let html = `<h4 style="text-align:center;">الفرق 🏆</h4>`;
         for (let i = 0; i < shuffled.length; i += 2) {
-            let p1 = shuffled[i];
-            let p2 = shuffled[i+1]; // قد يكون فارغاً إذا كان العدد فردياً
-            
-            html += `
-                <div class="badge-item" style="background:var(--white); border:1px solid #eee; border-right:6px solid var(--accent); margin-bottom:12px; padding:15px; display:flex; justify-content:space-around; align-items:center;">
-                    <div style="text-align:center; width:40%;">
-                        <img src="${playersData[p1]}" style="width:50px; height:50px; border-radius:50%; object-fit:cover; margin-bottom:5px;">
-                        <div style="font-weight:bold; font-size:0.9rem;">${p1}</div>
-                    </div>
-                    <div style="font-weight:900; color:var(--accent); font-size:1.2rem;">VS</div>
-                    <div style="text-align:center; width:40%;">
-                        ${p2 ? `
-                            <img src="${playersData[p2]}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;
+            let p1 = shuffled[i], p2 = shuffled[i+1];
+            html += `<div class="badge-item" style="justify-content:space-around; background:white; border-right:5px solid var(--accent);">
+                <div style="text-align:center;"><img src="${playersData[p1]}" style="width:40px; height:40px; border-radius:50%"><br><small>${p1}</small></div>
+                <div>VS</div>
+                <div style="text-align:center;">${p2?`<img src="${playersData[p2]}" style="width:40px; height:40px; border-radius:50%"><br><small>${p2}</small>`:'--'}</div>
+            </div>`;
+        }
+        results.innerHTML = html;
+        results.scrollIntoView({ behavior: 'smooth' });
+    };
 </script>
 </body>
 </html>
