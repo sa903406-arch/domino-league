@@ -332,21 +332,22 @@
 </nav>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // إعدادات الفايربيس (كما أرسلتها سابقاً)
     const firebaseConfig = {
-  apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
-  authDomain: "koster-499c0.firebaseapp.com",
-  projectId: "koster-499c0",
-  storageBucket: "koster-499c0.firebasestorage.app",
-  messagingSenderId: "170205849470",
-  appId: "1:170205849470:web:7133888e3051c7ab47b52f",
-  measurementId: "G-KT9W98Y75C"
-};
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+        apiKey: "AIzaSyDJS8QCZRfa72Vl8NZxFZcLY-ee0CFILzw",
+        authDomain: "koster-499c0.firebaseapp.com",
+        projectId: "koster-499c0",
+        storageBucket: "koster-499c0.firebasestorage.app",
+        messagingSenderId: "170205849470",
+        appId: "1:170205849470:web:7133888e3051c7ab47b52f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     let playersData = {}; 
     let cachedStats = {}; 
     let cachedHistory = {};
