@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>دوري الدومنة الملكي | الإصدار الاحترافي</title>
@@ -258,6 +259,10 @@
             </div>
         </div>
     </div>
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+    <button class="btn btn-success" onclick="shareAsImage()" style="flex: 1; padding: 10px;">📸 مشاركة الصورة واتساب</button>
+    <button class="btn btn-primary" onclick="downloadImage()" style="flex: 1; padding: 10px;">💾 حفظ الصورة</button>
+</div>
 
     <div id="page-home">
         <div class="podium" id="podiumUI"></div>
@@ -749,7 +754,7 @@ window.closeProfile = () => {
     window.requestAdmin = (el) => {
         if(isAdminUnlocked) { switchTab('page-admin', el); return; }
         let p = prompt("كلمة المرور:");
-        if(p === "1234") { isAdminUnlocked = true; switchTab('page-admin', el); }
+        if(p === "314630") { isAdminUnlocked = true; switchTab('page-admin', el); }
     };
     window.renderArchive = () => {
     const archiveContainer = document.getElementById('archiveList');
@@ -783,6 +788,51 @@ window.closeProfile = () => {
         
         daySection += `</div>`;
         archiveContainer.innerHTML += daySection;
+    });
+};
+    // دالة لالتقاط صورة للجدول
+async function captureLeaderboard() {
+    const element = document.getElementById('page-home'); // سيقوم بتصوير المنصة والجدول معاً
+    const canvas = await html2canvas(element, {
+        useCORS: true, // للسماح بتحميل صور اللاعبين من سيرفر فايربيس
+        backgroundColor: "#f0f2f5", // لون الخلفية في الصورة
+        scale: 2 // لزيادة جودة الصورة
+    });
+    return canvas;
+}
+
+// دالة الحفظ في الجهاز
+window.downloadImage = async () => {
+    const canvas = await captureLeaderboard();
+    const link = document.createElement('a');
+    link.download = `ترتيب_الدوري_${new Date().toLocaleDateString()}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+};
+
+// دالة المشاركة عبر الواتساب
+window.shareAsImage = async () => {
+    const canvas = await captureLeaderboard();
+    canvas.toBlob(async (blob) => {
+        const file = new File([blob], "leaderboard.png", { type: "image/png" });
+        
+        // التحقق مما إذا كان المتصفح يدعم مشاركة الملفات (يعمل غالباً على الموبايل)
+        if (navigator.share && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'ترتيب دوري الدومنة الملكي 🏆',
+                    text: 'شاهد ترتيب المتصدرين حالياً!'
+                });
+            } catch (err) {
+                console.error("فشلت المشاركة:", err);
+            }
+        } else {
+            // إذا كان متصفح كمبيوتر لا يدعم مشاركة الملفات، سيقوم بتحميلها وإرسال رابط واتساب
+            alert("المشاركة المباشرة غير مدعومة في هذا المتصفح، سيتم حفظ الصورة أولاً.");
+            window.downloadImage();
+            window.open(`https://wa.me/?text=${encodeURIComponent("شاهد ترتيب دوري الدومنة الملكي!")}`, '_blank');
+        }
     });
 };
 </script>
