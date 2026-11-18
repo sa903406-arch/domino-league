@@ -318,13 +318,13 @@ const IC={edit:svg('<path d="M4 20h4l11-11-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>
 
 /* ---------- الحالة ---------- */
 const S={
-  mode:LS.get('dl2_mode','demo'),
+  mode:LS.get('dl2_mode',/^https?:/.test(location.protocol)?'live':'demo'),
   players:[],            // [{name,img}]
   nights:[],             // [{id,date,season,players:[],matches:[{a:[],b:[],sa,sb}]}]
   legacy:[],             // الموسم 1: [{name,date,win,loss}]
   meta:{currentSeason:2,champions:[]},
   page:'standings',viewSeason:null,viewPlayer:null,backTo:'standings',adminTab:'record',unlocked:false,diag:null,
-  draw:LS.get('dl2_draw_'+LS.get('dl2_mode','demo'),{rounds:[],busy:false,pending:null}),
+  draw:LS.get('dl2_draw_'+LS.get('dl2_mode',/^https?:/.test(location.protocol)?'live':'demo'),{rounds:[],busy:false,pending:null}),
   draft:null,error:'',ready:false
 };
 let SH=null;             // حالة النافذة السفلية
@@ -1120,7 +1120,7 @@ async function boot(){
     console.error(err);
     S.error='تعذّر الاتصال بقاعدة البيانات ('+(err.code||err.message)+'). عدنا إلى الوضع التجريبي. تأكد من قواعد Firestore ثم جرّب الوضع المباشر من الإعدادات.';
     unsubs.forEach(u=>{try{u()}catch{}});unsubs=[];
-    S.mode='demo';LS.set('dl2_mode','demo');loadDemo();
+    S.mode='demo';loadDemo();   // لجلسة واحدة فقط، لا نحفظ التحويل حتى لا يعلق الزائر في التجريبي
   }
   // تنظيف: أي اسم غير موجود في البيانات الحالية يُزال من المسودة والقرعة
   const known=new Set(allNames());
