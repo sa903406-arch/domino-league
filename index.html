@@ -252,6 +252,67 @@ button.row{font:inherit}
 .stat.ok .d{background:var(--lime)}.stat.bad .d{background:var(--coral)}.stat .grow{flex:1}
 textarea.field{min-height:150px;padding:10px 12px;direction:ltr;text-align:left;font-family:ui-monospace,monospace;font-size:13px;font-weight:500;line-height:1.6}
 @media (prefers-reduced-motion:reduce){.pod.p1 .av,.champ .av{animation:none}.lockpop{animation:none}}
+
+/* podium v2 */
+.stage{position:relative;margin-top:8px;padding-top:6px}
+.beam{position:absolute;left:50%;top:-6px;width:300px;height:430px;transform:translateX(-50%);background:linear-gradient(180deg,rgba(198,255,61,.26),rgba(198,255,61,.05) 70%,rgba(198,255,61,0));clip-path:polygon(38% 0,62% 0,100% 100%,0 100%);pointer-events:none}
+.halo{position:absolute;left:50%;top:40px;width:340px;height:340px;transform:translateX(-50%);background:radial-gradient(circle,rgba(198,255,61,.18),rgba(198,255,61,0) 65%);pointer-events:none}
+.spk{position:absolute;width:5px;height:5px;border-radius:50%;background:var(--lime);opacity:0;animation:tw 3.2s ease-in-out infinite;box-shadow:0 0 8px var(--lime)}
+@keyframes tw{0%,100%{opacity:0;transform:translateY(8px) scale(.6)}50%{opacity:.9;transform:translateY(-10px) scale(1)}}
+.stage .podium{position:relative;z-index:1}
+.avw{position:relative;display:inline-block}
+.medal{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);min-width:30px;height:30px;border-radius:15px;display:grid;place-items:center;font-family:var(--num);font-weight:800;font-size:18px;color:#0A0D14;background:var(--ring,#C9D1DE);border:3px solid var(--bg);padding:0 6px}
+.pod.p1 .medal{min-width:36px;height:36px;border-radius:18px;font-size:22px;bottom:-12px}
+.pod .crownI{animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.pod .who{gap:12px}
+.pod .block{position:relative;overflow:hidden;box-shadow:inset 0 2px 0 rgba(255,255,255,.22),inset 0 0 40px rgba(255,255,255,.03)}
+.pod .block::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 10px,transparent 10px 22px)}
+.pod .block::after{content:"";position:absolute;left:0;right:0;top:0;height:44%;background:linear-gradient(180deg,rgba(255,255,255,.10),transparent)}
+.pod .block>*{position:relative;z-index:1}
+.pod .nt{padding:2px 12px;border-radius:999px;background:rgba(0,0,0,.28);font-size:24px!important}
+.pod.p1 .nm{background:linear-gradient(90deg,#F4F6FA,var(--lime));-webkit-background-clip:text;background-clip:text;color:transparent}
+details.nt-d{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+details.nt-d summary{list-style:none;display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer}
+details.nt-d summary::-webkit-details-marker{display:none}
+details.nt-d[open] summary{border-bottom:1px solid var(--line);background:var(--panel2)}
+details.nt-d .chev{transition:.2s;color:var(--muted)}details.nt-d[open] .chev{transform:rotate(90deg)}
+.aw .sb{font-size:12px;color:var(--muted);font-weight:600;margin-top:-4px}
+.rr{margin-top:12px}.rr h3{margin:0 0 8px;font-size:14px;font-weight:800;color:var(--muted)}
+.mrow{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--panel);border:1px solid var(--line);margin-bottom:8px}
+.mrow.done{border-inline-start:4px solid var(--lime)}
+.mrow .grow{flex:1;min-width:0;font-weight:800;font-size:15px;line-height:1.5}.mrow .grow small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.tgrid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.tcard.t{background:linear-gradient(135deg,#17233D,#0F1626)}
+.tnum{width:34px;height:34px;border-radius:10px;background:var(--lime);color:#0A0D14;display:grid;place-items:center;font-family:var(--num);font-weight:800;font-size:22px;flex:none}
+.reslt{margin-top:12px;text-align:center;font-weight:800;font-size:15px;color:var(--lime);min-height:24px}
+
+/* paper entry */
+.qpanel{padding:14px;border-radius:18px;background:var(--panel);border:1px solid var(--line)}
+.qrow{display:flex;gap:10px}
+.qbox{flex:1;min-width:0;padding:10px;border-radius:14px;border:2px dashed var(--line);display:flex;flex-direction:column;gap:6px}
+.qbox.w{border-color:rgba(198,255,61,.5);background:rgba(198,255,61,.05)}.qbox.l{border-color:rgba(255,107,122,.5);background:rgba(255,107,122,.05)}
+.qbox .ql{font-weight:900;font-size:13px}.qbox.w .ql{color:var(--lime)}.qbox.l .ql{color:var(--coral)}
+.qs{display:flex;align-items:center;gap:8px;min-height:34px;font-weight:800;font-size:15px;color:var(--muted)}
+.qs.on{color:var(--text)}
+.attb.w{border-color:var(--lime)!important;background:rgba(198,255,61,.14)!important}
+.attb.l{border-color:var(--coral)!important;background:rgba(255,107,122,.14)!important}
+.qctl{display:flex;align-items:center;gap:10px;margin-top:12px}
+.qstep{display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:4px}
+.qstep button{width:44px;height:44px;border-radius:10px;background:var(--chip);border:0;color:var(--text);font-size:24px;font-weight:800}
+.qstep b{min-width:38px;text-align:center;font-family:var(--num);font-size:28px}
+.qquick{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.qquick button{min-height:40px;padding:0 12px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--soft);font-weight:700;font-size:13px}
+.paper{border-radius:16px;border:1px solid var(--line);background:var(--panel);overflow:hidden}
+.paper .ph{display:grid;grid-template-columns:30px 1fr 1fr 64px;gap:6px;padding:10px 12px;font-weight:900;font-size:14px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.paper .ph span:nth-child(2){color:var(--lime)}.paper .ph span:nth-child(3){color:var(--coral)}
+.prow{display:grid;grid-template-columns:30px 1fr 1fr 64px;gap:6px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+.prow:last-child{border-bottom:0}
+.prow .pno{font-family:var(--num);font-weight:800;font-size:18px;color:var(--muted)}
+.pcell{display:flex;align-items:center;gap:8px;background:none;border:0;color:var(--text);text-align:inherit;padding:0;min-width:0;font-weight:800;font-size:14px;line-height:1.35}
+.pcell.l{color:var(--soft)}
+.pend{display:flex;align-items:center;justify-content:flex-end;gap:2px}
+.pcount{font-family:var(--num);font-weight:800;font-size:18px;color:var(--lime);direction:ltr}
 </style>
 </head>
 <body>
@@ -323,8 +384,8 @@ const S={
   nights:[],             // [{id,date,season,players:[],matches:[{a:[],b:[],sa,sb}]}]
   legacy:[],             // الموسم 1: [{name,date,win,loss}]
   meta:{currentSeason:2,champions:[]},
-  page:'standings',viewSeason:null,viewPlayer:null,backTo:'standings',adminTab:'record',unlocked:false,diag:null,
-  draw:LS.get('dl2_draw_'+LS.get('dl2_mode',/^https?:/.test(location.protocol)?'live':'demo'),{rounds:[],busy:false,pending:null}),
+  page:'standings',viewSeason:null,viewPlayer:null,backTo:'standings',adminTab:'record',unlocked:false,diag:null,q:{w:[],l:[],n:1},
+  draw:Object.assign({teams:[],done:{},busy:false,pending:null},LS.get('dl2_draw_'+LS.get('dl2_mode',/^https?:/.test(location.protocol)?'live':'demo'),{})),
   draft:null,error:'',ready:false
 };
 let SH=null;             // حالة النافذة السفلية
@@ -526,13 +587,14 @@ function seasonPills(){
   return `<div class="pills" role="group" aria-label="الموسم">${list.map(n=>`<button class="pill" data-act="season" data-s="${n}" aria-pressed="${n===sn}">${seasonLabel(n)}</button>`).join('')}</div>`;
 }
 function podium(rows,sn){
-  const order=[1,0,2].filter(i=>rows[i]);   // وسط = الأول، يمين الشاشة = الثالث
+  const order=[1,0,2].filter(i=>rows[i]);
   const cols=order.map(i=>{const r=rows[i],k=i+1;
     return `<button class="pod p${k}" data-act="player" data-name="${esc(r.name)}" aria-label="المركز ${k}: ${esc(r.name)}">
-      <div class="who">${k===1?`<span class="crownI">${CROWN}</span>`:''}${avatar(r.name,k===1?104:76)}
+      <div class="who">${k===1?`<span class="crownI">${CROWN}</span>`:''}<span class="avw">${avatar(r.name,k===1?104:76)}<i class="medal">${k}</i></span>
       <div class="nm">${esc(r.name)}</div><div class="st">${r.w} فوز · ${r.l} خسارة</div></div>
       <div class="block"><span class="rk">${k}</span><span class="nt ${r.net>0?'pos':r.net<0?'neg':''}">${signed(r.net)}</span></div></button>`}).join('');
-  return `<div class="podium">${cols}</div><div class="floor"></div>`;
+  const sp=[[12,30,0],[84,50,.9],[28,160,1.7],[70,190,2.3],[50,10,.4],[92,150,1.3]].map(([l,t,d])=>`<i class="spk" style="left:${l}%;top:${t}px;animation-delay:${d}s"></i>`).join('');
+  return `<div class="stage"><div class="beam"></div><div class="halo"></div>${sp}<div class="podium">${cols}</div><div class="floor"></div></div>`;
 }
 function rStandings(){
   const sn=curSeason(),T=computeSeason(sn),rows=T.rows,champs=champions();
@@ -612,110 +674,122 @@ function rPlayer(){
 }
 
 /* ----- إحصاءات ----- */
-function nightsSummary(sn){
+function nightRows(sn){
   const out=[];
   if(sn===1){
     const by={};S.legacy.forEach(r=>{(by[r.date]||(by[r.date]=[])).push({name:r.name,w:r.win,l:r.loss,net:r.win-r.loss})});
-    Object.entries(by).forEach(([date,a])=>{a.sort((x,y)=>y.net-x.net);out.push({date,top:a[0],n:a.length,kims:Math.round(a.reduce((t,x)=>t+x.w,0)/2)})});
+    Object.entries(by).forEach(([date,a])=>out.push({date,rows:a.sort((x,y)=>y.net-x.net||x.name.localeCompare(y.name,'ar')),kims:Math.round(a.reduce((t,x)=>t+x.w,0)/2)}));
   }
-  S.nights.filter(n=>seasonOf(n.date)===sn).forEach(n=>{const t=tally(n.matches);out.push({date:n.date,top:t[0],n:t.length,kims:n.matches.reduce((a,m)=>a+m.sa+m.sb,0)})});
-  return out.sort((a,b)=>a.date<b.date?1:-1);
+  S.nights.filter(n=>seasonOf(n.date)===sn).forEach(n=>out.push({date:n.date,rows:tally(n.matches),kims:n.matches.reduce((a,m)=>a+m.sa+m.sb,0)}));
+  return out.sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);
 }
 function rStats(){
   const sn=curSeason(),T=computeSeason(sn),rows=T.rows;
   let h=`<div class="eyebrow"><span class="tag">إحصاءات</span><span class="sub">${seasonLabel(sn)}</span></div><h1>الأرقام</h1>${seasonPills()}`;
   if(!rows.length)return h+`<div class="empty" style="margin-top:14px">لا توجد بيانات في هذا الموسم بعد.</div>`;
-  const nights=nightsSummary(sn);
-  h+=`<div class="kpis"><div class="kpi"><span class="n">${T.kims}</span><span class="l">كَيم</span></div><div class="kpi"><span class="n">${T.nights}</span><span class="l">ليلة</span></div><div class="kpi"><span class="n">${rows.length}</span><span class="l">لاعب</span></div></div>`;
+  const nights=nightRows(sn);
+  h+=`<div class="kpis"><div class="kpi"><span class="n">${T.kims}</span><span class="l">كَيم</span></div><div class="kpi"><span class="n">${T.nights}</span><span class="l">ليلة</span></div><div class="kpi"><span class="n">${rows.length}</span><span class="l">لاعب</span></div><div class="kpi"><span class="n">${T.nights?Math.round(T.kims/T.nights):0}</span><span class="l">كَيم/ليلة</span></div></div>`;
+  // نجومية الليالي وأفضل ليلة وسلاسل الليالي الرابحة
+  const stars={},streak={},cur={};let best=null;
+  [...nights].reverse().forEach(n=>{
+    const top=n.rows[0]?n.rows[0].net:0;
+    n.rows.forEach(r=>{
+      if(r.net===top&&top>0)stars[r.name]=(stars[r.name]||0)+1;
+      if(!best||r.net>best.net)best={name:r.name,net:r.net,date:n.date};
+      if(r.net>0){cur[r.name]=(cur[r.name]||0)+1;streak[r.name]=Math.max(streak[r.name]||0,cur[r.name])}else cur[r.name]=0;
+    });
+  });
   const mx=(arr,f)=>arr.reduce((b,x)=>(b==null||f(x)>f(b)?x:b),null);
   const q=rows.filter(r=>r.games>=MIN_GAMES);
   const aw=[];
-  const topW=mx(rows,r=>r.w);aw.push(['الأكثر فوزاً',topW,topW.w,'فوز']);
-  if(q.length){const b=mx(q,r=>r.wr);aw.push(['الأعلى نسبة فوز',b,Math.round(b.wr*100)+'%','']);}
-  const att=mx(rows,r=>r.nights);aw.push(['الأكثر حضوراً',att,att.nights,'ليلة']);
-  const pl=mx(rows,r=>r.games);aw.push(['الأكثر لعباً',pl,pl.games,'كَيم']);
-  h+=`<div class="sec"><div class="sec-h"><h2>الألقاب</h2></div><div class="awards">`+aw.map(([lab,r,v,u])=>`<button class="aw" data-act="player" data-name="${esc(r.name)}"><span class="lab">${lab}</span><span class="who">${avatar(r.name,34)}<span style="overflow:hidden;text-overflow:ellipsis">${esc(r.name)}</span></span><span class="v">${v}<small>${u}</small></span></button>`).join('')+`</div></div>`;
+  const topW=mx(rows,r=>r.w);aw.push(['الأكثر فوزاً',topW.name,topW.w,'فوز']);
+  if(q.length){const b=mx(q,r=>r.wr);aw.push(['الأعلى نسبة فوز',b.name,Math.round(b.wr*100)+'%','']);}
+  const att=mx(rows,r=>r.nights);aw.push(['الأكثر حضوراً',att.name,att.nights,'ليلة']);
+  const pl=mx(rows,r=>r.games);aw.push(['الأكثر لعباً',pl.name,pl.games,'كَيم']);
+  const sk=Object.entries(stars).sort((a,b)=>b[1]-a[1])[0];if(sk)aw.push(['نجم الليالي',sk[0],sk[1],'مرة']);
+  if(best&&best.net>0)aw.push(['أفضل ليلة',best.name,'+'+best.net,fmtShort(best.date)]);
+  const st=Object.entries(streak).sort((a,b)=>b[1]-a[1])[0];if(st&&st[1]>1)aw.push(['أطول سلسلة ليالٍ رابحة',st[0],st[1],'ليالٍ']);
+  const bad=mx(rows,r=>r.l);if(bad&&bad.l>0)aw.push(['الأكثر خسارة',bad.name,bad.l,'خسارة']);
+  h+=`<div class="sec"><div class="sec-h"><h2>الألقاب</h2></div><div class="awards">`+aw.map(([lab,name,v,u])=>`<button class="aw" data-act="player" data-name="${esc(name)}"><span class="lab">${lab}</span><span class="who">${avatar(name,34)}<span style="overflow:hidden;text-overflow:ellipsis">${esc(name)}</span></span><span class="v">${v}<small>${u}</small></span></button>`).join('')+`</div></div>`;
   if(nights.length){
-    h+=`<div class="sec"><div class="sec-h"><h2>الليالي</h2><span class="sub">نجم كل ليلة</span></div><div class="list">`+nights.slice(0,10).map(n=>`
-      <div class="card" style="padding:12px 14px;display:flex;align-items:center;gap:12px">${n.top?avatar(n.top.name,40):''}
-        <div style="flex:1"><div style="font-weight:800;font-size:16px">${esc(fmtShort(n.date))}</div><div class="hint">${n.top?'نجم الليلة: '+esc(n.top.name)+' · ':''}${n.n} لاعبين · ${kimTxt(n.kims)}</div></div>
-        ${n.top?`<span class="n pos" style="font-size:28px">${signed(n.top.net)}</span>`:''}</div>`).join('')+`</div></div>`;
+    h+=`<div class="sec"><div class="sec-h"><h2>كل الليالي</h2><span class="sub">${nights.length} · اضغط للتفاصيل</span></div><div class="list">`+nights.map(n=>{const t=n.rows[0];return `
+      <details class="nt-d"><summary>${t?avatar(t.name,40):''}
+        <div style="flex:1;min-width:0"><div style="font-weight:800;font-size:16px">${esc(fmtShort(n.date))}</div><div class="hint">${t?'نجم الليلة: '+esc(t.name)+' · ':''}${n.rows.length} لاعبين · ${kimTxt(n.kims)}</div></div>
+        ${t?`<span class="n ${t.net>0?'pos':''}" style="font-size:28px">${signed(t.net)}</span>`:''}<span class="chev">${IC.back}</span></summary>
+        <div class="tbl" style="border:0;border-radius:0"><div class="tr h"><span>اللاعب</span><span class="c">فوز</span><span class="c">خسارة</span><span class="c">الصافي</span></div>`+
+        n.rows.map(x=>`<div class="tr"><span class="nm">${avatar(x.name,28)}${esc(x.name)}</span><span class="c n">${x.w}</span><span class="c n" style="color:var(--soft)">${x.l}</span><span class="c n ${x.net>0?'pos':x.net<0?'neg':''}" style="font-size:22px">${signed(x.net)}</span></div>`).join('')+`</div></details>`}).join('')+`</div></div>`;
   }
   if(!T.duos.length)return h+`<div class="hint" style="text-align:center;margin-top:18px">الثنائيات تظهر من الليالي التي تُسجَّل بنظام الثنائي ضد الثنائي.</div>`;
   const duos=[...T.duos].sort((a,b)=>b.wr-a.wr||b.games-a.games);
-  if(duos.length){
-    const dq=duos.filter(d=>d.games>=MIN_GAMES);
-    if(dq.length>=2){
-      const g=dq[0],u=dq[dq.length-1];
-      if(g!==u&&g.wr!==u.wr)h+=`<div class="sec"><div class="sec-h"><h2>الثنائيات</h2></div><div class="hl2">
-      <div class="hlc"><span class="lab">الثنائي الذهبي</span>${pair(g.players,34)}<div class="nm">${esc(g.players.join(' + '))}</div><div class="big">${Math.round(g.wr*100)}%</div><div class="hint n" style="font-family:inherit;direction:ltr;text-align:right">${g.w} - ${g.l}</div></div>
-      <div class="hlc bad"><span class="lab">الثنائي المنحوس</span>${pair(u.players,34)}<div class="nm">${esc(u.players.join(' + '))}</div><div class="big">${Math.round(u.wr*100)}%</div><div class="hint n" style="font-family:inherit;direction:ltr;text-align:right">${u.w} - ${u.l}</div></div></div></div>`;
-    }
-    h+=`<div class="sec"><div class="sec-h"><h2>كل الثنائيات</h2><span class="sub">${duos.length} ثنائيات</span></div><div class="list">`+duos.map(d=>`
+  const dq=duos.filter(d=>d.games>=MIN_GAMES);
+  if(dq.length>=2){
+    const g=dq[0],u=dq[dq.length-1];
+    if(g!==u&&g.wr!==u.wr)h+=`<div class="sec"><div class="sec-h"><h2>الثنائيات</h2></div><div class="hl2">
+    <div class="hlc"><span class="lab">الثنائي الذهبي</span>${pair(g.players,34)}<div class="nm">${esc(g.players.join(' + '))}</div><div class="big">${Math.round(g.wr*100)}%</div><div class="hint n" style="font-family:inherit;direction:ltr;text-align:right">${g.w} - ${g.l}</div></div>
+    <div class="hlc bad"><span class="lab">الثنائي المنحوس</span>${pair(u.players,34)}<div class="nm">${esc(u.players.join(' + '))}</div><div class="big">${Math.round(u.wr*100)}%</div><div class="hint n" style="font-family:inherit;direction:ltr;text-align:right">${u.w} - ${u.l}</div></div></div></div>`;
+  }
+  h+=`<div class="sec"><div class="sec-h"><h2>كل الثنائيات</h2><span class="sub">${duos.length} ثنائيات</span></div><div class="list">`+duos.map(d=>`
     <div class="card" style="padding:13px 14px"><div style="display:flex;align-items:center;gap:12px">${pair(d.players,32)}
       <div style="flex:1"><div style="font-weight:800;font-size:16px">${esc(d.players.join(' + '))}</div><div class="hint">${d.games<MIN_GAMES?'عيّنة صغيرة · ':''}${kimTxt(d.games)}</div></div>
       <span class="n" style="font-size:28px">${d.w} - ${d.l}</span></div>
       <div style="display:flex;align-items:center;gap:10px;margin-top:8px"><div class="bar" style="flex:1;margin:0"><i class="${d.wr<.5?'low':''}" style="width:${Math.round(d.wr*100)}%"></i></div><span class="n" style="font-size:14px;color:var(--soft);min-width:40px;text-align:left">${Math.round(d.wr*100)}%</span></div></div>`).join('')+`</div></div>
     <div class="hint" style="text-align:center;margin-top:16px">الألقاب تُحتسب بعد ${MIN_GAMES} كَيمات على الأقل.</div>`;
-  }
   return h;
 }
 
-/* ----- القرعة ----- */
+/* ----- القرعة (تقسيم فرق الليلة كلها مرة واحدة) ----- */
 const rnd=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n};
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
 const keyOf=(x,y)=>[x,y].sort().join('|');
-function pickRound(att,rounds){
-  // سجل اللقاءات: ليالي سابقة (الأقدم أولاً) ثم جولات القرعة الحالية
-  const ev=[];S.nights.forEach(n=>n.matches.forEach(m=>ev.push({a:m.a,b:m.b})));
-  rounds.forEach(r=>ev.push({a:r.a,b:r.b}));
-  const partner={},opp={};   // {count, w: ثقل الحداثة}
-  const add=(o,k,age)=>{const e=o[k]||(o[k]={c:0,w:0});e.c++;e.w+=1/age};
-  ev.forEach((r,i)=>{const age=ev.length-i;   // 1 = الأحدث
-    add(partner,keyOf(...r.a),age);add(partner,keyOf(...r.b),age);
-    r.a.forEach(x=>r.b.forEach(y=>add(opp,keyOf(x,y),age)))});
-  const plays={};att.forEach(n=>plays[n]=0);
-  rounds.forEach(r=>[...r.a,...r.b].forEach(n=>{if(n in plays)plays[n]++}));
-  // من يلعب: الأقل لعباً الليلة أولاً، والتعادل بالسحب العشوائي
-  const four=shuffle(att).sort((x,y)=>plays[x]-plays[y]).slice(0,4);
-  const rest=att.filter(n=>!four.includes(n));
-  const [p,q,r,t]=four;
-  const opts=[[[p,q],[r,t]],[[p,r],[q,t]],[[p,t],[q,r]]];
-  const pen=(o,k,wc,ww)=>o[k]?o[k].c*wc+o[k].w*ww:0;
-  const scored=opts.map(([a,b])=>{
-    let sc=pen(partner,keyOf(...a),6,40)+pen(partner,keyOf(...b),6,40);   // تكرار الشريك: الأشد، والأحدث أسوأ
-    a.forEach(x=>b.forEach(y=>sc+=pen(opp,keyOf(x,y),1,6)));               // تكرار الخصم: أخف
-    return{a,b,sc,j:Math.random()*0.5}}).sort((x,y)=>(x.sc+x.j)-(y.sc+y.j));
-  const best=scored[0],swap=rnd(2)===1;
-  return{a:shuffle(swap?best.b:best.a),b:shuffle(swap?best.a:best.b),rest};
+function pickTeams(att,prev){
+  // سجل الثنائيات من كل الليالي (الأحدث أثقل)
+  const ms=[];S.nights.forEach(n=>n.matches.forEach(m=>ms.push(m)));
+  const hist={};ms.forEach((m,i)=>{const age=ms.length-i;[m.a,m.b].forEach(t=>{const k=keyOf(...t),e=hist[k]||(hist[k]={c:0,w:0});e.c++;e.w+=1/age})});
+  const prevSet=prev&&prev.length?new Set(prev.map(t=>keyOf(...t))):null;
+  let best=null;
+  for(let it=0;it<400;it++){
+    const sh=shuffle(att),teams=[];for(let i=0;i<sh.length;i+=2)teams.push([sh[i],sh[i+1]]);
+    let sc=0;teams.forEach(t=>{const e=hist[keyOf(...t)];if(e)sc+=e.c*6+e.w*40});
+    if(prevSet&&teams.every(t=>prevSet.has(keyOf(...t))))sc+=30;
+    sc+=Math.random()*0.5;
+    if(!best||sc<best.sc)best={teams,sc};
+  }
+  return shuffle(best.teams).map(t=>shuffle(t));
 }
-const saveDraw=()=>LS.set('dl2_draw_'+S.mode,{rounds:S.draw.rounds,busy:false,pending:null});
-function teamCard(t,label,cls,slots){
-  return `<div class="tcard ${cls}">${pair(t,62)}<div style="flex:1;min-width:0"><div class="tl">${label}</div><div class="tn">${t.map((n,i)=>`<div class="slotline"><span class="slot" ${slots?`data-slot="${slots+i}"`:''}>${esc(n)}</span></div>`).join('')}</div></div></div>`;
+function robin(T){
+  const ids=[...Array(T).keys()];if(T%2)ids.push(null);
+  const n=ids.length,rounds=[];let arr=[...ids];
+  for(let r=0;r<n-1;r++){const ms=[];for(let i=0;i<n/2;i++){const a=arr[i],b=arr[n-1-i];if(a!=null&&b!=null)ms.push([a,b])}rounds.push(ms);arr=[arr[0],arr[n-1],...arr.slice(1,n-1)]}
+  return rounds;
+}
+const saveDraw=()=>LS.set('dl2_draw_'+S.mode,{teams:S.draw.teams,done:S.draw.done});
+function teamCard(t,label,slotBase){
+  return `<div class="tcard t">${slotBase!=null?`<span class="tnum">${label}</span>`:`<span class="tnum">${label}</span>`}${pair(t,58)}<div style="flex:1;min-width:0"><div class="tn" style="font-size:20px">${t.map((n,i)=>`<div class="slotline" style="min-height:34px"><span class="slot" ${slotBase!=null?`data-slot="${slotBase+i}"`:''}>${esc(n)}</span></div>`).join('')}</div></div></div>`;
 }
 function rDraw(){
   const att=S.draft.attendees,pool=allNames(),D=S.draw,busy=D.busy;
-  const rounds=D.rounds,cur=D.pending||rounds[rounds.length-1];
-  const ok=att.length>=4;
-  let h=`<div class="eyebrow"><span class="tag">القرعة</span><span class="sub">عشوائية وعادلة</span></div><h1>اسحب الفرق</h1>
+  const teams=D.pending||D.teams||[];
+  const even=att.length%2===0,ok=att.length>=4&&even;
+  let h=`<div class="eyebrow"><span class="tag">القرعة</span><span class="sub">تقسيم فرق الليلة</span></div><h1>اسحب الفرق</h1>
   <div class="sec" style="margin-top:14px"><div class="sec-h"><h2>من حضر؟</h2><span class="sub">${att.length} لاعبين${att.length?` · <button data-act="att-clear" style="background:none;border:0;color:var(--lime);font-weight:800;font-size:13px;padding:6px">مسح الكل</button>`:''}</span></div><div class="att">`+
     pool.map(n=>`<button class="attb" data-act="toggle-att" data-name="${esc(n)}" aria-pressed="${att.includes(n)}">${avatar(n,30)}${esc(n)}</button>`).join('')+`</div>
-    <div class="hint" style="margin-top:8px">القرعة عشوائية، لكنها تفضّل الثنائيات التي لم تجتمع من قبل أو مضى على آخر لقاء لها وقت أطول (من كل الليالي المسجّلة)، ويلعب الأقل لعباً الليلة أولاً. اللاعبون المختارون هنا هم أنفسهم حاضرو ليلة التسجيل.</div></div>`;
-  if(cur){
-    h+=`<div class="board ${busy?'spinning':''}">${teamCard(cur.a,busy?'الفريق الأول · جاري السحب…':'الفريق الأول','',busy?'a':'')}<div class="vsb">VS</div>${teamCard(cur.b,busy?'الفريق الثاني':'الفريق الثاني','b',busy?'b':'')}</div>`;
-    if(!busy&&cur.rest&&cur.rest.length)h+=`<div class="restbar"><span class="tagsm" style="margin:0;background:var(--chip);color:var(--soft)">يستريح</span>${cur.rest.map(n=>`<span style="display:inline-flex;align-items:center;gap:6px">${avatar(n,26)}${esc(n)}</span>`).join('')}</div>`;
+    <div class="hint" style="margin-top:8px">اختر الحاضرين بعدد زوجي (4 أو 6 أو 8…). تُسحب القرعة مرة واحدة لكل الليلة فتتكوّن الفرق، وتتجنب القرعة الثنائيات التي لعبت معاً مؤخراً.</div></div>`;
+  if(teams.length){
+    h+=`<div class="tgrid">`+teams.map((t,i)=>teamCard(t,i+1,busy?i*2:null)).join('')+`</div>`;
+    if(!busy){
+      const R=teams.length===2?[[[0,1]]]:robin(teams.length);
+      h+=`<div class="sec"><div class="sec-h"><h2>المواجهات</h2><span class="sub">كل فريق يلاقي كل فريق</span></div>`+
+        R.map((ms,ri)=>`<div class="rr">${R.length>1?`<h3>الجولة ${ri+1}</h3>`:''}`+ms.map(([a,b])=>{
+          const key=a+'-'+b,done=D.done&&D.done[key];
+          return `<div class="mrow ${done?'done':''}"><div class="grow">فريق ${a+1} <span style="color:var(--muted)">ضد</span> فريق ${b+1}<small>${esc(teams[a].join(' + '))} · ${esc(teams[b].join(' + '))}${done?' · سُجّلت ✓':''}</small></div>${done?'':`<button class="btn sm ghost" data-act="draw-record" data-a="${a}" data-b="${b}">سجّل</button>`}</div>`}).join('')+`</div>`).join('')+`</div>`;
+    }
   }else{
-    h+=`<div class="empty" style="margin-top:14px">اختر الحاضرين (4 فأكثر) ثم اضغط «اسحب القرعة».</div>`;
+    h+=`<div class="empty" style="margin-top:14px">اختر الحاضرين بعدد زوجي ثم اضغط «اسحب القرعة».</div>`;
   }
   h+=`<div class="sec" style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
-    <button class="btn primary bigdraw" data-act="draw-go" ${ok&&!busy?'':'disabled'}>${svg('<path d="M4 4l5 5M20 4l-5 5M4 20l5-5M20 20l-5-5M12 8v8M8 12h8"/>',24,2.4)}${rounds.length?'اسحب الجولة التالية':'اسحب القرعة'}</button>
-    ${!ok?`<div class="hint" style="text-align:center;color:var(--coral)">يلزم 4 لاعبين على الأقل.</div>`:''}
-    ${rounds.length&&!busy?`<button class="btn ghost" data-act="draw-record" data-i="${rounds.length-1}">سجّل نتيجة هذه المواجهة</button>`:''}</div>`;
-  if(rounds.length>1||(rounds.length===1&&busy)){
-    h+=`<div class="sec"><div class="sec-h"><h2>جولات الليلة</h2><span class="sub">${rounds.length}</span></div><div class="list">`+
-      [...rounds].map((r,i)=>({r,i})).reverse().map(({r,i})=>`<div class="rnd ${r.done?'done':''}"><div class="grow"><div class="t">${esc(r.a.join(' + '))} <span style="color:var(--muted)">ضد</span> ${esc(r.b.join(' + '))}</div><div class="m">الجولة ${i+1}${r.rest&&r.rest.length?' · يستريح '+esc(r.rest.join('، ')):''}${r.done?' · سُجّلت ✓':''}</div></div>${r.done?'':`<button class="btn sm ghost" data-act="draw-record" data-i="${i}">سجّل</button>`}</div>`).join('')+`</div></div>`;
-  }
-  if(rounds.length)h+=`<button class="btn ghost" data-act="draw-reset" style="margin-top:18px">بدء قرعة جديدة لليلة جديدة</button>`;
+    <button class="btn primary bigdraw" data-act="draw-go" ${ok&&!busy?'':'disabled'}>${svg('<path d="M4 4l5 5M20 4l-5 5M4 20l5-5M20 20l-5-5M12 8v8M8 12h8"/>',24,2.4)}${teams.length&&!busy?'إعادة القرعة':'اسحب القرعة'}</button>
+    ${!ok?`<div class="hint" style="text-align:center;color:var(--coral)">${att.length<4?'يلزم 4 لاعبين على الأقل.':'العدد '+att.length+' فردي، أضف لاعباً أو أخرج لاعباً ليصبح زوجياً.'}</div>`:''}
+    ${teams.length&&!busy?`<button class="btn ghost" data-act="draw-reset">مسح القرعة</button>`:''}</div>`;
   return h;
 }
 
@@ -724,6 +798,38 @@ function matchCard(m,i){
   const aw=m.sa>m.sb,bw=m.sb>m.sa;
   const side=(t,s,w)=>`<div class="side ${w?'win':''}"><div class="who">${pair(t)}<span class="names">${esc(t.join(' + '))}</span></div><div class="score n">${s}</div></div>`;
   return `<div class="mcard"><div class="mhead"><span class="t">المواجهة ${i+1}</span><span><button class="icon" data-act="edit-match" data-i="${i}" aria-label="تعديل المواجهة ${i+1}">${IC.edit}</button><button class="icon" data-act="del-match" data-i="${i}" aria-label="حذف المواجهة ${i+1}">${IC.trash}</button></span></div>${side(m.a,m.sa,aw)}${side(m.b,m.sb,bw)}</div>`;
+}
+const matchWL=m=>m.sa>=m.sb?{W:m.a,L:m.b,hi:m.sa,lo:m.sb}:{W:m.b,L:m.a,hi:m.sb,lo:m.sa};
+function qPanel(d){
+  const q=S.q,pool=d.attendees.length?d.attendees:[];
+  const box=(k,label,cls)=>`<div class="qbox ${cls}"><div class="ql">${label}</div>`+[0,1].map(i=>{const n=q[k][i];return n?`<span class="qs on">${avatar(n,30)}${esc(n)}</span>`:`<span class="qs">— اختر —</span>`}).join('')+`</div>`;
+  const last=d.matches[d.matches.length-1];
+  const ready=q.w.length===2&&q.l.length===2;
+  let h=`<div class="sec"><div class="sec-h"><h2>إضافة كيم</h2><span class="sub">اضغط الأسماء: أول اثنين الفائزان، والتاليان الخاسران</span></div><div class="qpanel">
+    <div class="qrow">${box('w','الفوز','w')}${box('l','الخسارة','l')}</div>`;
+  if(!pool.length)h+=`<div class="hint" style="margin-top:10px">اختر الحاضرين من القائمة أعلاه أولاً.</div>`;
+  else h+=`<div class="att" style="margin-top:12px">`+pool.map(n=>`<button class="attb ${q.w.includes(n)?'w':q.l.includes(n)?'l':''}" data-act="q-pick" data-name="${esc(n)}">${avatar(n,30)}${esc(n)}</button>`).join('')+`</div>`;
+  if(S.draw.teams.length)h+=`<div class="qquick"><span class="hint" style="align-self:center">فرق القرعة:</span>`+S.draw.teams.map((t,i)=>`<button data-act="q-duo" data-i="${i}">${i+1}: ${esc(t.join(' + '))}</button>`).join('')+`</div>`;
+  h+=`<div class="qctl"><div class="qstep"><button data-act="q-step" data-d="-1" aria-label="أنقص">−</button><b>${q.n}</b><button data-act="q-step" data-d="1" aria-label="زِد">+</button></div>
+    <button class="btn primary" data-act="q-add" ${ready?'':'disabled'} style="flex:1">${IC.plus}إضافة ${q.n>1?'('+q.n+' كيمات)':'(كيم واحد)'}</button></div>
+    <div class="hint" style="margin-top:6px">العدد = كم كيم فاز بها هذان الفائزان على هذين الخاسرين.</div>`;
+  const quick=[];
+  if(last){const m=matchWL(last);quick.push(`<button data-act="q-same-last">نفس الفريقين</button>`,`<button data-act="q-swap-last">عكس: الخاسر يصير فائزاً</button>`)}
+  if(q.w.length||q.l.length)quick.push(`<button data-act="q-clear" style="color:var(--coral)">مسح الاختيار</button>`);
+  if(quick.length)h+=`<div class="qquick">${quick.join('')}</div>`;
+  return h+`</div></div>`;
+}
+function paperTable(d,kims){
+  let h=`<div class="sec"><div class="sec-h"><h2>ورقة الكيمات</h2><span class="sub">${d.matches.length} صف · ${kimTxt(kims)}</span></div>`;
+  if(!d.matches.length)return h+`<div class="empty">لا توجد صفوف بعد. أضف أول كيم من الأعلى كما تكتبه على الورقة.</div><button class="btn dash" data-act="add-match" style="margin-top:10px">${IC.plus}إدخال متقدم</button></div>`;
+  h+=`<div class="paper"><div class="ph"><span>#</span><span>الفوز</span><span>الخسارة</span><span></span></div>`+d.matches.map((m,i)=>{
+    const {W,L,hi,lo}=matchWL(m);
+    return `<div class="prow"><span class="pno">${i+1}</span>
+      <button class="pcell" data-act="edit-match" data-i="${i}">${pair(W,26)}<span>${esc(W.join(' × '))}</span></button>
+      <button class="pcell l" data-act="edit-match" data-i="${i}">${pair(L,26)}<span>${esc(L.join(' × '))}</span></button>
+      <span class="pend"><span class="pcount">${lo?hi+'-'+lo:hi>1?'×'+hi:''}</span><button class="icon" data-act="del-match" data-i="${i}" aria-label="حذف الصف ${i+1}" style="width:34px;height:34px">${IC.trash}</button></span></div>`}).join('')+`</div>
+    <button class="btn dash" data-act="add-match" style="margin-top:10px">${IC.plus}إدخال متقدم (نتيجة للطرفين)</button></div>`;
+  return h;
 }
 function rRecord(){
   const d=S.draft,editing=!!d.id;
@@ -737,9 +843,7 @@ function rRecord(){
     pool.map(n=>`<button class="attb" data-act="toggle-att" data-name="${esc(n)}" aria-pressed="${d.attendees.includes(n)}">${avatar(n,30)}${esc(n)}</button>`).join('')+
     `<button class="attb" data-act="player-new" style="color:var(--lime)">${IC.plus}لاعب</button></div>
     <div class="hint" style="margin-top:8px">اختر من حضر الليلة ليظهروا في قوائم المواجهات.</div></div>`;
-  h+=`<div class="sec"><div class="sec-h"><h2>المواجهات</h2><span class="sub">${matchTxt(d.matches.length)} · ${kimTxt(kims)}</span></div><div class="list">`;
-  h+=d.matches.length?d.matches.map(matchCard).join(''):`<div class="empty">لم تُضف مواجهات بعد.<br>كل مواجهة = ثنائي ضد ثنائي وعدد الكيمات التي فاز بها كل طرف.</div>`;
-  h+=`<button class="btn dash" data-act="add-match">${IC.plus}إضافة مواجهة</button></div></div>`;
+  h+=qPanel(d)+paperTable(d,kims);
   if(T.length){
     h+=`<div class="sec"><div class="sec-h"><h2>ملخص الليلة</h2></div><div class="tbl">
       <div class="tr h"><span>اللاعب</span><span class="c">فوز</span><span class="c">خسارة</span><span class="c">الصافي</span></div>`+
@@ -825,6 +929,12 @@ function renderSheet(){
   else if(SH.type==='share')b.innerHTML=sheetShare();
   else if(SH.type==='champ')b.innerHTML=sheetChamp();
 }
+function resTxt(){
+  const A1=[SH.a0,SH.a1].filter(Boolean).join(' + ')||'الفريق الأول',B1=[SH.b0,SH.b1].filter(Boolean).join(' + ')||'الفريق الثاني';
+  if(SH.sa===0&&SH.sb===0)return '';
+  if(SH.sa===SH.sb)return 'تعادل '+SH.sa+' - '+SH.sb;
+  return SH.sa>SH.sb?`فاز ${esc(A1)} ${SH.sa} - ${SH.sb}`:`فاز ${esc(B1)} ${SH.sb} - ${SH.sa}`;
+}
 function sheetMatch(){
   const d=S.draft,pool=d.attendees.length?[...d.attendees]:allNames();
   ['a0','a1','b0','b1'].forEach(k=>{if(SH[k]&&!pool.includes(SH[k]))pool.push(SH[k])});
@@ -837,6 +947,8 @@ function sheetMatch(){
     <div class="team"><div class="lbl" style="margin-top:0">الفريق الأول · عدد الكيمات التي فازوا بها</div><div class="two">${sel('a0','اللاعب 1')}${sel('a1','اللاعب 2')}</div>${step('a')}</div>
     <div class="vs">VS</div>
     <div class="team" style="margin-top:8px"><div class="lbl" style="margin-top:0">الفريق الثاني · عدد الكيمات التي فازوا بها</div><div class="two">${sel('b0','اللاعب 3')}${sel('b1','اللاعب 4')}</div>${step('b')}</div>
+    <div class="reslt">${resTxt()}</div>
+    <div class="hint" style="text-align:center">الفريق الذي يبقى عدّاده 0 يُحسب خاسراً بعدد كيمات الفائز.</div>
     <div class="acts"><button class="btn ghost" data-act="sheet-close">إلغاء</button><button class="btn primary" data-act="match-save">${SH.i==null?'إضافة':'حفظ'}</button></div>`;
 }
 function sheetPlayer(){
@@ -887,6 +999,8 @@ async function buildStandingsImage(sn){
   T('الموسم '+sn+' · '+(2025+sn)+' · بصافي النقاط',1010,196,'700 30px '+F,'#8B95A7','right');
   const cfg=[[0,540,230,110,'#C6FF3D','#22331A','#121C12','#C6FF3D'],[1,270,180,82,'#C9D1DE','#1E2A42','#111827','#C9D1DE'],[2,810,150,82,'#E0A15A','#2B2230','#15121C','#E0A15A']];
   const base=850;
+  const bm=x.createLinearGradient(0,230,0,base);bm.addColorStop(0,'rgba(198,255,61,.22)');bm.addColorStop(1,'rgba(198,255,61,0)');
+  x.fillStyle=bm;x.beginPath();x.moveTo(470,230);x.lineTo(610,230);x.lineTo(840,base);x.lineTo(240,base);x.closePath();x.fill();
   cfg.forEach(([i,cx,h,r,ring,c1,c2,rc])=>{
     const p=rows[i];if(!p)return;const top=base-h;
     const bg=x.createLinearGradient(0,top,0,base);bg.addColorStop(0,c1);bg.addColorStop(1,c2);
@@ -896,7 +1010,10 @@ async function buildStandingsImage(sn){
     const nm=p.name.length>9?p.name.slice(0,9)+'…':p.name;
     T(nm,cx,top-52,'900 '+(i===0?'46':'40')+'px '+F,'#F4F6FA');
     T(p.w+' فوز · '+p.l+' خسارة',cx,top-14,'600 26px '+F,'#8B95A7');
-    av(p.name,cx,top-52-46-r-(i===0?6:0),r,{c:ring,w:i===0?8:5});
+    const acy=top-52-46-r-(i===0?6:0);
+    av(p.name,cx,acy,r,{c:ring,w:i===0?8:5});
+    x.beginPath();x.arc(cx,acy+r+2,i===0?24:20,0,7);x.fillStyle=ring;x.fill();x.lineWidth=5;x.strokeStyle='#0A0D14';x.stroke();
+    T(String(i+1),cx,acy+r+(i===0?12:9),'800 '+(i===0?'30':'26')+'px '+N,'#0A0D14');
     if(i===0){x.fillStyle='#C6FF3D';const y0=top-52-46-2*r-34;x.beginPath();x.moveTo(cx-24,y0+22);x.lineTo(cx-30,y0);x.lineTo(cx-12,y0+10);x.lineTo(cx,y0-8);x.lineTo(cx+12,y0+10);x.lineTo(cx+30,y0);x.lineTo(cx+24,y0+22);x.closePath();x.fill()}
   });
   x.fillStyle='rgba(198,255,61,.5)';x.fillRect(90,base,W-180,4);
@@ -932,6 +1049,7 @@ const A={
 
   'toggle-att'(t){
     if(S.draw.busy)return;
+    if(S.page==='draw'&&S.draw.teams.length){S.draw.teams=[];S.draw.done={};saveDraw()}
     const n=t.dataset.name,a=S.draft.attendees,i=a.indexOf(n);
     if(i>-1)a.splice(i,1);else a.push(n);
     saveDraft();render();
@@ -951,6 +1069,33 @@ const A={
   },
   'img-save'(){const a=document.createElement('a');a.href=SH.url;a.download='ترتيب-الدومنة-'+today()+'.png';a.click()},
   'att-clear'(){if(S.draw.busy)return;S.draft.attendees=[];saveDraft();render()},
+  'q-pick'(t){
+    const n=t.dataset.name,q=S.q;
+    if(q.w.includes(n))q.w=q.w.filter(x=>x!==n);
+    else if(q.l.includes(n))q.l=q.l.filter(x=>x!==n);
+    else if(q.w.length<2)q.w.push(n);
+    else if(q.l.length<2)q.l.push(n);
+    else return toast('الفريقان مكتملان، اضغط إضافة',true);
+    render();
+  },
+  'q-step'(t){S.q.n=Math.max(1,Math.min(99,S.q.n+(+t.dataset.d)));render()},
+  'q-clear'(){S.q.w=[];S.q.l=[];S.q.n=1;render()},
+  'q-duo'(t){
+    const team=S.draw.teams[+t.dataset.i];if(!team)return;const q=S.q;
+    const clash=x=>team.some(n=>x.includes(n));
+    if(!q.w.length&&!clash(q.l))q.w=[...team];
+    else if(!q.l.length&&!clash(q.w))q.l=[...team];
+    else return toast('هذا الفريق مستخدم أو الخانتان ممتلئتان',true);
+    render();
+  },
+  'q-same-last'(){const m=S.draft.matches[S.draft.matches.length-1];if(!m)return;const {W,L}=matchWL(m);S.q.w=[...W];S.q.l=[...L];S.q.n=1;render()},
+  'q-swap-last'(){const m=S.draft.matches[S.draft.matches.length-1];if(!m)return;const {W,L}=matchWL(m);S.q.w=[...L];S.q.l=[...W];S.q.n=1;render()},
+  'q-add'(){
+    const q=S.q;if(q.w.length!==2||q.l.length!==2)return;
+    S.draft.matches.push({a:[...q.w],b:[...q.l],sa:q.n,sb:0});
+    [...q.w,...q.l].forEach(n=>{if(!S.draft.attendees.includes(n))S.draft.attendees.push(n)});
+    S.q={w:[],l:[],n:1};saveDraft();render();toast('أُضيف الصف '+S.draft.matches.length+' ✓');
+  },
   'add-match'(){openSheet({type:'match',i:null,a0:'',a1:'',b0:'',b1:'',sa:0,sb:0})},
   'edit-match'(t){const i=+t.dataset.i,m=S.draft.matches[i];openSheet({type:'match',i,a0:m.a[0],a1:m.a[1],b0:m.b[0],b1:m.b[1],sa:m.sa,sb:m.sb})},
   'del-match'(t){
@@ -967,7 +1112,7 @@ const A={
     const m={a:[SH.a0,SH.a1],b:[SH.b0,SH.b1],sa:SH.sa,sb:SH.sb};
     if(SH.i==null)S.draft.matches.push(m);else S.draft.matches[SH.i]=m;
     p.forEach(n=>{if(!S.draft.attendees.includes(n))S.draft.attendees.push(n)});
-    if(SH.round!=null&&S.draw.rounds[SH.round]){S.draw.rounds[SH.round].done=true;saveDraw();toast('أُضيفت إلى ليلة التسجيل ✓')}
+    if(SH.mkey!=null){S.draw.done[SH.mkey]=true;saveDraw();toast('أُضيفت إلى ليلة التسجيل ✓')}
     saveDraft();closeSheet();render();
   },
   async 'save-night'(){
@@ -980,7 +1125,7 @@ const A={
     const players=[...new Set([...d.attendees,...d.matches.flatMap(m=>[...m.a,...m.b])])];
     try{
       await Data.saveNight({id:d.id,date:d.date,season,players,matches:d.matches});
-      S.draft=newDraft();saveDraft();S.draw={rounds:[],busy:false,pending:null};saveDraw();toast('تم حفظ الليلة ✓');
+      S.draft=newDraft();saveDraft();S.draw={teams:[],done:{},busy:false,pending:null};saveDraw();toast('تم حفظ الليلة ✓');
       S.viewSeason=null;go('standings');
     }catch(err){console.error(err);toast('تعذّر الحفظ: '+(err.code||err.message),true)}
   },
@@ -1034,28 +1179,28 @@ const A={
 
   async 'draw-go'(){
     const D=S.draw,att=S.draft.attendees;
-    if(D.busy||att.length<4)return;
-    const res=pickRound(att,D.rounds);
-    D.busy=true;D.pending=res;render();
+    if(D.busy||att.length<4||att.length%2)return;
+    if(D.teams.length&&!confirm('إعادة القرعة؟ ستُمسح الفرق الحالية.'))return;
+    const res=pickTeams(att,D.teams);
+    D.busy=true;D.pending=res;D.done={};render();
     const slots=[...document.querySelectorAll('[data-slot]')];
     const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const finals=[...res.a,...res.b];
-    const tick=setInterval(()=>slots.forEach((el,i)=>{if(!el.dataset.lock)el.textContent=att[rnd(att.length)]}),reduce?9999:70);
+    const finals=res.flat();
+    const tick=setInterval(()=>slots.forEach(el=>{if(!el.dataset.lock)el.textContent=att[rnd(att.length)]}),reduce?9999:70);
     for(let i=0;i<slots.length;i++){
-      await new Promise(r=>setTimeout(r,reduce?0:(i===0?900:520)));
+      await new Promise(r=>setTimeout(r,reduce?0:(i===0?900:480)));
       const el=slots[i];el.dataset.lock='1';el.textContent=finals[i];el.classList.add('lockpop');
       if(navigator.vibrate)try{navigator.vibrate(18)}catch{}
     }
     clearInterval(tick);
     await new Promise(r=>setTimeout(r,reduce?0:450));
-    D.rounds.push({a:res.a,b:res.b,rest:res.rest,done:false});
-    D.busy=false;D.pending=null;saveDraw();render();
+    D.teams=res;D.busy=false;D.pending=null;saveDraw();render();
   },
   'draw-record'(t){
-    const i=+t.dataset.i,r=S.draw.rounds[i];if(!r)return;
-    openSheet({type:'match',i:null,round:i,a0:r.a[0],a1:r.a[1],b0:r.b[0],b1:r.b[1],sa:0,sb:0});
+    const a=+t.dataset.a,b=+t.dataset.b,T=S.draw.teams;if(!T[a]||!T[b])return;
+    openSheet({type:'match',i:null,mkey:a+'-'+b,a0:T[a][0],a1:T[a][1],b0:T[b][0],b1:T[b][1],sa:0,sb:0});
   },
-  'draw-reset'(){if(!confirm('مسح جولات القرعة الحالية؟'))return;S.draw={rounds:[],busy:false,pending:null};saveDraw();render()},
+  'draw-reset'(){if(!confirm('مسح فرق القرعة الحالية؟'))return;S.draw.teams=[];S.draw.done={};saveDraw();render()},
 
   async 'fb-test'(){
     S.diag=[[null,'جاري الفحص…']];S.diag.busy=true;render();
@@ -1126,8 +1271,8 @@ async function boot(){
   const known=new Set(allNames());
   S.draft.attendees=S.draft.attendees.filter(n=>known.has(n));
   S.draft.matches=S.draft.matches.filter(m=>[...m.a,...m.b].every(n=>known.has(n)));
-  S.draw.rounds=(S.draw.rounds||[]).filter(r=>[...r.a,...r.b].every(n=>known.has(n)));
-  S.draw.busy=false;S.draw.pending=null;saveDraft();saveDraw();
+  if(!Array.isArray(S.draw.teams)||!S.draw.teams.every(t=>t.every(n=>known.has(n))))S.draw.teams=[];
+  S.draw.busy=false;S.draw.pending=null;if(!S.draw.teams.length)S.draw.done={};saveDraft();saveDraw();
   S.ready=true;render();
 }
 boot();
